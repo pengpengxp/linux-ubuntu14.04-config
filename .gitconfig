@@ -1,0 +1,9 @@
+[user]
+	name = pengpengxp
+	email = pengpengxpgpri@gmail.com
+[alias]
+	co = checkout
+	br = branch
+	sh = show
+	st = status
+	cf = config

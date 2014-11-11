@@ -1,0 +1,12 @@
+"3.8.2 (created: 2014/02/13 23:52:43)
+
+noremap go o<Space>www.baidu.com<Return>
+noremap gO t<Space>www.baidu.com<Return>
+noremap gs o<Space>www.sina.com.cn<Return>
+noremap gS t<Space>www.sina.com.cn<Return>
+
+noremap h gT
+noremap l gt
+source! /home/pengpengxp/.vimperatorrc.local
+
+" vim: set ft=vimperator:
