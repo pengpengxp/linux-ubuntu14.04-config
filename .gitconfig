@@ -7,3 +7,5 @@
 	sh = show
 	st = status
 	cf = config
+[push]
+	default = current

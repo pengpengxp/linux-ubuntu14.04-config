@@ -1,0 +1,32 @@
+keycode 66 = Caps_Lock
+keycode 37 = Control_L 
+keycode 64 = Alt_L
+keycode 108 = Alt_R
+keycode 134 = Super_R
+keycode 135 = Menu
+keycode 105 = Control_R
+keycode 118 = Insert
+
+
+remove control = Alt_L
+remove control = Cpas_Lock
+remove control = Super_R
+remove control = Menu
+remove mod1 = Control_L
+
+
+add lock = Cpas_Lock
+
+####################################################################
+xmodmap:  up to 6 keys per modifier, (keycodes in parentheses):
+
+control     Alt_L (0x40),  Caps_Lock (0x42),  Control_R (0x69),  Super_R (0x86),  Menu (0x87),  Alt_L (0xcc)
+mod1        Control_L (0x25),  Alt_R (0x6c),  Meta_L (0xcd)
+mod4        Super_L (0x85),  Super_L (0xce),  Hyper_L (0xcf)
+
+####################################################################
+xmodmap:  up to 4 keys per modifier, (keycodes in parentheses):
+
+control     Control_L (0x25),  Control_R (0x69)
+mod1        Alt_L (0x40),  Alt_R (0x6c),  Meta_L (0xcd)
+mod4        Super_L (0x85),  Super_R (0x86),  Super_L (0xce),  Hyper_L (0xcf)

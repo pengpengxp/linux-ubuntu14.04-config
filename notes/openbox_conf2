@@ -1,0 +1,166 @@
+
+openbox配置手册  
+
+2012-03-11 17:54:03|  分类： linux |  标签：openbox  tint2  gnome-panel   |字号 订阅
+先发个官方的openbox配置教程：http://openbox.org/wiki/Help:Contents  
+配置快捷键：http://openbox.org/wiki/Help:Bindings
+首先发张我的成果图，比较简单。openbox配置手册 - flow - 发现ubuntu！
+ 
+我用的是mint11-gnome ，直接apt-get安装的openbox。
+使用了下面的软件：jupiter（电源管理，帮助节能），tint2（轻量的面板程序，图中在下方），gnome-panel（gnome2面板），mintmenu（linux mint最具特色的东西，很好的菜单程序）mint11自带的appmenu（全局菜单），nautilus（文件管理），chrome（浏览器），wicd-gtk（网络管理程序），fcitx（输入法），xcompmgr （openbox实现透明等特效的程序），hsetroot（壁纸程序），obconf（openbox配置程序），grun（相当于windows下的运行，ubuntu中alt+f2）
+OpenBox的个人配置文件有：
+~/.config/openbox/autostart.sh
+~/.config/openbox/menu.xml
+~/.config/openbox/rc.xml
+可在 /etc/X11/openbox/*或者/etc/xdg/openbox/*找到，直接复制过来就行
+
+menu.xml 配置右键菜单的，照着里面的格式修改就行。
+
+/rc.xml 配置快捷键的，可以把里面不用的快捷键删了，留些常用的就行，openbox默认的快捷键（只是常用的）有：
+Alt-F4        关闭当前窗口
+Alt-Space   显示窗口菜单
+Alt-Tab       切换窗口
+Alt-Shift-Tab 逆向切换窗口
+Windows-D  最小化所有窗口
+Windows-E 运行Konqueror文件管理（可以修改为别的）
+Alt-Escape  将当前窗口下降一层
+Windows-F1 去桌面1
+Windows-F2 去桌面2
+Windows-F3 去桌面3
+Windows-F4 去桌面4
+Control-Alt-Left 去左面的桌面
+Control-Alt-Right去右面的桌面
+alt-shift-left  将当前窗口移到左面的桌面
+Alt+鼠标左键拖动 移动窗口
+Alt+鼠标右键拖动 改变窗口大小
+Alt+鼠标滑轮 切换窗口
+在配置文件当中：
+S Shift 键
+C Control 键
+A Alt 键
+W windows键
+M Meta 键
+H Hyper 键 (须绑定某键)
+
+为了能ALT+f2运行程序，加上下面的：
+
+<keybind key="A-F2">
+<action name="Execute">
+<execute>grun</execute>
+</action>
+</keybind>
+
+
+
+下面配置autostart.sh，这完全按照shell脚本写就行，把要开机执行的软件名字扔里面就行。
+这是我的：
+
+#!/bin/bash
+. $GLOBALAUTOSTART
+hsetroot -full ~/Pictures/mine/Amanda-Seyfried-Wallpaper.jpg
+
+#设置壁纸，hsetroot -full就是将图片适应的显示 -fill则是拉伸填充，具体请看帮助
+
+xcompmgr &
+
+#让openbox有透明等特效功能，可以自己设置参数，详情看帮助
+
+tint2 &
+#下方面板，配置文件在 ~/.config/tint2/tint2.rc
+
+
+gnome-panel &
+
+#gnome面板，相比之下功能比较多，有很多插件，可以把mint菜单放上面，全局菜单放上面，添加应用快捷方式
+
+wicd-gtk &
+
+#网络管理
+
+
+mountavfs &
+
+#执行avfs，刚学的，有用。
+
+
+/usr/bin/jupiter-run &
+
+#电源管理，能方便的调整工作模式
+
+之所以用tint2而不用dock，因为这个比较轻量，而且自定义度高，在openbox这种缺少特效的环境下表现好，要用dock很可能显示不正常。tint2官方配置说明：http://code.google.com/p/tint2/wiki/Configure
+简单说说常用的：
+
+rounded = 10
+#左右边缘圆滑程度
+#rounded = 像素数
+border_width = 0
+#任务栏距离屏幕边缘的距离
+background_color = #000000 80
+#面板颜色和透明度，0为完全透明
+
+
+# Panel
+panel_monitor = all
+panel_position = bottom center horizontal
+#panel_position = 垂直位置 水平位置 方向
+
+panel_size = 100% 35
+#面板大小，宽%高.前面的100代表宽度和屏幕宽一样，100%。后面35的是像素数
+
+panel_margin = 0 0
+#panel_margin = horizontal_margin vertical_margin
+#horizontal_margin = 0 代表宽度和显示器一样宽
+
+#vertical_margin=0 代表垂直方向距离边缘0像素
+
+
+网上有篇帖子介绍如何开机随机显示壁纸，是个脚本，放在开机执行就行，但是我实验失败，不知道什么原因，贴上来大家看看(大概加了下注释)：
+
+# ~/wall.sh
+
+#!/bin/env bash
+WALLPAPERS="/home/flow/Pictures/mine"
+
+#将一个存有图片的路径赋给WALLPAPERS
+ALIST=( `ls -w1 $WALLPAPERS` )
+
+#屏幕宽度设为1，将WALLPAPERS中文件名送入ALIST，查了下这样ALIST应该就是包含多个值的数组了。
+
+#数组的赋值就是把所有元素放在（）中然后送给数组，详情查看http://www.cnblogs.com/chengmo/archive/2010/09/30/1839632.html
+
+RANGE=${#ALIST[@]}
+
+#利用了数组操作，计算数组ALIST的长度
+
+#也可用`ls $WALLPAPERS|wc -l`代替
+let "number = $RANDOM"
+#number为随机数
+
+let LASTNUM="`cat $WALLPAPERS/.last` + $number"
+
+#LASTNUM的值为 .last文件中的值+随机数
+let "number = $LASTNUM % $RANGE"
+
+#LASTNUM余RANGE，得到的就是小于图片数的值
+echo $number > $WALLPAPERS/.last
+#将这个值送入.last文件，下次再用
+#feh --bg-max $WALLPAPERS/${ALIST[$number]} &
+
+#feh也可以设置桌面壁纸，用法如上
+hsetroot -full $WALLPAPERS/${ALIST[$number]} &
+
+#${ALIST[$number]}是number对应的图片名称
+
+#${name[$i]} 就是显示第i个数的值
+
+
+#下面是我加的，延时10分钟，再执行这个脚本，就能实现每10分钟随机换壁纸。
+sleep 600
+exec ~/wall.sh &
+
+比较佩服这人，这个脚本分析了半天才看懂，虽然繁琐不过可以用，就是在我加入autostart里面后开机不能执行，原因不明（要谁知道原因说下吧）。
+
+我用的nautilus文件管理，在gnome面板上弄了个快捷启动器，命令为：  nautilus --no-desktop 
+这样能防止nautilus设置你的桌面，不加的话nautilus会将桌面弄为gnome桌面，上面有图标之类的。
+
+还有个利用gnome-screenshot的截屏快捷启动器：gnome-screenshot -a ，抓取区域并保存，很好用

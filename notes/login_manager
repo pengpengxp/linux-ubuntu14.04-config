@@ -1,0 +1,7 @@
+kdm
+lightdm
+slim
+xdm
+
+
+use dpkg-reconfigure lightdm or kdm or slim or xdm to reconfigure

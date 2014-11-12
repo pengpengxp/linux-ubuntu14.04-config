@@ -1,0 +1,7 @@
+ W: GPG 错误：http://ppa.launchpad.net lucid Release: 由于没有公钥，无法验证下列签名： NO_PUBKEY FAF69C646FF368B7的问题
+分类： linux 计算机使用常见问题 2011-09-08 11:32 5364人阅读 评论(2) 收藏 举报
+c终端
+
+在安装更新时，即在运行，命令行sudo apt-get update 或者运行更新管理器的时候，出现W: GPG 错误：http://ppa.launchpad.net lucid Release: 由于没有公钥，无法验证下列签名： NO_PUBKEY FAF69C646FF368B7的问题，可以在终端中运行：sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys FAF69C646FF368B7
+
+即可解决。

@@ -1,0 +1,122 @@
+Ubuntu下配置tty全过程
+
+分类： Linux 2009-09-28 19:21 589人阅读评论(0) 收藏举报
+
+ 解决了的问题：1.tty下显示中文，2.支持中文输入，3.合适的分辨率，4.关闭终端响铃
+第一步：打开FrameBuffer模块
+编辑文件：
+代码
+1. sudo gedit /etc/initramfs-tools/modules 
+
+
+加入三行内容：
+fbcon
+vesafb
+vga16fb
+编辑文件：
+Java代码
+
+ 
+
+1. sudo vi /etc/modprobe.d/blacklist-framebuffer.conf
+
+把以下两行给注释掉：
+blacklist vesafb
+blacklist vga16fb
+编辑文件：
+代码
+1. sudo gedit /boot/grub/menu.lst 
+
+在启动条目的内核项后面加入vga=xxx参数
+xxx所代表的值可以用下面的方法来查看：
+
+ 
+
+可以通过 hwinfo --framebuffer 命令查看自己显卡支持的模式
+
+1 安装 hwinfo
+
+代码:
+sudo apt-get install hwinfo
+
+
+2 查看自己显卡支持的模式：
+
+代码:
+sudo hwinfo --framebuffer
+
+
+或者更简要的模式输出：
+
+代码:
+sudo hwinfo --framebuffer|grep Mode
+
+
+这是我机子上的结果：
+Mode 0x0305: 1024x768 (+1024), 8 bits
+Mode 0x0317: 1024x768 (+2048), 16 bits
+Mode 0x0318: 1024x768 (+4096), 24 bits
+Mode 0x0312: 640x480 (+2560), 24 bits
+Mode 0x0314: 800x600 (+1600), 16 bits
+Mode 0x0315: 800x600 (+3200), 24 bits
+Mode 0x0301: 640x480 (+640), 8 bits
+Mode 0x0303: 800x600 (+832), 8 bits
+Mode 0x0311: 640x480 (+1280), 16 bits
+选择1024x768的分辨率，16位色，所以应该在vga=后面加上0x0317
+第二步，安装支持中文的控制台zhcon并启动
+代码
+1. sudo apt-get install zhcon 
+
+
+引用
+chenjihua说：这里缺少了一步：
+Java代码
+1. sudo update-initramfs -u 
+
+如果不做这一步，重启后会无法正常显示控制台。
+
+重启后，
+在tty状态下输入命令
+Java代码
+
+1. zhcon --utf8 --drv=fb 
+在很多网页上提到使用--drv=vga参数来启动zhcon，这样做在我的机子上显示的分辨率是640x480，我希望有一个我看着比较舒服的大分辨率，所以我使用--drv=fb参数来启动zhcon
+第三步，优化
+化简zhcon启动的参数：
+
+打开bashrc   代码gedit .bashrc
+
+
+在~/.bashrc中增加一行，
+Java代码
+1. alias zhcon='zhcon --utf8 --drv=fb' 
+
+这样在启动zhcon时只需要输入zhcon即可。
+设置 zhcon开机自动启动：
+在~/.bashrc中增加一行，
+Java代码
+
+1. [[ $(tty) == //dev//tty[0-9]* ]] && zhcon 
+
+
+不过这个方法只针对当前用户，即对tty登入时的帐户下的~/.bashrc设置这行才有效。
+第四步，中文输入法支持
+zhcon中可以输入中文。Ctrl+Space即可。
+第五步，关闭终端响铃
+因为有时候电脑要在课上用，所以关闭system bell还是很有必要的。
+网上找了半天，找到一个softbeep的软件，摆弄半天还是没成功。
+狗狗告诉我，把pcspeaker这个模块给-r掉，我找了一下，Ubuntu没这个模块。
+继续google，发现Ubuntu这个模块名字叫pcspkr，给它blacklist了算了。
+Java代码
+
+  1. sudo vi /etc/modprobe.d/blacklist  
+
+sudo vi /etc/modprobe.d/blacklist
+
+
+添加一行
+Java代码
+
+  1. blacklist pcspkr  
+
+blacklist pcspkr

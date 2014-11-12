@@ -1,0 +1,18 @@
+FIX HDA INTEL (REALTEK ALC887) NO SOUND ISSUE IN UBUNTU
+Written by Andrew | Date: Monday, November 29, 2010 
+
+Tweet
+
+I got a new computer at work, installed Ubuntu 10.10 Maverick Meerkat and the sound didn't work. The fix was actually quite simple so I thought I'd share it with you in case you have a similar issue.
+
+The computer has an HDA Intel chip (Realtek ALC887) and I couldn't open alsamixer (this error was displayed: "load hw:0 error: Invalid argument"), although the sound seemed to be working in various applications (no error there) except I couldn't hear anything.
+
+The fix:
+
+Edit /etc/modprobe.d/alsa-base.conf as root:
+sudo gedit /etc/modprobe.d/alsa-base.conf
+
+And add the following line at the end of the file:
+options snd-hda-intel model=generic
+
+Save, reboot (a logout might be enough too) and try to play some audio file - the sound should work. If this generic fix doesn't work for you, try "auto" instead or see THIS post.

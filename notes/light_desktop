@@ -1,0 +1,133 @@
+Linux轻量级别组合 不要KDE与Gnome
+[日期：2008-09-07] 	来源：Linux时代  作者：Linux 	[字体：大 中 小]
+
+最近觉得Linux的KDE，Gnome都太大了。让人很是郁闷。所以决定来个轻量级的融合。
+
+桌面有:fluxbox fvwm icewn openbox等
+面板有:pypanel fbpanel等
+文件管理系统我选择了xfe
+桌面管理我选择了:slim
+对于系统监控就用了conky
+锁屏为xlock
+浏览器:Galeon
+运行:grun
+终端:rxvt-unicode
+图形压缩:file-roller(Gnome中) xarchiver (xfce中).关于大小及关联多少爷门自己看吧。
+既然都轻了我就全轻了吧
+
+所以我的配置是slim+openbox+pypanel+xfe
+
+一:先说说slim吧,这个玩意阿比较简单而且比较好弄
+
+1)安装slim
+emerge slim slim-themes
+
+2)配置
+安装完成后将/etc/rc.conf中
+DISPLAYMANAGER="gdm"
+XSESSION="Gnome"
+改为
+DISPLAYMANAGER="slim"
+XSESSION="Openbox"
+就成了。
+
+别忘记这个:
+rc-update add xdm default
+
+3)选择主题
+你可以换一下slim的主题
+slim -p /usr/share/slim/themes/<你所需要的主题名>
+来看，选好后，打开/etc/slim.conf
+找到
+current_theme default
+将default改为你所需要的主题名就可以了
+
+4)技巧
+slim还有一个方便的地方:
+在登录界面username中输入下列关键字产生的功能
+console ----- 启动终端登录
+exit ----------- 进入字符界面登录
+halt ----------- 关机需输入root密码
+reboot ------- 重启需输入root密码
+
+二.OpenBOX
+1)安装openbox
+emerge openbox obconf
+
+obconf是图形配置，但是用处不大。不如命令行。
+
+2)安装完成后，需要进行配置
+2-1)修改菜单,首先为了防止主菜单被以后升级覆盖，应该复制到自己的目录下。
+cp /etc/xdg/openbox/menu.xml ~/.config/openbox
+vim ~/.config/openbox
+
+内容为:
+
+#menu id为单独ID，属于唯一标识.label为可在菜单看到的文字
+#item label=为在菜单中显示的应用程序名字
+dia #本行中为对应应用程序项的命令
+#结束第一个item,应用程序
+
+gimp-2.4
+
+gthumb
+
+#结束第一个菜单
+
+为显示一条分隔线如:
+
+2-2)使用二级菜单可参看menu.xml最后,如
+
+#一级菜单名
+#分隔线并对菜单命名为"Openbox"
+
+#将子菜单加入一级菜单的写法
+
+#完成一级菜单
+
+2-3)键盘绑定(快捷键的设置)
+S->Shift A->Alt C->Ctrl
+
+编辑~/.config/openbox/rc.xml如果不存在则cp /etc/xdg/openbox/rc.xml ~/.config/openbox/
+找到标记,在中间写
+#绑定alt+F2键
+#Execute执行
+gnome-terminal #执行alt+F2所出现的动作。本例为alt+F2出现Gnome终端
+
+
+显示桌面为:
+
+快捷启动xfe文件管理器
+emerge xfe
+
+xfe
+
+xfe不能输入中文，但是可以显示。需要下载wqy字体，在xfe选项中选择wqy字体就可以显示中文了。
+
+在继续安装pypanel与feh.pypanel来做面板,feh来进行壁纸加载
+emerge pypanel feh
+安装完成后，在~/.config/openbox/创建autostart.sh，这样可以让有些程序在启动openbox时自动加载
+我的autostart.sh中有:
+gdesklets --no-tray-icon &
+feh --bg-tile /home/suxue/.tupian/bz/sky1.jpg & #添加壁纸的命令
+conky &
+fcitx &
+pypanel &
+
+当选择了slim做为dm,.xprofile不在管用。直接将fcitx加入到autostart.sh就可以了。配置fcitx的方法可参看我的其他blog信息。
+
+另:pypanel默认不支持中。修改方法为:
+vi ~/.pypanelrc
+找到FONT = "bitstream vera sans-8"
+改为
+FONT = "wenquanyi bitmap song-8"
+就支持中文了
+
+同时时钟眼色为黑色。与面板颜色冲突。所喜欢全局为黑色，所以修改了时钟的配色
+在~/.pypanelrc中找到
+CLOCK_COLOR = "0x000000"
+改为
+CLOCK_COLOR = "0xf280e6" #0xf280e6为你所选择的颜色
+
+大功告成。可以开始游戏了。
+

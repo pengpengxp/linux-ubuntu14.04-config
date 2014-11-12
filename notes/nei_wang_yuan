@@ -1,0 +1,452 @@
+http://bbs.cqupt.edu.cn/nForum/#!article/Unix_Linux/12889
+标题: 内网可用Unix/Linux源 
+发信站: 幽幽黄桷兰BBS (Fri Mar 25 05:15:57 2011), 站内 
+
+发信人: graysky (Graysky), 信区: Unix_Linux 
+标题: Re: 连不了外网,求一个源 
+发信站: 幽幽黄桷兰BBS (Tue Oct 19 00:01:32 2010), 站内 
+
+
+上海交通大学FTP http://ftp.sjtu.edu.cn/ 
+上海交通 ftp://ftp.sjtu.edu.cn 
+这两个网站对应的IP地址是202.38.97.230，这个是一直可以免费使用的 
+北京交通大学 http://mirror.njtu.edu.cn，IP是202.112.154.58，已处理，可免费访 
+问 
+电子科大 http://ubuntu.uestc.edu.cn ，IP是202.115.22.208，已处理，可免费访问 
+红联教育网源 ftp://debian.ustc.edu.cn ，IP是202.38.93.66，已处理，可免费访问 
+
+http://mirrors.163.com/，IP是60.191.81.189，已处理，可免费访问 
+http://mirror.lupaworld.com/，IP是115.238.55.232，已处理，可免费访问 
+http://mirror9.net9.org，IP是219.153.42.248，已处理，可免费访问 
+
+注意事项： 
+1. 确保校园网正常连接，不用登陆电信网关，上述地址就可以直接使用； 
+2. 如出现域名不能访问时，请调整DNS设置，或者直接用上述IP地址访问。因为有些网 
+站可能有电信、教育网双域名IP，如DNS设置不正确，可能访问到错误的IP地址； 
+3. 如果有什么问题，可随时和我联系，联系电话62461343 
+
+
+希望能够给校内ubuntu用户镜像源选择带来帮助 
+原文地址：http://www.linuxde.net/2011/10/1550.html 
+如何使用Ubuntu Night 
+by 天明 
+Ubuntu Night( http://ubuntu9.com ) 的Top mirror功能根据当前的网络情况和源健康状况不断地进行更新当前可用的源的信息，包括了Top fast/near/stable mirror，可以找到当前网络上所有可用的Ubuntu 镜像（即源)，并按照平均下载速度和地理位置进行排名。而且，当你找到最适合你的源之后，还可以直接下载它的sources.list 文件，并可直接将它copy到/etc/apt/sources.list或者放在/etc/apt/souces.list.d目录下，非常的方便，无须苦苦找可用源。 
+
+如何使用我们推荐的源 
+
+不同的网络状况连接以下源的速度不同, 所以cn99并不一定是最快的源, 建议在添加前手动验证以下源的连接速度(ping下就行),比如说北京网通ADSL用户连接cn99就非常慢，而ftp.sjtu.edu.cn是相对较快的源,选择最快的源可以节省大批下载时间 
+
+1 首先备份源列表： 
+ 
+ sudo cp /etc/apt/sources.list /etc/apt/sources.list_backup 
+ 
+ 2 而后用gedit或其他编辑器打开： 
+ 
+ gksu gedit /etc/apt/sources.list 
+ kdesudo kate /etc/apt/sources.list 
+ gksu mousepad /etc/apt/sources.list 
+ gksu gedit /etc/apt/sources.list 
+ 
+3 从下面列表中选择合适的源，替换掉文件中所有的内容，保存编辑好的文件： 
+ 
+ 注意：一定要选对版本 
+ 
+ 4 然后，刷新列表： 
+ 
+sudo apt-get update 
+ 
+ 注意：一定要执行刷新 
+ 
+ 源列表 
+ 
+Natty(11.04) 版本 
+ 
+ Ubuntu 官方更新服务器（欧洲，此为官方源，国内较慢，但无同步延迟问题，电信网通用户可以使用)： 
+ 
+ deb http://archive.ubuntu.com/ubuntu/ natty main restricted universe multiverse 
+ deb http://archive.ubuntu.com/ubuntu/ natty-security main restricted universe multiverse 
+ deb http://archive.ubuntu.com/ubuntu/ natty-updates main restricted universe multiverse 
+ deb http://archive.ubuntu.com/ubuntu/ natty-proposed main restricted universe multiverse 
+ deb http://archive.ubuntu.com/ubuntu/ natty-backports main restricted universe multiverse 
+ deb-src http://archive.ubuntu.com/ubuntu/ natty main restricted universe multiverse 
+ deb-src http://archive.ubuntu.com/ubuntu/ natty-security main restricted universe multiverse 
+ deb-src http://archive.ubuntu.com/ubuntu/ natty-updates main restricted universe multiverse 
+ deb-src http://archive.ubuntu.com/ubuntu/ natty-proposed main restricted universe multiverse 
+ deb-src http://archive.ubuntu.com/ubuntu/ natty-backports main restricted universe multiverse 
+ Ubuntu官方提供的其他软件（第三方闭源软件等）： 
+ 
+ deb http://archive.canonical.com/ubuntu/ natty partner 
+ deb http://extras.ubuntu.com/ubuntu natty main 
+ 骨头兄亲自搭建并维护这个Ubuntu源（该源位于浙江杭州百兆共享宽带的电信机房)，包含 Deepin 等镜像： 
+ 
+deb http://ubuntu.srt.cn/ubuntu/ natty main restricted universe multiverse 
+deb http://ubuntu.srt.cn/ubuntu/ natty-security main restricted universe multiverse 
+deb http://ubuntu.srt.cn/ubuntu/ natty-updates main restricted universe multiverse 
+deb http://ubuntu.srt.cn/ubuntu/ natty-proposed main restricted universe multiverse 
+deb http://ubuntu.srt.cn/ubuntu/ natty-backports main restricted universe multiverse 
+deb-src http://ubuntu.srt.cn/ubuntu/ natty main restricted universe multiverse 
+deb-src http://ubuntu.srt.cn/ubuntu/ natty-security main restricted universe multiverse 
+deb-src http://ubuntu.srt.cn/ubuntu/ natty-updates main restricted universe multiverse 
+deb-src http://ubuntu.srt.cn/ubuntu/ natty-proposed main restricted universe multiverse 
+deb-src http://ubuntu.srt.cn/ubuntu/ natty-backports main restricted universe multiverse 
+网易163更新服务器（广东广州电信联通双线服务器，原 CN99 跳转到此），包含其他开源镜像： 
+ 
+ deb http://mirrors.163.com/ubuntu/ natty main restricted universe multiverse 
+ deb http://mirrors.163.com/ubuntu/ natty-security main restricted universe multiverse 
+ deb http://mirrors.163.com/ubuntu/ natty-updates main restricted universe multiverse 
+ deb http://mirrors.163.com/ubuntu/ natty-proposed main restricted universe multiverse 
+ deb http://mirrors.163.com/ubuntu/ natty-backports main restricted universe multiverse 
+ deb-src http://mirrors.163.com/ubuntu/ natty main restricted universe multiverse 
+ deb-src http://mirrors.163.com/ubuntu/ natty-security main restricted universe multiverse 
+ deb-src http://mirrors.163.com/ubuntu/ natty-updates main restricted universe multiverse 
+ deb-src http://mirrors.163.com/ubuntu/ natty-proposed main restricted universe multiverse 
+ deb-src http://mirrors.163.com/ubuntu/ natty-backports main restricted universe multiverse
+ 搜狐更新服务器（山东联通服务器，官方中国大陆地区镜像跳转至此） ，包含其他开源镜像： 
+ 
+ deb http://mirrors.sohu.com/ubuntu/ natty main restricted universe multiverse 
+ deb http://mirrors.sohu.com/ubuntu/ natty-security main restricted universe multiverse 
+ deb http://mirrors.sohu.com/ubuntu/ natty-updates main restricted universe multiverse 
+ deb http://mirrors.sohu.com/ubuntu/ natty-proposed main restricted universe multiverse 
+ deb http://mirrors.sohu.com/ubuntu/ natty-backports main restricted universe multiverse 
+ deb-src http://mirrors.sohu.com/ubuntu/ natty main restricted universe multiverse 
+ deb-src http://mirrors.sohu.com/ubuntu/ natty-security main restricted universe multiverse 
+ deb-src http://mirrors.sohu.com/ubuntu/ natty-updates main restricted universe multiverse 
+ deb-src http://mirrors.sohu.com/ubuntu/ natty-proposed main restricted universe multiverse 
+ deb-src http://mirrors.sohu.com/ubuntu/ natty-backports main restricted universe multiverse
+ LupaWorld更新服务器（浙江杭州电信联通双线服务器），包含其他开源镜像： 
+ 
+ deb http://mirror.lupaworld.com/ubuntu natty main restricted universe multiverse 
+ deb http://mirror.lupaworld.com/ubuntu natty-security main restricted universe multiverse 
+ deb http://mirror.lupaworld.com/ubuntu natty-updates main restricted universe multiverse 
+ deb http://mirror.lupaworld.com/ubuntu natty-backports main restricted universe multiverse 
+ deb http://mirror.lupaworld.com/ubuntu natty-proposed main restricted universe multiverse 
+ deb-src http://mirror.lupaworld.com/ubuntu natty main restricted universe multiverse 
+ deb-src http://mirror.lupaworld.com/ubuntu natty-security main restricted universe multiverse 
+ deb-src http://mirror.lupaworld.com/ubuntu natty-updates main restricted universe multiverse 
+ deb-src http://mirror.lupaworld.com/ubuntu natty-backports main restricted universe multiverse 
+ deb-src http://mirror.lupaworld.com/ubuntu natty-proposed main restricted universe multiverse 
+ Geekbone.org 更新服务器（上海电信服务器，由 SHLUG /上海Linux用户群维护），包含 Debian 等其他镜像： 
+ 
+deb http://mirrors.geekbone.org/ubuntu natty main restricted universe multiverse 
+deb http://mirrors.geekbone.org/ubuntu natty-security main restricted universe multiverse 
+deb http://mirrors.geekbone.org/ubuntu natty-updates main restricted universe multiverse 
+deb http://mirrors.geekbone.org/ubuntu natty-backports main restricted universe multiverse 
+deb http://mirrors.geekbone.org/ubuntu natty-proposed main restricted universe multiverse 
+deb-src http://mirrors.geekbone.org/ubuntu natty main restricted universe multiverse 
+deb-src http://mirrors.geekbone.org/ubuntu natty-security main restricted universe multiverse 
+deb-src http://mirrors.geekbone.org/ubuntu natty-updates main restricted universe multiverse 
+deb-src http://mirrors.geekbone.org/ubuntu natty-backports main restricted universe multiverse 
+deb-src http://mirrors.geekbone.org/ubuntu natty-proposed main restricted universe multiverse 
+Ylmf OS 更新服务器（广东东莞电信联通双线服务器）： 
+ 
+ deb http://archive.ylmf.net/ubuntu natty main restricted universe multiverse 
+ deb http://archive.ylmf.net/ubuntu natty-security main restricted universe multiverse 
+ deb http://archive.ylmf.net/ubuntu natty-updates main restricted universe multiverse 
+ deb http://archive.ylmf.net/ubuntu natty-backports main restricted universe multiverse 
+ deb http://archive.ylmf.net/ubuntu natty-proposed main restricted universe multiverse 
+ deb-src http://archive.ylmf.net/ubuntu natty main restricted universe multiverse 
+ deb-src http://archive.ylmf.net/ubuntu natty-security main restricted universe multiverse 
+ deb-src http://archive.ylmf.net/ubuntu natty-updates main restricted universe multiverse 
+ deb-src http://archive.ylmf.net/ubuntu natty-backports main restricted universe multiverse 
+ deb-src http://archive.ylmf.net/ubuntu natty-proposed main restricted universe multiverse 
+ 
+ 常州贝特康姆软件技术有限公司 更新服务器（江苏常州电信服务器），包含其他开源镜像： 
+ 
+ deb http://centos.bitcomm.cn/ubuntu natty main restricted universe multiverse 
+ deb http://centos.bitcomm.cn/ubuntu natty-security main restricted universe multiverse 
+ deb http://centos.bitcomm.cn/ubuntu natty-updates main restricted universe multiverse 
+ deb http://centos.bitcomm.cn/ubuntu natty-backports main restricted universe multiverse 
+ deb http://centos.bitcomm.cn/ubuntu natty-proposed main restricted universe multiverse 
+ deb-src http://centos.bitcomm.cn/ubuntu natty main restricted universe multiverse 
+ deb-src http://centos.bitcomm.cn/ubuntu natty-security main restricted universe multiverse 
+ deb-src http://centos.bitcomm.cn/ubuntu natty-updates main restricted universe multiverse 
+ deb-src http://centos.bitcomm.cn/ubuntu natty-backports main restricted universe multiverse 
+ deb-src http://centos.bitcomm.cn/ubuntu natty-proposed main restricted universe multiverse 
+ 以下为教育网服务器（推荐教育网用户使用，部分非教育网用户也有可观的速度。教育网用户请优先使用IPv6地址） 
+ 
+厦门大学更新服务器，由厦门大学信息与网络中心维护，包含其他开源镜像： 
+ 
+ deb http://mirrors.xmu.edu.cn/ubuntu/archive/ natty main restricted universe multiverse 
+ deb http://mirrors.xmu.edu.cn/ubuntu/archive/ natty-backports restricted universe multiverse 
+ deb http://mirrors.xmu.edu.cn/ubuntu/archive/ natty-proposed main restricted universe multiverse 
+ deb http://mirrors.xmu.edu.cn/ubuntu/archive/ natty-security main restricted universe multiverse 
+ deb http://mirrors.xmu.edu.cn/ubuntu/archive/ natty-updates main restricted universe multiverse 
+ deb-src http://mirrors.xmu.edu.cn/ubuntu/archive/ natty main restricted universe multiverse 
+ deb-src http://mirrors.xmu.edu.cn/ubuntu/archive/ natty-backports main restricted universe multiverse 
+ deb-src http://mirrors.xmu.edu.cn/ubuntu/archive/ natty-proposed main restricted universe multiverse 
+ deb-src http://mirrors.xmu.edu.cn/ubuntu/archive/ natty-security main restricted universe multiverse 
+ deb-src http://mirrors.xmu.edu.cn/ubuntu/archive/ natty-updates main restricted universe multiverse 
+ 
+ IPv6地址 
+ 
+ deb http://mirrors.xmu6.edu.cn/ubuntu/archive/ natty main restricted universe multiverse 
+ deb http://mirrors.xmu6.edu.cn/ubuntu/archive/ natty-backports restricted universe multiverse 
+ deb http://mirrors.xmu6.edu.cn/ubuntu/archive/ natty-proposed main restricted universe multiverse 
+ deb http://mirrors.xmu6.edu.cn/ubuntu/archive/ natty-security main restricted universe multiverse 
+ deb http://mirrors.xmu6.edu.cn/ubuntu/archive/ natty-updates main restricted universe multiverse 
+ deb-src http://mirrors.xmu6.edu.cn/ubuntu/archive/ natty main restricted universe multiverse 
+ deb-src http://mirrors.xmu6.edu.cn/ubuntu/archive/ natty-backports main restricted universe multiverse 
+ deb-src http://mirrors.xmu6.edu.cn/ubuntu/archive/ natty-proposed main restricted universe multiverse 
+ deb-src http://mirrors.xmu6.edu.cn/ubuntu/archive/ natty-security main restricted universe multiverse 
+ deb-src http://mirrors.xmu6.edu.cn/ubuntu/archive/ natty-updates main restricted universe multiverse 
+ 北京交通大学更新服务器，由北京交通大学信息中心赞助，包含其他开源镜像 ： 
+ 
+deb http://mirror.bjtu.edu.cn/ubuntu/ natty main multiverse restricted universe 
+deb http://mirror.bjtu.edu.cn/ubuntu/ natty-backports main multiverse restricted universe 
+deb http://mirror.bjtu.edu.cn/ubuntu/ natty-proposed main multiverse restricted universe 
+deb http://mirror.bjtu.edu.cn/ubuntu/ natty-security main multiverse restricted universe 
+deb http://mirror.bjtu.edu.cn/ubuntu/ natty-updates main multiverse restricted universe 
+deb-src http://mirror.bjtu.edu.cn/ubuntu/ natty main multiverse restricted universe 
+deb-src http://mirror.bjtu.edu.cn/ubuntu/ natty-backports main multiverse restricted universe 
+deb-src http://mirror.bjtu.edu.cn/ubuntu/ natty-proposed main multiverse restricted universe 
+deb-src http://mirror.bjtu.edu.cn/ubuntu/ natty-security main multiverse restricted universe 
+deb-src http://mirror.bjtu.edu.cn/ubuntu/ natty-updates main multiverse restricted universe 
+IPv6地址 
+ 
+ deb http://mirror6.bjtu.edu.cn/ubuntu/ natty main multiverse restricted universe 
+ deb http://mirror6.bjtu.edu.cn/ubuntu/ natty-backports main multiverse restricted universe 
+ deb http://mirror6.bjtu.edu.cn/ubuntu/ natty-proposed main multiverse restricted universe 
+ deb http://mirror6.bjtu.edu.cn/ubuntu/ natty-security main multiverse restricted universe 
+ deb http://mirror6.bjtu.edu.cn/ubuntu/ natty-updates main multiverse restricted universe 
+ deb-src http://mirror6.bjtu.edu.cn/ubuntu/ natty main multiverse restricted universe 
+ deb-src http://mirror6.bjtu.edu.cn/ubuntu/ natty-backports main multiverse restricted universe 
+ deb-src http://mirror6.bjtu.edu.cn/ubuntu/ natty-proposed main multiverse restricted universe 
+ deb-src http://mirror6.bjtu.edu.cn/ubuntu/ natty-security main multiverse restricted universe 
+ deb-src http://mirror6.bjtu.edu.cn/ubuntu/ natty-updates main multiverse restricted universe 
+ 东北大学更新服务器，包含其他开源镜像： 
+ 
+ deb http://ftp.neu.edu.cn/mirrors/ubuntu/ natty main multiverse restricted universe 
+ deb http://ftp.neu.edu.cn/mirrors/ubuntu/ natty-backports main multiverse restricted universe 
+ deb http://ftp.neu.edu.cn/mirrors/ubuntu/ natty-proposed main multiverse restricted universe 
+ deb http://ftp.neu.edu.cn/mirrors/ubuntu/ natty-security main multiverse restricted universe 
+ deb http://ftp.neu.edu.cn/mirrors/ubuntu/ natty-updates main multiverse restricted universe 
+ deb-src http://ftp.neu.edu.cn/mirrors/ubuntu/ natty main multiverse restricted universe 
+ deb-src http://ftp.neu.edu.cn/mirrors/ubuntu/ natty-backports main multiverse restricted universe 
+ deb-src http://ftp.neu.edu.cn/mirrors/ubuntu/ natty-proposed main multiverse restricted universe 
+ deb-src http://ftp.neu.edu.cn/mirrors/ubuntu/ natty-security main multiverse restricted universe 
+ deb-src http://ftp.neu.edu.cn/mirrors/ubuntu/ natty-updates main multiverse restricted universe 
+ IPv6地址 
+ 
+ deb http://ftp.neu6.edu.cn/mirrors/ natty main multiverse restricted universe 
+ deb http://ftp.neu6.edu.cn/mirrors/ natty-backports main multiverse restricted universe 
+ deb http://ftp.neu6.edu.cn/mirrors/ natty-proposed main multiverse restricted universe 
+ deb http://ftp.neu6.edu.cn/mirrors/ natty-security main multiverse restricted universe 
+ deb http://ftp.neu6.edu.cn/mirrors/ natty-updates main multiverse restricted universe 
+ deb-src http://ftp.neu6.edu.cn/mirrors/ natty main multiverse restricted universe 
+ deb-src http://ftp.neu6.edu.cn/mirrors/ natty-backports main multiverse restricted universe 
+ deb-src http://ftp.neu6.edu.cn/mirrors/ natty-proposed main multiverse restricted universe 
+ deb-src http://ftp.neu6.edu.cn/mirrors/ natty-security main multiverse restricted universe 
+ deb-src http://ftp.neu6.edu.cn/mirrors/ natty-updates main multiverse restricted universe 
+ 大连理工大学更新服务器，包含其他开源镜像： 
+ 
+deb http://mirror.dlut.edu.cn/ubuntu/ natty main restricted universe multiverse 
+deb http://mirror.dlut.edu.cn/ubuntu/ natty-security main restricted universe multiverse 
+deb http://mirror.dlut.edu.cn/ubuntu/ natty-updates main restricted universe multiverse 
+deb http://mirror.dlut.edu.cn/ubuntu/ubuntu natty-backports main restricted universe multiverse 
+deb http://mirror.dlut.edu.cn/ubuntu/ natty-proposed main restricted universe multiverse 
+deb-src http://mirror.dlut.edu.cn/ubuntu/ natty main restricted universe multiverse 
+deb-src http://mirror.dlut.edu.cn/ubuntu/ natty-security main restricted universe multiverse 
+deb-src http://mirror.dlut.edu.cn/ubuntu/ natty-updates main restricted universe multiverse 
+deb-src http://mirror.dlut.edu.cn/ubuntu/ natty-backports main restricted universe multiverse 
+deb-src http://mirror.dlut.edu.cn/ubuntu/ natty-proposed main restricted universe multiverse 
+成都市 电子科技大学更新服务器，仅包括 Ubuntu 镜像： 
+ 
+ deb http://ubuntu.uestc.edu.cn/ubuntu/ natty main multiverse restricted universe 
+ deb http://ubuntu.uestc.edu.cn/ubuntu/ natty-backports main multiverse restricted universe 
+ deb http://ubuntu.uestc.edu.cn/ubuntu/ natty-proposed main multiverse restricted universe 
+ deb http://ubuntu.uestc.edu.cn/ubuntu/ natty-security main multiverse restricted universe 
+ deb http://ubuntu.uestc.edu.cn/ubuntu/ natty-updates main multiverse restricted universe 
+ deb-src http://ubuntu.uestc.edu.cn/ubuntu/ natty main multiverse restricted universe 
+ deb-src http://ubuntu.uestc.edu.cn/ubuntu/ natty-backports main multiverse restricted universe 
+ deb-src http://ubuntu.uestc.edu.cn/ubuntu/ natty-proposed main multiverse restricted universe 
+ deb-src http://ubuntu.uestc.edu.cn/ubuntu/ natty-security main multiverse restricted universe 
+ deb-src http://ubuntu.uestc.edu.cn/ubuntu/ natty-updates main multiverse restricted universe 
+ 如果无法解析uestc.edu.cn域名，请使用以下地址 
+ 
+ deb http://ubuntu.dormforce.net/ubuntu/ natty main multiverse restricted universe 
+ deb http://ubuntu.dormforce.net/ubuntu/ natty-backports main multiverse restricted universe 
+ deb http://ubuntu.dormforce.net/ubuntu/ natty-proposed main multiverse restricted universe 
+ deb http://ubuntu.dormforce.net/ubuntu/ natty-security main multiverse restricted universe 
+ deb http://ubuntu.dormforce.net/ubuntu/ natty-updates main multiverse restricted universe 
+ deb-src http://ubuntu.dormforce.net/ubuntu/ natty main multiverse restricted universe 
+ deb-src http://ubuntu.dormforce.net/ubuntu/ natty-backports main multiverse restricted universe 
+ deb-src http://ubuntu.dormforce.net/ubuntu/ natty-proposed main multiverse restricted universe 
+ deb-src http://ubuntu.dormforce.net/ubuntu/ natty-security main multiverse restricted universe 
+ deb-src http://ubuntu.dormforce.net/ubuntu/ natty-updates main multiverse restricted universe 
+ 上海市上海交通大学更新服务器，包含其他开源镜像： 
+ 
+ deb http://ftp.sjtu.edu.cn/ubuntu/ natty main multiverse restricted universe 
+ deb http://ftp.sjtu.edu.cn/ubuntu/ natty-backports main multiverse restricted universe 
+ deb http://ftp.sjtu.edu.cn/ubuntu/ natty-proposed main multiverse restricted universe 
+ deb http://ftp.sjtu.edu.cn/ubuntu/ natty-security main multiverse restricted universe 
+ deb http://ftp.sjtu.edu.cn/ubuntu/ natty-updates main multiverse restricted universe 
+ deb-src http://ftp.sjtu.edu.cn/ubuntu/ natty main multiverse restricted universe 
+ deb-src http://ftp.sjtu.edu.cn/ubuntu/ natty-backports main multiverse restricted universe 
+ deb-src http://ftp.sjtu.edu.cn/ubuntu/ natty-proposed main multiverse restricted universe 
+ deb-src http://ftp.sjtu.edu.cn/ubuntu/ natty-security main multiverse restricted universe 
+ deb-src http://ftp.sjtu.edu.cn/ubuntu/ natty-updates main multiverse restricted universe 
+ IPv6地址 
+ 
+deb http://ftp6.sjtu.edu.cn/ubuntu/ natty main multiverse restricted universe 
+deb http://ftp6.sjtu.edu.cn/ubuntu/ natty-backports main multiverse restricted universe 
+deb http://ftp6.sjtu.edu.cn/ubuntu/ natty-proposed main multiverse restricted universe 
+deb http://ftp6.sjtu.edu.cn/ubuntu/ natty-security main multiverse restricted universe 
+deb http://ftp6.sjtu.edu.cn/ubuntu/ natty-updates main multiverse restricted universe 
+deb-src http://ftp6.sjtu.edu.cn/ubuntu/ natty main multiverse restricted universe 
+deb-src http://ftp6.sjtu.edu.cn/ubuntu/ natty-backports main multiverse restricted universe 
+deb-src http://ftp6.sjtu.edu.cn/ubuntu/ natty-proposed main multiverse restricted universe 
+deb-src http://ftp6.sjtu.edu.cn/ubuntu/ natty-security main multiverse restricted universe 
+deb-src http://ftp6.sjtu.edu.cn/ubuntu/ natty-updates main multiverse restricted universe 
+中国科学技术大学更新服务器，由中科大 Linux 用户协会和中科大学网络信息中心维护，包含其他开源镜像： 
+ 
+ deb http://debian.ustc.edu.cn/ubuntu/ natty main multiverse restricted universe 
+ deb http://debian.ustc.edu.cn/ubuntu/ natty-backports main multiverse restricted universe 
+ deb http://debian.ustc.edu.cn/ubuntu/ natty-proposed main multiverse restricted universe 
+ deb http://debian.ustc.edu.cn/ubuntu/ natty-security main multiverse restricted universe 
+ deb http://debian.ustc.edu.cn/ubuntu/ natty-updates main multiverse restricted universe 
+ deb-src http://debian.ustc.edu.cn/ubuntu/ natty main multiverse restricted universe 
+ deb-src http://debian.ustc.edu.cn/ubuntu/ natty-backports main multiverse restricted universe 
+ deb-src http://debian.ustc.edu.cn/ubuntu/ natty-proposed main multiverse restricted universe 
+ deb-src http://debian.ustc.edu.cn/ubuntu/ natty-security main multiverse restricted universe 
+ deb-src http://debian.ustc.edu.cn/ubuntu/ natty-updates main multiverse restricted universe 
+ IPv6地址 
+ 
+ deb http://mirrors6.ustc.edu.cn/ubuntu/ natty main multiverse restricted universe 
+ deb http://mirrors6.ustc.edu.cn/ubuntu/ natty-backports main multiverse restricted universe 
+ deb http://mirrors6.ustc.edu.cn/ubuntu/ natty-proposed main multiverse restricted universe 
+ deb http://mirrors6.ustc.edu.cn/ubuntu/ natty-security main multiverse restricted universe 
+ deb http://mirrors6.ustc.edu.cn/ubuntu/ natty-updates main multiverse restricted universe 
+ deb-src http://mirrors6.ustc.edu.cn/ubuntu/ natty main multiverse restricted universe 
+ deb-src http://mirrors6.ustc.edu.cn/ubuntu/ natty-backports main multiverse restricted universe 
+ deb-src http://mirrors6.ustc.edu.cn/ubuntu/ natty-proposed main multiverse restricted universe 
+ deb-src http://mirrors6.ustc.edu.cn/ubuntu/ natty-security main multiverse restricted universe 
+ deb-src http://mirrors6.ustc.edu.cn/ubuntu/ natty-updates main multiverse restricted universe 
+ 清华大学更新服务器，包含其他开源镜像： 
+ 
+ deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu/ natty main restricted universe multiverse 
+ deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu/ natty-security main restricted universe multiverse 
+ deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu/ natty-updates main restricted universe multiverse 
+ deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu/ natty-backports main restricted universe multiverse 
+ deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu/ natty-proposed main restricted universe multiverse 
+ deb-src http://mirrors.tuna.tsinghua.edu.cn/ubuntu/ natty main restricted universe multiverse 
+ deb-src http://mirrors.tuna.tsinghua.edu.cn/ubuntu/ natty-security main restricted universe multiverse 
+ deb-src http://mirrors.tuna.tsinghua.edu.cn/ubuntu/ natty-updates main restricted universe multiverse 
+ deb-src http://mirrors.tuna.tsinghua.edu.cn/ubuntu/ natty-backports main restricted universe multiverse 
+ deb-src http://mirrors.tuna.tsinghua.edu.cn/ubuntu/ natty-proposed main restricted universe multiverse 
+ IPv6地址 
+ 
+deb http://mirrors.6.tuna.tsinghua.edu.cn/ubuntu/ natty main multiverse restricted universe 
+deb http://mirrors.6.tuna.tsinghua.edu.cn/ubuntu/ natty-backports main multiverse restricted universe 
+deb http://mirrors.6.tuna.tsinghua.edu.cn/ubuntu/ natty-proposed main multiverse restricted universe 
+deb http://mirrors.6.tuna.tsinghua.edu.cn//ubuntu/ natty-security main multiverse restricted universe 
+deb http://mirrors.6.tuna.tsinghua.edu.cn/ubuntu/ natty-updates main multiverse restricted universe 
+deb-src http://mirrors.6.tuna.tsinghua.edu.cn/ubuntu/ natty main multiverse restricted universe 
+deb-src http://mirrors.6.tuna.tsinghua.edu.cn/ubuntu/ natty-backports main multiverse restricted universe 
+deb-src http://mirrors.6.tuna.tsinghua.edu.cn/ubuntu/ natty-proposed main multiverse restricted universe 
+deb-src http://mirrors.6.tuna.tsinghua.edu.cn/ubuntu/ natty-security main multiverse restricted universe 
+deb-src http://mirrors.6.tuna.tsinghua.edu.cn/ubuntu/ natty-updates main multiverse restricted universe 
+中国地质大学（北京）更新服务器（已失效） 
+ 
+ deb http://www.tofree.org/ubuntu/ natty main restricted universe multiverse 
+ deb http://www.tofree.org/ubuntu/ natty-security main restricted universe multiverse 
+ deb http://www.tofree.org/ubuntu/ natty-updates main restricted universe multiverse 
+ deb http://www.tofree.org/ubuntu/ natty-proposed main restricted universe multiverse 
+ deb http://www.tofree.org/ubuntu/ natty-backports main restricted universe multiverse 
+ deb-src http://www.tofree.org/ubuntu/ natty main restricted universe multiverse 
+ deb-src http://www.tofree.org/ubuntu/ natty-security main restricted universe multiverse 
+ deb-src http://www.tofree.org/ubuntu/ natty-updates main restricted universe multiverse 
+ deb-src http://www.tofree.org/ubuntu/ natty-proposed main restricted universe multiverse 
+ deb-src http://www.tofree.org/ubuntu/ natty-backports main restricted universe multiverse 
+ 以下为较快的境外服务器 
+ 
+ 台湾的官方源，也是国立台湾大学的源。速度有时甚至快于内地的，包含 Debian 等其他镜像： 
+ 
+ deb http://tw.archive.ubuntu.com/ubuntu natty main restricted universe multiverse 
+ deb http://tw.archive.ubuntu.com/ubuntu natty-security main restricted universe multiverse 
+ deb http://tw.archive.ubuntu.com/ubuntu natty-updates main restricted universe multiverse 
+ deb http://tw.archive.ubuntu.com/ubuntu natty-backports main restricted universe multiverse 
+ deb http://tw.archive.ubuntu.com/ubuntu natty-proposed main restricted universe multiverse 
+ deb-src http://tw.archive.ubuntu.com/ubuntu natty main restricted universe multiverse 
+ deb-src http://tw.archive.ubuntu.com/ubuntu natty-security main restricted universe multiverse 
+ deb-src http://tw.archive.ubuntu.com/ubuntu natty-updates main restricted universe multiverse 
+ deb-src http://tw.archive.ubuntu.com/ubuntu natty-backports main restricted universe multiverse 
+ deb-src http://tw.archive.ubuntu.com/ubuntu natty-proposed main restricted universe multiverse 
+ 以下源支持IPV6,推荐可以使用IPV6的教育网用户使用，速度在200kb/s左右，如需源代码，将deb替换成deb-src即可 
+ 
+瑞士IPv6源，详情： 
+ 
+ deb http://mirror.switch.ch/ftp/ubuntu/ natty main multiverse restricted universe 
+ deb http://mirror.switch.ch/ftp/ubuntu/ natty-backports main multiverse restricted universe 
+ deb http://mirror.switch.ch/ftp/ubuntu/ natty-proposed main multiverse restricted universe 
+ deb http://mirror.switch.ch/ftp/ubuntu/ natty-security main multiverse restricted universe 
+ deb http://mirror.switch.ch/ftp/ubuntu/ natty-updates main multiverse restricted universe 
+ 爱尔兰IPv6源，详情： 
+ 
+ deb http://ftp.heanet.ie/mirrors/ubuntu/ natty main multiverse restricted universe 
+ deb http://ftp.heanet.ie/mirrors/ubuntu/ natty-backports main multiverse restricted universe 
+ deb http://ftp.heanet.ie/mirrors/ubuntu/ natty-proposed main multiverse restricted universe 
+ deb http://ftp.heanet.ie/mirrors/ubuntu/ natty-security main multiverse restricted universe 
+ deb http://ftp.heanet.ie/mirrors/ubuntu/ natty-updates main multiverse restricted universe 
+ 比利时IPv6源： 
+ 
+ deb ftp://ftp.belnet.be/mirror/ubuntu.com/ubuntu/ natty main multiverse restricted universe 
+ deb ftp://ftp.belnet.be/mirror/ubuntu.com/ubuntu/ natty-backports main multiverse restricted universe 
+ deb ftp://ftp.belnet.be/mirror/ubuntu.com/ubuntu/ natty-proposed main multiverse restricted universe 
+ deb ftp://ftp.belnet.be/mirror/ubuntu.com/ubuntu/ natty-security main multiverse restricted universe 
+ deb ftp://ftp.belnet.be/mirror/ubuntu.com/ubuntu/ natty-updates main multiverse restricted universe 
+ 日本IPv6源，详情： 
+ 
+deb http://ftp.kddilabs.jp/020/Linux/packages/ubuntu/archive/ maverick main multiverse restricted universe 
+deb http://ftp.kddilabs.jp/020/Linux/packages/ubuntu/archive/ maverick-backports main multiverse restricted universe 
+deb http://ftp.kddilabs.jp/020/Linux/packages/ubuntu/archive/ maverick-proposed main multiverse restricted universe 
+deb http://ftp.kddilabs.jp/020/Linux/packages/ubuntu/archive/ maverick-security main multiverse restricted universe 
+deb http://ftp.kddilabs.jp/020/Linux/packages/ubuntu/archive/ maverick-updates main multiverse restricted universe 
+瑞典IPV6源，据说速度达到1M以上，详情: 
+ 
+ deb http://se.archive.ubuntu.com/ubuntu/ natty main universe restricted multiverse 
+ deb-src http://se.archive.ubuntu.com/ubuntu/ natty main universe restricted multiverse 
+ deb http://se.archive.ubuntu.com/ubuntu/ natty-security main restricted multiverse universe 
+ deb-src http://se.archive.ubuntu.com/ubuntu/ natty-security main restricted multiverse universe 
+ deb http://se.archive.ubuntu.com/ubuntu/ natty-updates universe main multiverse restricted 
+ deb-src http://se.archive.ubuntu.com/ubuntu/ natty-updates universe main multiverse restricted 
+ deb http://se.archive.ubuntu.com/ubuntu/ natty-proposed universe main multiverse restricted 
+ deb-src http://se.archive.ubuntu.com/ubuntu/ natty-proposed universe main multiverse restricted 
+ 备注： 
+ 
+ 教育网内原有兰大开源社区维护的镜像，现已删去其中 Ubuntu 镜像，保留了其他发行版。 
+ 西南大学开源社区维护的西南大学镜像中 Ubuntu 现只保留最新发布版的ISO镜像。 
+ 各大镜像站点往往包括 Ubuntu 以外的大量其他自由软件资源，文中已注出。 
+ 其他软件源如 Medibuntu、Getdeb 和各种 PPA 可在 Ubuntu-Tweak 中打开。 
+ Maverick(10.10) 版本 
+ 
+ 将上述列表地址中的 natty 替换为 maverick 即可 
+ 
+ Lucid(10.04) 版本 
+ 
+ 将上述列表地址中的 natty 替换为 lucid 即可 详细 
+ 
+ Hardy(8.04) 版本 
+ 
+将上述列表地址中的 natty 替换为 hardy 即可 详细 
+ 
+ Oneric 版本 （尚未发布） 
+ 
+ 预计于2011年11月发布，版本号为11.10。将上述列表地址中的 natty 替换为 oneiric 即可 
+ 
+ 停止维护的版本 
+ 
+9.10、9.04、8.10、7.10 、7.04、6.10、6.06、5.10、5.04、4.10 
+ 
+ 停止维护版本的官方软件源：http://old-releases.ubuntu.com/releases/ 以5.04 (hoary) 为例： 
+ 
+ deb http://old-releases.ubuntu.com/ubuntu/ hoary main restricted universe multiverse 
+ deb http://old-releases.ubuntu.com/ubuntu/ hoary-security main restricted universe multiverse 
+ deb http://old-releases.ubuntu.com/ubuntu/ hoary-updates main restricted universe multiverse 
+ deb http://old-releases.ubuntu.com/ubuntu/ hoary-proposed main restricted universe multiverse 
+ deb http://old-releases.ubuntu.com/ubuntu/ hoary-backports main restricted universe multiverse 
+ deb-src http://old-releases.ubuntu.com/ubuntu/ hoary main restricted universe multiverse 
+ deb-src http://old-releases.ubuntu.com/ubuntu/ hoary-security main restricted universe multiverse 
+ deb-src http://old-releases.ubuntu.com/ubuntu/ hoary-updates main restricted universe multiverse 
+ deb-src http://old-releases.ubuntu.com/ubuntu/ hoary-proposed main restricted universe multiverse 
+ deb-src http://old-releases.ubuntu.com/ubuntu/ hoary-backports main restricted universe multiverse 
+ 6.06(Dapper)的源部分第三方镜像如中科大、交大等有，详情请查阅各镜像地址下的 dists 目录中是否有 dapper 子目录 

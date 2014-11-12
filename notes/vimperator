@@ -1,0 +1,145 @@
+http://pchu.blogbus.com/logs/32923406.html
+
+
+
+Vimperator —— 用键盘畅游网络
+2008-12-25
+版权声明：转载时请以超链接形式标明文章原始出处和作者信息及本声明
+http://www.blogbus.com/pchu-logs/32923406.html
+
+应该说，Vimperator是一个刚出道而且想法不错的Firefox插件。它把vim的很多操作移植到了Firefox上，对于我这个接触vim不久的人来说很有新鲜感。
+
+简单来说，它使得Firefox成为一个有不同“模式”的浏览器，用户可以更容易地获取对浏览器的全盘控制，更快速地利用键盘而不是鼠标做你想做的事，但随之而来的就是不要按错键的问题。
+
+你有没有想过为什么键盘上有104个键（台式机）或者87个键（笔记本），然而只有在打字的时候才能物尽其用，而控制（比如说）Firefox的时候还得同时按两个键（Ctrl,Alt,Shift...）。更多的击键次数却换不来更高的操作速度，这不是很令人郁闷的吗？
+
+Vimperator首先就把用户的手重新从鼠标上、水杯旁、下巴上拉回到了键盘打字的准备位置，因为正如vim所做的一样，h-j-k-l的移动方式才是更直接而迅速的。当你的焦点不是在地址栏、搜索栏、命令栏、输入框等等的地方（换句话说，在普通模式下）时，h用于左移，j用于下移，k用于上移，l用于右移。老实说，我是通过google reader第一次听说这种控制方式（并且熟练），后来才知道是vi的经典键位的。
+
+这样子和直接用上下左右四个箭头有区别吗？有的。如果你按 20j，Firefox将下移20个单位。利用数字配合命令来控制命令的重复次数，是vim的一大特色。当然不断按20j来翻页显然并不合算，PageUp和PageDown好用多了，但是PgUp和PgDn不在手的旁边，怎么办？Vimperator给了我们Ctrl+u和Ctrl+d可以用，分别用于Up半页和Down半页。可是老实说，这键也好按不到哪里去。没关系，我们可以做键盘映射，把它们映射到J和K（Shift+..）上面。只需键入
+
+:map J <C-d> （回车） 
+:map K <C-u> （回车）
+
+这里出现了vim的万能冒号，它的出现代表进入control模式，我们开始给Firefox下命令，而使用Esc键退出control模式。内容很明显，把J/K给map成Ctrl-d/Ctrl-u。我还会map这个：
+
+:map H gT （回车） 
+:map L gt （回车）
+
+h和l不是左右移动吗？H和L其实也已经有后退和前进的功能了，那这gt和gT……则是转换标签页，对于我来说要比前者常用一些。gt表示下一个标签页，gT表示上一个标签页。这样利用Shift+h/l，也就自然懒得用鼠标移过去点击了，以前用开的Ctrl+PgUp/PgDn也显得稍稍不顺手了。但鼠标滚轮和垂直滚动条难道就不能打败h-j-k-l移动吗？网页一长，用J和K也不是办法，用数字配合J/K也往往很难掌握数字的尺度，这时用gg是最合适的了。普通的gg只是相当于Home，回到页顶；普通的G也只是相当于End，转到页末。一旦配上数字，20gg就表示页面20%的地方，如果你浏览网页的时候注意到下方的xx%，那么在长文章里到处跳转也只是一眨眼的事，要是遇上一大篇文字，垂直滚动条也还不是要败下阵来？
+
+这样说来，3gt和3gT也有类似效果啰？注意，3gT确实是往前滚三个标签页，但是3gt表示的却是第三个标签页。当然有时候这也很有用，如果你注意到网页下方的[x/yy]的话，进行标签页跳转也是瞬间的事。再加上g0，跳至第一个标签页；g$，跳至最后一个标签页；Ctrl+6，跳至上一个标签页，用户也就更加得心应手了。
+
+说了这么多，倒也还没点过链接，难道Vimperator有这么大的败笔？当然不是，只需按f，所有可见的链接都会变成底色黄色，同时出现数字提示，键入数字就点了链接，但是要把1从10、11、12中区分开，要按1回车。这还是不方便啊，然而你可以按了f之后试着键入你要点的链接的前几个字母，顿时可以选择的项目少了很多，这功能倒是方便了英文链接而对中文链接无益。要是你发现，哎呀错了，要在新标签页中打开，哎呀怎么后退？除了之前说的H/L来后退/前进之外，还可以用Ctrl+o来后退，用Ctrl+i来前进，前面配上数字也是可以的哦。而要在新标签页打开，你只需按F（Shift+f）而不是f，类似。
+
+希望你还只是一路看下来，没找来装，否则很可能会被Vimperatorized的Firefox的全新面孔吓怕：没有菜单栏、没有地址栏、没有书签栏，底部多了黑色和白色的两行东西。其实你可以很容易把menubar、navigation bar、bookmark bar找回来，还是万能冒号
+
+:set go+=mTb （回车）
+
+这样一来，go（GUIoptions的简写）参数里就多了mTb三项（+=是C的风格哈）。有什么不懂，万能冒号会用 :help 帮你解答，比如 :help d 。d是一个简洁而常用的命令，关闭当前标签页，你不需要用鼠标找那个小红叉了，也不需要用Ctrl+w了。数字配合d也非常贴心，可以关闭从这个标签页往后算起的若干个标签页。关错了，Vimperator还提供了u一键undo。同样是一键，r键可以refresh，/键可以开始全文搜索。Vimperator的默认是增量搜索，也就是你键入关键词的同时Firefox已经开始把搜索结果展示给你，回车之后文中符合的字眼都会有黄色底色，只需一键n即可跳到下一个搜到关键词的地方，N则是上一个。想去除黄色高亮了？只需用万能冒号
+
+:set nohls （回车）
+
+nohls代表no highlight search，就这么简单。
+
+然而怎样打开网页呢？为何还没讲到？那是因为连我都觉得Vimperator的方式糟蹋了Firefox的Awesome Bar。o键可以把你带到命令栏 :open 的后面，键入url地址即可打开该网页；t键可以把你带到命令栏 :tabopen 的后面，键入url地址即可在新标签页内打开该网页。虽然这里默认也有智能匹配功能，比如 :open xiaonei（Tab键）会出现一个网址列表，然后使用Tab和Shift+Tab选择，回车打开，但比起Firefox本身的地址栏还是稍逊一筹。唯一值得赞赏的是，你可以在此键入关键词，调用搜索引擎（默认google）打开新标签页或本页内搜索。这就省下了Ctrl+t，Ctrl+k，键入关键词，回车的功夫，也便于看着当前页面的文字来斟酌关键字。更加人性化的是，如果你设好了搜索引擎的关键字（点击搜索引擎栏的标签->管理搜索引擎，第二栏便是），那么调用各种引擎来搜索也方便多了，比如我会用
+
+:tabopen wkcn 过冷液体 
+:tabopen wken supercooling 
+:tabopen wkfr surfusion
+
+来打开同一个现象的中文、英文、法文维基百科（很遗憾，中文没有这个词条……），反正比起以前Ctrl+t, Ctrl+k, Ctrl+↓（选择搜索引擎）是快多了。
+
+与此相关的还有另一个更有用（但是平时容易按错键）的p键，作用是把剪贴板中的内容直接当成url地址或者搜索关键字在当前页打开，要想在新标签页中打开，使用P键即可。对于不习惯vim操作的人来说，这时一个大问题出现了：用惯的Ctrl+c, Ctrl+v和Vimperator冲突，vim的Yank对新手还是很陌生。Vimperator说Ctrl+c是用来停止页面加载的（vim的ctrl+c也好像是用来中断所有未完成的操作的），说Ctrl+v是用来pass through一个键的（也就是下一个按键将会由Firefox自己处理），类似的还有Ctrl+z是进入pass through模式（Vimperator不再对你的按键其反应，除非用Esc退出此模式）。简单来说，要让Vimperator“放过”Ctrl+C，给Firefox收到，连续按Ctrl+v, Ctrl+c即可。当然聪明人都不这么干，而是
+
+:noremap <C-c> <C-v><C-c>
+
+为什么是noremap而不是map？因为要是Vimperator把后面的Ctrl+c又换成Ctrl+v, Ctrl+c，如此下去岂不永无终止？我已经亲身试过这个导致Firefox崩溃的死循环了……这样还不够
+
+:cnoremap <C-c> <C-v><C-c> 
+:inoremap <C-c> <C-v><C-c>
+
+这才可以在control模式（键入命令的时候）和insert模式（在文本框里的时候）下恢复Ctrl+c的使用。对于Ctrl+v同理。可这样子，Esc已经被用来返回普通模式，总得有个键停止页面载入吧？你自己找个键来map就行了。再仔细一想，难道用Vimperator的人都从来不用复制粘贴？非也，只是vim把它叫做yank（召回）而已，Y键（Shift+y）就可以把选中的文字放入剪贴板，方便p键paste。但是且慢，我们可以不用鼠标来反白选择文字吗？是可以的，因为有caret模式。按 i 键，效果等同于F7，网页中会出现一个光标，接受我们的h-j-k-l等等移动的命令。这时再按 v 键，就进入visual模式，再移动光标就开始选择文字了。离开caret模式可以用Esc或者F7。
+
+在结束这篇文章之前，要讲的至少还有buffer，其实也就是Vimperator对于标签页的另一个叫法，来源于vim对于多文件操作的称呼。键入B，你得到的是现在所有标签页的标题和地址，带有%记号的是当前标签页，有#记号的是上一个标签页。键入b，你便会出现在命令栏 :buffer! 的后面，你可以通过键入标题或url中的文字到达某一个标签页，比如用 :buffer! xiaonei 来回到已经打开的校内主页。如果Vimperator没找对（比如说有几页符合要求），你还可以通过gb跳到下一个满足条件的标签页。
+
+同样很好用的命令还有gi，跳到上次使用的文本框中，这功能可以方便搜索时修改、调整关键词。gf用来查看源代码。还有智能的]]和[[，Vimperator会寻找页面中形如next、>>、previous、<<的链接，从而实现转到下一页或者上一页的功能，不过Vimperator本身不认识中文，需要调整一下参数
+
+:set nextpattern=\s*下一页|下一张|下页\s*,\bnext\b,^>$,^(>>|»)$,^(>|»),(>|»)$,\bmore\b 
+:set previouspattern=\s*上一页|上一张|上页\s*,\bprev|previous\b,^<$,^(<<|«)$,^(<|«),(<|«)$
+
+试用完了Vimperator，怎么用键盘关Firefox呢？和vim一样，ZZ表示记住现在打开的页面并关闭Firefox，ZQ表示不记住现在打开的页面并关闭。可是先别关，要先把刚刚做的set和map等设置存好。使用 :mkv 可以在$HOME目录下生成配置文件 .vimperatorrc 或者 _vimperatorrc，Unix和Mac的用户应该很熟悉$HOME目录了，Windows的$HOME目录一般应该是C:\Documents and Settings\Username\ 。有时为了更方便地管理配置文件，你可以建立一个环境变量$VIMPERATOR_HOME，写上你常用的文件夹，再把配置文件移过来。$VIMPERATOR_HOME的优先级比$HOME高，但是据说2.0版以后的Vimperator不会再用这个环境变量。如果你像我这样使用xp/ubuntu双系统，又希望两边的Vimperator使用同一个配置文件，一个方法是在ubuntu底下建立一个指向xp的配置文件的软链接，如：
+
+user@localhost:~$ ln -s /media/sdaN/Documents/_vimperatorrc
+
+你生成配置文件之后，还可以自己修改，我的配置文件是这样的： 
+(注：新的、与时俱进的.vimperatorrc文件见这篇日志)
+
+﻿" 1.2 (created: 2008/08/16 18:51:52)
+" Mappings
+map A <Nop>
+map <C-o> <Nop>
+map <C-i> <Nop>
+map J <C-d>
+noremap K <C-u>
+map H gT
+map L gt
+noremap j 3j
+noremap k 3k
+noremap I <C-o>
+noremap O <C-i>
+noremap <C-u> <C-v><C-u>
+noremap <C-s> <C-c>
+noremap <C-c> <C-v><C-c>
+noremap <C-a> <C-v><C-a>
+cnoremap <C-c> <C-v><C-c>
+cnoremap <C-v> <C-v><C-v>
+cnoremap <C-x> <C-v><C-x>
+inoremap <C-a> <C-v><C-a>
+inoremap <C-c> <C-v><C-c>
+inoremap <C-v> <C-v><C-v>
+inoremap <C-x> <C-v><C-x>
+inoremap <C-z> <C-v><C-z>
+inoremap <C-y> <C-v><C-y>
+
+" Options
+set guioptions=mT
+set titlestring=Mozilla Firefox
+set popups=2
+set nextpattern=\s*下一页|下一张|下页\s*,\bnext\b,^>$,^(>>|››|»)$,^(>|»),(>|»)$,\bmore\b
+set previouspattern=\s*上一页|上一张|上页\s*,\bprev|previous\b,^<$,^(<<|‹‹|«)$,^(<|«),(<|«)$
+
+" PassThrough gmail and greader
+autocmd LocationChange .* js modes.passAllKeys = /.*(mail\.google\.com|www\.google\.com\/reader).*/.test(buffer.URL)
+
+" Abbreviations
+
+" Commands
+command noimg set! permissions.default.image=2
+command ysimg set! permissions.default.image=1
+command nojs set! javascript.enabled=false
+command ysjs set! javascript.enabled=true
+
+source! ~/_vimperatorrc.local
+
+" vim: set ft=vimperator:
+
+这里的map用了<Nop>，作用就是废了那个按键。PassThrough gmail and greader 则有这样的效果：每当到达gmail/greader的页面时自动进入PassThrough模式，从而让gmail/greader捕捉到快捷键而不是给Vimperator拦截下来。这里使用了autocommand功能，每当LocationChange事件发生，当时的url满足正则表达式 .* (即无论任何网址)时，调用javascript更改参数modes.passAllKeys，将其赋值为真/假，依据是用后面这个正则表达式来测试buffer.URL变量。这里的javascript怎么来的呢？没错，你可以试试
+
+:js alert("test")
+
+你还可以使用 :! 来调用命令行，比如（以对此相对陌生的Windows用户为例）
+
+:! mspaint 
+:! ping 127.0.0.1
+
+我的配置文件使用的command是Vimperator的自定义命令的功能，分别定义了noimg命令和ysimg命令。如果你知道 :set! 是用来修改Firefox本身设置（见about:config）的话，这两个命令的作用就呼之欲出了：执行 :noimg 和 :ysimg 分别可以命令Firefox打开网页时是否载入图片。旧版本的Firefox应该调整 network.image.imageBehavior 而不是 permissions.default.image ，而且值应该是1和0。在这方面，Vimperator本身带有一个更彻底的禁用花哨CSS的参数，执行
+
+:set um
+
+可以进入usermode，相当于 查看->页面风格->无风格 的效果，仅仅是键盘操作比较快的优势。退出usermode只需 :set noum
+
+此外，Vimperator还能在control模式zoom in, zoom out，能够利用QuickMarks快速跳转标签页，能够录制键盘宏（Macro），当然还有相对基本的链接另存为、复制链接地址、复制链接文字等等不同于f的功能。
+
+至于文中所提到的 noimg, ysimg, nojs, ysjs 几个autocmd，本来我的目的是用一个键（如F12等）来toggle，但技术不精，没能做到，主要是除了set!我不知道还有什么方法更改firefox preferences。
+
+这篇文章到此为止，可以说是我认识Vimperator的心得吧。

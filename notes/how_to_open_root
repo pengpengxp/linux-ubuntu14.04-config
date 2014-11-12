@@ -1,0 +1,3 @@
+如果你真要开启root的登录权限，使用命令
+sudo passwd root
+之后输入root的密码

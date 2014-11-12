@@ -1,0 +1,167 @@
+http://os.chinaunix.net/a2009/0207/991/000000991151.shtml
+
+
+ChinaUnix首页 | 论坛 | 博客 | 微博 | 求职 | 读书 | 培训 | 下载 | IT采购 | 搜索 ChinaUnix.net 请 登录 或 注册
+当前位置：ChinaUnix 首页 > 操作系统频道 > fedora10KVM桥接问题
+fedora10KVM桥接问题
+2009年02月07日 14:01 来源：ChinaUnix博客 作者：新华网 编辑：周荣茂
+    Using bridged networking with Virt-manager
+    
+     Friday, September 19, 2008 - 08:08 Haydn Solomon
+    
+    
+    
+    In
+    previous posts you can find instructions on how to configure bridged
+    networking when managing your kvm guests by command line. However for
+    many users experimenting with kvm, the virt-manager GUI tool is the
+    preferred method of managing kvm guests in which case bridged
+    networking configuration might pose a challenge. If you fall into the
+    camp of users who prefer virt-manager and have ever wondered how to
+    configure bridged networking , you’ll be able to use bridged networking
+    with virt-manager after reading this post.
+    
+    
+    
+    1.	Configure your bridge
+    Your libvirt installation will provide default bridges for use with
+    xen, qemu and other types of domains. For qemu/kvm, the default bridge
+    should be called vnet0 and you can verify this by issuing the following
+    command on your system.
+    # brctl show
+    bridge name bridge id STP enabled interfaces
+    pan0 8000.000000000000 no
+    virbr0 8000.000000000000 yes
+    vnet0 8000.000000000000 yes
+    Th
+    first thing you need to do is add a network script for your vnet0
+    bridge. On Fedora this script will be located under
+    /etc/sysconfig/network-scripts/ but may differ for other linux
+    distributions. So go ahead and create a new script at
+    /etc/sysconfig/network-scripts/ifcfg-vnet0 as root user and edit the
+    contents so that it looks like the following.
+    DEVICE=vnet0
+    TYPE=Bridge
+    BOOTPROTO=dhcp
+    ONBOOT=yes
+    This completes set up of your vnet0 bridge.
+    
+    2.	Add your physical interface to the bridge
+    The next step is to add the physical interface that your kvm guest
+    will be sharing to the vnet0 bridge configured above. For this post,
+    we’ll assume that you’ll be using eth0 so to add eth0 to vnet0 bridge,
+    issue the following command.
+    # brctl addif vnet0 eth0
+    You can verify that your eth0 was added to the vnet0 bridge
+    issuing the brctl show command. Your output should look similar to the
+    following.
+    # brctl show
+    bridge name bridge id STP enabled interfaces
+    pan0 8000.000000000000 no
+    virbr0 8000.000000000000 yes
+    vnet0 8000.0019b97ec863 yes eth0
+    Now
+    you need to configure your network script for eth0. You will already
+    have a script for eth0, but you’ll need to modify it by adding one line
+    as BRIDGE=vnet0 so that it looks similar to the following script.
+    # Broadcom Corporation BCM4401-B0 100Base-TX
+    DEVICE=eth0
+    BRIDGE=vnet0
+    BOOTPROTO=dhcp
+    HWADDR=00:19:b9:7e:c8:63
+    ONBOOT=yes
+    TYPE=Ethernet
+    USERCTL=no
+    IPV6INIT=no
+    PEERDNS=yes
+    NM_CONTROLLED=no
+    …
+    …
+    
+    3.	Restart your network services
+    In order for all the network script modifications to take effect,
+    you need to restart your network services. Your command may differ
+    slightly but for most linux distributions the following command will
+    restart your network services.
+    # /etc/rc.d/init.d/network restart
+    Shutting down interface vnet0: [ OK ]
+    Shutting down interface eth0: [ OK ]
+    Shutting down loopback interface: [ OK ]
+    Bringing up loopback interface: [ OK ]
+    Bringing up interface eth0: [ OK ]
+    Bringing up interface vnet0:
+    Determining IP information for vnet0... done.
+    [ OK ]
+    My
+    experience is that the dhcp on the bridge device usually takes a little
+    longer than the other scripts so don’t worry if the line that says
+    “determining ip information for vnet0” sits there for a min or two.
+    Once this script completes, you’re finished with your system network
+    configurations. Now, onto actually using bridged networking with
+    virt-manager.
+    
+    4.	Configure Bridged Networking in Virt-Manager
+    Now comes the easy part. Configure your kvm guest in virt-manager as
+    you normally would. When you get to the part that asks about your
+    network type, choose to share with a physical device and you will be
+    able to select the eth0 on bridge vnet0. Below is a screenshot of what
+    you should see. You don’t need to specify a specific mac address unless
+    you need to for some kind of static mapping.
+    
+    
+    
+    Boot up your kvm guest which will be now connected to your local
+    network. Your brctl show command will now show your kvm guest network
+    added to your vnet0 bridge. Below is a sample output.
+    # brctl show
+    bridge name bridge id STP enabled interfaces
+    pan0 8000.000000000000 no
+    virbr0 8000.000000000000 yes
+    vnet0 8000.0019b97ec863 yes eth0
+     vnet1
+    
+    Summary
+    Bridged networking with virt-manager is simpler than
+    configuring bridged networking
+    when managing kvm guests with command line since you don’t have to
+    worry about things like qemu network scripts and generating random mac
+    addresses. Virt-manager takes care of these things behind the scenes.
+    What will be nice to see someday would be GUI tools for managing the
+    bridges which would make the procedure even simpler.
+    
+    
+    
+    
+    本文来自ChinaUnix博客，如果查看原文请点：http://blog.chinaunix.net/u/32175/showart_1817880.html
+技术热点索引
+Linux
+Redhat
+Centos
+Ubuntu
+SUSE Linux
+Fedora
+Debian
+国产Linux
+Unix
+BSD
+Solaris
+AIX
+HP-UNIX
+Mac OS X
+Windows
+Windows7
+Windows Server
+其它OS
+Android
+MeeGo
+操作系统频道热议话题
+Centos 6.4可以下载了
+求对lamp服务器的安全性的见解
+[求助] 求指导这个Linux的yum问题
+sh编程报错：期待一元表达式
+热门博客
+盛拓传媒简介 | 关于IT168 | 合作伙伴 | 广告服务 | 使用条款 | 投稿指南 | 诚聘精英 | 联系我们 | 法律声明 | 网站导航 | 往日回顾
+北京皓辰网域网络信息技术有限公司. 版权所有 京ICP证:060528号 北京市公安局海淀分局网监中心备案编号：1101082001
+广播电视节目制作经营许可证(京) 字第1234号 中国互联网协会会员 联系我们：
+感谢所有关心和支持过ChinaUnix的朋友们 转载本站内容请注明原作者名及出处
+网络110 报警服务国家备案百度联盟-认证

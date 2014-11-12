@@ -1,0 +1,655 @@
+Location: http://www.thinkwiki.org/wiki/How_to_configure_the_TrackPoint                                                          
+[INS::INS]
+
+How to configure the TrackPoint
+
+From ThinkWiki
+Jump to: navigation, search
+
+Contents                                                                                                                        
+                                                                                                                                
+  * 1 Configuration using xinput                                                                                                
+      + 1.1 old method using xinput set-int-prop                                                                                
+      + 1.2 Example: openSUSE 11.2 and ThinkPad USB                                                                             
+        Keyboard with TrackPoint                                                                                                
+  * 2 Graphical Frontends                                                                                                       
+      + 2.1 GPointing Device Settings                                                                                           
+      + 2.2 configure-trackpoint                                                                                                
+  * 3 Configuration using DevKit                                                                                                
+  * 4 Configuration using udev and HAL                                                                                          
+      + 4.1 Scrolling                                                                                                           
+          o 4.1.1 xorg.conf.d                                                                                                   
+          o 4.1.2 udev                                                                                                          
+          o 4.1.3 Hal (soon to be deprecated)                                                                                   
+          o 4.1.4 Reactivate Scrolling after suspend/                                                                           
+            resume                                       Below are several ways of configuring the kernel psmouse driver for    
+      + 4.2 Configuring other options (e.g. Press to     controlling extended TrackPoint features.                              
+        select, Sensitivity and Speed)                                                                                          
+  * 5 Configuration using sysfs                                                                                                 
+      + 5.1 Press to Select                                                                                                     
+      + 5.2 Sensitivity & Speed                                                                                                 
+      + 5.3 Vertical Scrolling                                                                                                  
+  * 6 Configuration using the X server (xorg.conf)                                                                              
+      + 6.1 Using the "evdev" driver (preferred,                                                                                
+        especially for recent Xorg versions)                                                                                    
+      + 6.2 Using the "mouse" driver (deprecated, only                                                                          
+        for old Xorg versions)                                                                                                  
+  * 7 Application specific tweaks                                                                                               
+      + 7.1 Configure Opera for using trackpoint                                                                                
+        horizontal scrolling                                                                                                    
+      + 7.2 Firefox 3 tweaks                                                                                                    
+  * 8 Sysfs Options Reference                                                                                                   
+  * 9 Determining TrackPoint Path ID                                                                                            
+
+On a Modern distribution (like Fedora, Ubuntu or OpenSUSE) you will want to use xinput or one of the graphical front ends. For
+distributions that are lagging a bit (e.g. Debian Lenny and PCLOS '09) you may still want to use the old xorg config method.
+
+Configuration using xinput
+
+If you want to modify changes on the fly, you can do so with xinput (part of the optional xorg-x11-apps rpm on Fedora). Note
+that these changes are not saved when the xserver is restarted. However, you can add the lines e.g. in your .xsessionrc (depends
+on your distribution) so they are executed every time X starts.
+
+To query the available options
+
+xinput list-props "TPPS/2 IBM TrackPoint"
+
+More information can be found in the man-pages for evdev
+
+man evdev
+
+To enable vertical scrolling
+
+xinput set-prop "TPPS/2 IBM TrackPoint" "Evdev Wheel Emulation" 1
+xinput set-prop "TPPS/2 IBM TrackPoint" "Evdev Wheel Emulation Button" 2
+xinput set-prop "TPPS/2 IBM TrackPoint" "Evdev Wheel Emulation Timeout" 200
+
+To enable horizontal scrolling in addition to vertical scrolling
+
+xinput set-prop "TPPS/2 IBM TrackPoint" "Evdev Wheel Emulation Axes" 6 7 4 5
+
+To enable middle button emulation (using left- and right-click simultaneously)
+
+xinput set-prop "TPPS/2 IBM TrackPoint" "Evdev Middle Button Emulation" 1
+xinput set-prop "TPPS/2 IBM TrackPoint" "Evdev Middle Button Timeout" 50
+
+old method using xinput set-int-prop
+
+Note: xinput set-int-prop is deprecated according to the xinput manpage.
+
+To enable vertical scrolling
+
+xinput set-int-prop "TPPS/2 IBM TrackPoint" "Evdev Wheel Emulation" 8 1
+xinput set-int-prop "TPPS/2 IBM TrackPoint" "Evdev Wheel Emulation Button" 8 2
+xinput set-int-prop "TPPS/2 IBM TrackPoint" "Evdev Wheel Emulation Timeout" 8 200
+
+To enable horizontal scrolling in addition to vertical scrolling
+
+xinput set-int-prop "TPPS/2 IBM TrackPoint" "Evdev Wheel Emulation Axes" 8 6 7 4 5
+
+To enable middle button emulation (using left- and right-click simultaneously)
+
+xinput set-int-prop "TPPS/2 IBM TrackPoint" "Evdev Middle Button Emulation" 8 1
+xinput set-int-prop "TPPS/2 IBM TrackPoint" "Evdev Middle Button Timeout" 8 50
+
+Example: openSUSE 11.2 and ThinkPad USB Keyboard with TrackPoint
+
+xinput list
+
+will show two "Lite-On Technology Corp. ThinkPad USB Keyboard with TrackPoint." with two different ids. Use the id with Axis 0
+and Axis 1 items.
+
+Suppose the id was 12. The following will enable the trackpoint scrolling:
+
+xinput set-int-prop 12 "Evdev Wheel Emulation" 8 1
+xinput set-int-prop 12 "Evdev Wheel Emulation Button" 8 2
+xinput set-int-prop 12 "Evdev Wheel Emulation Timeout" 8 200
+
+The following will enable the horizontal scrolling
+
+xinput set-int-prop 12 "Evdev Wheel Emulation Axes" 8 6 7 4 5
+
+To disable middle button click paste functionality, remap the middle button to something else:
+
+xmodmap -e "pointer = 1 9 3 4 5 6 7 8 2"
+
+To do these automatically without worrying about id number, generate a bash script file:
+
+#!/bin/sh
+xinput list | sed -ne 's/^[^ ][^V].*id=\([0-9]*\).*/\1/p' | while read id
+do
+        case `xinput list-props $id` in
+        *"Middle Button Emulation"*)
+                xinput set-int-prop $id "Evdev Wheel Emulation" 8 1
+                xinput set-int-prop $id "Evdev Wheel Emulation Button" 8 2
+                xinput set-int-prop $id "Evdev Wheel Emulation Timeout" 8 200
+                xinput set-int-prop $id "Evdev Wheel Emulation Axes" 8 6 7 4 5
+                xinput set-int-prop $id "Evdev Middle Button Emulation" 8 0
+                ;;
+        esac
+done
+
+# disable middle button
+xmodmap -e "pointer = 1 9 3 4 5 6 7 8 2"
+
+and save it with any name such as trackPointScrolling.sh, and make it executable:
+
+chmod +x trackPointScrolling.sh
+
+Next time you run it with $ ./trackPointScrolling.sh, it will enable the trackpoint scrolling and disable middle button paste.
+
+TODO some other examples 
+
+Graphical Frontends
+
+If you are using GNOME, you might want to use GPointing Device Settings or configure-trackpoint as a graphical frontends.
+
+GPointing Device Settings
+
+It is available for Fedora 12, Ubuntu 9.10 and Debian Squeeze in the standard package repositories
+
+NOTE!
+Unfortunately it seems no longer maintained, and does not work properly with GNOME3 [bug]
+
+Screenshot-GPointing Device Settings-TrackPoint.png
+
+configure-trackpoint
+
+To install it in Ubuntu run ...
+
+sudo apt-get install sysfsutils
+
+...and then download and install the deb here. Note that saved settings are not restored after reboot in Lucid Lynx. See methods
+below to make settings permanent.
+
+Configuration using DevKit
+
+Most recent distributions like Ubuntu 9.10 switch from HAL (being deprecated) to DevKit. Hence, the HAL configurations explained
+underneath, fail to work.
+
+The easiest way to configure your touchpad and trackpoint with DevKit is by using the GPointingDeviceSettings panel that fully
+supports the hardware. You can easily download the panel by installing gpointing-device-settings. On Ubuntu open a terminal and
+execute the command $ sudo apt-get install gpointing-device-settings
+
+Launch the UI through the $ gpointing-device-settings command, but you can also add a menu entry to your System / Preferences
+menu for easier access to the UI panel.
+
+Configuration using udev and HAL
+
+Modern distributions like Ubuntu 8.10 and Fedora 10 use udev and HAL to configure the input devices. You should no longer make
+changes to xorg.conf as by default Xorg (through the evdev driver) will let the kernel now handle input devices.
+
+But before you get started on this you should make sure you have all the updates applied from your distro vendor as both Ubuntu
+8.10 and Fedora 10 require some additional fixes that you will need.
+
+Scrolling
+
+By default the middle mouse button is just that, a middle mouse button, which in Linux is used for the Paste operation.
+
+You may configure it to act in the same way as in Windows, such that you can use it for vertical scrolling: keep the button
+pressed and move the TrackPoint up and down to scroll. (In GPointing Device Settings, this is known as "Use wheel emulation".)
+
+Note: This setting is not compatible with using Alt + Middle Mouse Button to resize windows. If you want to resize windows with
+the trackpad, disable wheel emulation. On Ubuntu 11.10, this setting resides in /usr/share/X11/xorg.conf.d/
+11-evdev-trackpoint.conf (see below), although some touchpads use /usr/share/X11/xorg.conf.d/50-synaptics.conf.
+
+xorg.conf.d
+
+Some distributions now support the new Xorg hotplug configuration method via xorg.conf.d directories (in Ubuntu 10.04 Lucid
+Lynx) instead of hal. In contrast to the udev method below, it should be around for some time, so it might be the best way to
+“statically” configure scrolling.
+
+Create the file /usr/lib/X11/xorg.conf.d/20-thinkpad.conf as root with the following content:
+
+Section "InputClass"
+        Identifier      "Trackpoint Wheel Emulation"
+        MatchProduct    "TPPS/2 IBM TrackPoint|DualPoint Stick|Synaptics Inc. Composite TouchPad / TrackPoint|ThinkPad USB Keyboard with TrackPoint|USB Trackpoint pointing device|Composite TouchPad / TrackPoint"
+        MatchDevicePath "/dev/input/event*"
+        Option          "EmulateWheel"          "true"
+        Option          "EmulateWheelButton"    "2"
+        Option          "Emulate3Buttons"       "false"
+        Option          "XAxisMapping"          "6 7"
+        Option          "YAxisMapping"          "4 5"
+EndSection
+
+Save and restart Xorg (or it'll be enabled at next reboot).
+
+NOTE!
+For Ubuntu 10.10 Maverick Meerkat, the correct path is /usr/share/X11/xorg.conf.d
+NOTE!
+For Arch Linux or Fedora or PCLinuxOS, the correct path is /etc/X11/xorg.conf.d
+NOTE!
+If the above does not work for you, you may need to add a different MatchProduct string. Use
+
+find /dev/input/event* -exec udevadm info --attribute-walk --name={} \; | grep -e product -e name | sort -u
+
+to get a list of possibilities.
+NOTE!
+If the above directory doesn't exist by default in your distribution, it probably doesn't support this method. In this case,
+please refer to the udev or xinput method below.
+
+udev
+
+Now that Xorg doesn't use the configuration from hal (in Debian unstable starting january 2010), the only way to “statically”
+configure scrolling in trackpoint is udev. (for other people, xinput method, works fine). This method will be gone (_again_) in
+not too long so it might be a better idea to use xinput way. YMMV.
+
+Create the file /etc/udev/rules.d/99_trackpoint.rules as root with the following content:
+
+ACTION!="add|change", GOTO="xorg_trackpoint_end"
+KERNEL!="event*", GOTO="xorg_trackpoint_end"
+
+ENV{ID_PATH}!="platform-i8042-serio-1", GOTO="xorg_trackpoint_end"
+
+ENV{x11_options.EmulateWheel}="1"
+ENV{x11_options.EmulateWheelButton}="2"
+ENV{x11_options.XAxisMapping}="6 7"
+ENV{x11_options.Emulate3Buttons}="0"
+
+LABEL="xorg_trackpoint_end"
+
+Save and restart udev then Xorg (or it'll be enabled at next reboot).
+
+NOTE!
+The ID_PATH used in the example above is a typical value. To determine the ID_PATH appropriate to the TrackPoint on a specific
+model see Determining TrackPoint Path ID
+
+Hal (soon to be deprecated)
+
+To accomplish this create the file /etc/hal/fdi/policy/mouse-wheel.fdi as root with the following content:
+
+<match key="info.product" string="TPPS/2 IBM TrackPoint">
+ <merge key="input.x11_options.EmulateWheel" type="string">true</merge>
+ <merge key="input.x11_options.EmulateWheelButton" type="string">2</merge>
+ <merge key="input.x11_options.YAxisMapping" type="string">4 5</merge>
+ <merge key="input.x11_options.Emulate3Buttons" type="string">true</merge>
+ <merge key="input.x11_options.EmulateWheelTimeout" type="string">200</merge>
+</match>
+
+If you also want to have horizontal scrolling, simply add the following XAxisMapping option to the above
+
+ <merge key="input.x11_options.XAxisMapping" type="string">6 7</merge>
+
+After this reboot, or restart the hal service and Xorg. You can validate the settings with lshal.
+
+In some models (eg: X301 and X200 since Jan 10 2010 on debian sid) you may have to use "PS/2 Generic Mouse" instead of "TPPS/2
+IBM TrackPoint". Have a look to your input devices typing lshal|grep input.product.
+
+Alternatively it is also possible to use the "old" Xorg configuration by adding the following lines to the /etc/X11/xorg.conf:
+
+Section "ServerFlags"
+        Option  "AutoAddDevices" "false"
+EndSection
+
+Using this entry HAL will not be used for the input devices.
+
+Reactivate Scrolling after suspend/resume
+
+Scrolling may be disabled after a resume from suspend.
+
+You can manually reactivate the trackpoint by reloading the psmouse module as root:
+
+    # rmmod psmouse && modprobe psmouse
+
+You can automatically force the pm-utils to reload this module. Create a file /etc/pm/config.d/01reload_mouse as root with the
+following content:
+
+# reload psmouse to reactivate trackpoint scrolling
+SUSPEND_MODULES="${SUSPEND_MODULES:+$SUSPEND_MODULES }psmouse"
+
+Configuring other options (e.g. Press to select, Sensitivity and Speed)
+
+Create a file /etc/udev/rules.d/10-trackpoint.rules and add a line to suit your needs
+
+SUBSYSTEM=="serio", DRIVERS=="psmouse", ATTRS{press_to_select}="1", ATTRS{sensitivity}="122"
+
+Testing udev with # udevadm test /sys/devices/platform/i8042/serio1 should apply the new changes. All of the settings listed 
+below can be specified here as part of a comma separated list. The customized values should be loaded automatically when
+booting. However, due to a kernel bug (affecting Lucid Lynx), the attributes may not yet exist when the udev rule fires. As a
+work around, add a WAIT_FOR condition on the attribute
+
+SUBSYSTEM=="serio", DRIVERS=="psmouse", WAIT_FOR="/sys/devices/platform/i8042/serio1/serio2/sensitivity", ATTRS{sensitivity}="122"
+
+On my system (Lucid Lynx), the above line did not work. I changed it to:
+
+SUBSYSTEM=="serio", DRIVERS=="psmouse", WAIT_FOR="/sys/devices/platform/i8042/serio1/serio2/sensitivity", ATTR{sensitivity}="255"
+
+and tested with # udevadm test /sys/devices/platform/i8042/serio1/serio2.
+
+To avoid the wait you can also listen for the Trackpoint input device to appear and then run a script to set the parameters
+
+SUBSYSTEM=="input", ATTR{name}=="*TrackPoint*", RUN+="/etc/conf.d/trackpoint"
+
+An example /etc/conf.d/trackpoint would be
+
+#! /bin/bash
+
+## Trackpoint settings
+
+# When run from a udev rule, DEVPATH should be set
+if [ ! -z $DEVPATH ] ; then
+    TPDEV=/sys/$( echo "$DEVPATH" | sed 's/\/input\/input[0-9]*//' )
+else
+# Otherwise just look in /sys/
+    TPDEV=$(find /sys/devices/platform/i8042 -name name | xargs grep -Fl TrackPoint | sed 's/\/input\/input[0-9]*\/name$//')
+fi
+
+# http://www.thinkwiki.org/wiki/How_to_configure_the_TrackPoint
+# http://wwwcssrv.almaden.ibm.com/trackpoint/files/ykt3eext.pdf
+#------------------------------------------------------------
+if [ -d "$TPDEV" ]; then
+    echo "Configuring Trackpoint"
+    echo -n 255     > $TPDEV/sensitivity     # Integer  128   Sensitivity
+    echo -n 110     > $TPDEV/speed           # Integer  97   Cursor speed
+    echo -n 4       > $TPDEV/inertia         # Integer  6   Negative intertia
+else
+    echo "Couldn't find trackpoint device $TPDEV"
+fi
+
+Configuration using sysfs
+
+Another way to modify changes on the fly, is echoing values directly into special files in sysfs.
+
+NOTE!
+
+The examples shown below are valid for ThinkPads with both TrackPoint and Touchpad, in which case the sysfs path is /sys/devices
+/platform/i8042/serio1/serio2.
+
+If however you have a ThinkPad without Touchpad, or with the Touchpad disabled in the BIOS, the sysfs path needs to be changed
+to /sys/devices/platform/i8042/serio1 instead (notice the missing serio2 at the end).
+
+If you want to set the sysfs parameters at boot, you can use the sysfsutils and put the preferred value in /etc/sysfs.conf.
+
+Press to Select
+
+Press to Select allows you to tap the control stick which will simulate a left click. You can enable this feature by typing the
+following in to a terminal (you may need to be root):
+
+    # echo -n 1 > /sys/devices/platform/i8042/serio1/serio2/press_to_select
+
+Press to Select should now be enabled. You can disable it in a similar manner:
+
+    # echo -n 0 > /sys/devices/platform/i8042/serio1/serio2/press_to_select
+
+You can use this script to automate the operation
+
+       #!/bin/bash
+       if [ "$1" = "1" ]; then
+               echo "Turning on tap on TrackPoint"
+               echo -n 1 > /sys/devices/platform/i8042/serio1/serio2/press_to_select
+               exit 0
+       fi
+       if [ "$1" = "0" ]; then
+               echo "Turning off tap on TrackPoint"
+               echo -n 0 > /sys/devices/platform/i8042/serio1/serio2/press_to_select
+               exit 0
+       fi
+       echo -n "Tap status: "
+       cat /sys/devices/platform/i8042/serio1/serio2/press_to_select
+
+In Ubuntu 8.10 to make Press to Select a permanent change:
+
+echo -n 1 | tee /sys/devices/platform/i8042/serio1/serio2/press_to_select
+
+As root, append the above command above "exit 0" in /etc/gdm/Init/Default
+
+Sensitivity & Speed
+
+Adjusting the speed and sensitivity of the TrackPoint requires echoing a value between 0 and 255 into the appropriate file. For
+example, for a speed of 120 and a sensitivity of 250, type the following into a terminal:
+
+    # echo -n 120 > /sys/devices/platform/i8042/serio1/serio2/speed
+    # echo -n 250 > /sys/devices/platform/i8042/serio1/serio2/sensitivity
+
+Feel free to experiment with your settings until you find a combination that is comfortable.
+
+When you satisfy your setting, add the two lines into /etc/rc.d/rc.local in order to avoid restoring the default setting every
+time the system reboots. In Ubuntu 9.10, add the lines to /etc/rc.local to avoid this.
+
+Vertical Scrolling
+
+No sysfs entry exists for vertical scrolling in kernels after 2.6.11.
+
+The feature was removed as it was not a hardware feature, but rather emulating a scroll action in software and as such did not
+belong in the kernel. Instead the scroll feature of the Xserver should be used, which can be activated with HAL or xinput as
+described above.
+
+Configuration using the X server (xorg.conf)
+
+Using the "evdev" driver (preferred, especially for recent Xorg versions)
+
+Extract from /etc/X11/xorg.conf on an X31:
+
+   Section "InputDevice"
+       Identifier "TPPS/2 IBM TrackPoint"
+       Driver     "evdev"
+       Option     "Device" "/dev/input/by-path/platform-i8042-serio-1-event-mouse"
+       Option     "GrabDevice" "False"
+       Option     "EmulateWheel" "true" #Enable wheel emulation for the Trackpoint
+       Option     "EmulateWheelButton" "2" #Use the middle button for the emulation
+       Option     "XAxisMapping" "6 7" #Map trackpoint X axis to X axis of emulated wheel
+       Option     "YAxisMapping" "4 5" #Map trackpoint Y axis to Y axis of emulated wheel
+   EndSection
+
+NOTE!
+The device path used in the example above is a typical value. To determine the device path appropriate to the TrackPoint on a
+specific model see Determining TrackPoint Path ID
+
+Using the "mouse" driver (deprecated, only for old Xorg versions)
+
+NOTE!
+This only applies to old distributions with Xorg versions that did not yet use evdev. For modern distributions use one of the
+other methods
+
+The scroll setting has been removed from the trackpoint driver in kernel versions 2.6.11 and above. Scroll emulation should now
+be handled in the X server.
+
+A nice side effect of that is, that middle button scrolling applies to any mouse and not just the TrackPoint interface, which
+can be a quite handy feature for desktop computers or people who prefer to use an external mouse, especially when scrolling
+through long lists or needing to use horizontal scrolling with a mouse which has only a vertical scroll wheel.
+
+The necessary functionality, known as "EmulateWheelTimeout" allowing to use button 2 for a middle click, wasn't implemented in
+Xorg prior to 6.9/7.0. However, there was a patch included in most distributions packages of Xorg, which was announced here. You
+can find an updated version of the package in the experimental branch of Debian or try to build the mouse driver yourself with
+the information in the announcement. This has successfully been tried with FC3's 6.8.2 packages.
+
+Once this functionality is in the X.org, add these lines to your TrackPoint configuration section in /etc/X11/xorg.conf:
+
+       Option          "EmulateWheel"          "on"
+       Option          "EmulateWheelButton"    "2"
+
+It may also be necessary to add these lines:
+
+       Option "YAxisMapping" "4 5"
+       Option "XAxisMapping" "6 7"
+
+which specify which buttons are mapped to motion in the vertical (Y) and horizontal (X) directions, respectively, in wheel
+emulation mode (see http://www.xfree86.org/current/mouse.4.html).
+
+Hint:
+Use the program "xev" to see, what mouse button identifiers are sent by your mouse/touchpad/trackpoint.
+You might want to try: "xev | grep button"
+Hint:
+If it does not work see if evdev is installed and remove it. On gentoo do the following:
+
+eix xf86-input-evdev
+emerge -C xf86-input-evdev
+and then remove the evdev flag in make.conf INPUT_DEVICES
+
+So, a complete mouse section, that implements this nicely and works very well on my R51, even with a simultaneously connected
+USB mouse, looks like that (tried out today, 20th of September, 2006 on Dapper):
+
+ Section "InputDevice"
+       Identifier  "Configured Mouse"
+       Driver      "mouse"
+       Option      "CorePointer"
+       Option      "Device"              "/dev/input/mice"
+       Option      "Protocol"            "ExplorerPS/2"
+       Option      "Emulate3Buttons"     "on"
+       Option      "Emulate3TimeOut"     "50"
+       Option      "EmulateWheel"        "on"
+       Option      "EmulateWheelTimeOut" "200"
+       Option      "EmulateWheelButton"  "2"
+       Option      "YAxisMapping"        "4 5"
+       Option      "XAxisMapping"        "6 7"
+       Option      "ZAxisMapping"        "4 5"
+ EndSection
+
+The mappings for Y and Z are the same, since the "Z-Axis" refers to actual hardware scrolling wheels which usually scroll the
+screen along the Y-Axis. If there is no hardware scrolling wheel present, horizontal and vertical scrolling using the TrackPoint
+work fine without the Z-Axis line.
+
+Now restart X and hold down button 2 and move the mouse to scroll, or just press and release button 2 for a middle click.
+
+To make this work with the synaptics driver for the touchpad, you can add
+
+       Option      "GuestMouseOff" "1"
+
+to the synaptics device section. This will make the synaptics driver ignore the Trackpoint, so it will be handled by the mouse
+driver. This allowed me to disable the touchpad while making the TrackPoint work like it should.
+
+NOTE!
+With the above mouse section in my xorg.conf all this works like a charm:
+
+  * I can press the wheel on my external USB mouse and move the mouse up and down for scrolling
+  * or I can just use the wheel on the external mouse for scrolling
+  * or pressing the MMB button of the trackpoint and use the trackpoint for scrolling.
+  * Even horizontal scrolling works automagically in Konqueror, for Firefox/Opera see below.
+
+Simultaneously I can use
+
+  * a press on the external mouse's wheel
+  * or the MMB of the trackpoint
+
+for pasting the buffer. Lovely! :)
+Hint:
+If you don't use the middle-mouse-button for pasting and sometimes pasting things by mistake while scrolling (witch is really
+odd) simply set the "EmulateWheelTimeOut" to "1" as a (bloody) workaround. Middle click will only possible with pressing left
+and right button simultaneously!
+
+Application specific tweaks
+
+Configure Opera for using trackpoint horizontal scrolling
+
+To fix horizontal scrolling in Opera, you need to edit the configfile standard_mouse.ini in e.g. /usr/share/opera/ui/ (Debian)
+or /opt/opera/share/opera/ini/ (Gentoo) and comment out the following lines
+
+Button6                                                        = Back
+Button7                                                        = Forward
+
+so they look like that
+
+;Button6                                                        = Back
+;Button7                                                        = Forward
+
+Remember, Button6 and Button7 do not so coincidental correspond with our X configuration we know from above:
+
+Option "YAxisMapping" "6 7"
+
+After this change you will be able to scroll vertically and horizontally with your middle button.
+
+Firefox 3 tweaks
+
+These settings make Firefox on Linux behave more like the Windows version. They were tested on an out of the box Fedora 10
+system on a Thinkpad T61. Go into about:config, and set the following:
+
+middlemouse.paste = false
+middlemouse.contentLoadURL = false
+general.autoScroll = true
+
+Sysfs Options Reference
+
+NOTE!
+These options are current as of kernel version 2.6.29, 3 May 2009
+
+     Name        Type   Default                                              Notes                                              
+sensitivity     Integer 128     Sensitivity                                                                                     
+speed           Integer 97      Cursor speed                                                                                    
+inertia         Integer 6       Described as "negative inertia." It acts more like friction. High values cause the cursor to    
+                                snap backward when the Trackpoint is released                                                   
+reach           Integer 10      Backup for Z-axis press                                                                         
+draghys         Integer 255     Drag hysteresis (how hard it is to drag with Z-axis pressed)                                    
+mindrag         Integer 20      Minimum amount of force needed to trigger dragging                                              
+thresh          Integer 8       Minimum value for a Z-axis press                                                                
+upthresh        Integer 255     Used to generate a 'click' on Z-axis                                                            
+ztime           Integer 38      How sharp of a press                                                                            
+jenks           Integer 135     Minimum curvature for double click                                                              
+press_to_select Boolean 0       Press to select                                                                                 
+skipback        Boolean 0       Supress movement after drag release                                                             
+ext_dev         Boolean 0       Disable external device                                                                         
+
+Table info taken from here. The given link will always point to the current version of the driver. If the notes seem sparse,
+that's because the code is sparse. On the other hand, the Trackpoint Engineering Specification Version 4.0 contains more
+documentation information than anyone ever desired.
+
+Determining TrackPoint Path ID
+
+Both the udev and xorg.conf configuration methods require knowledge of the Path ID of the TrackPoint. In the udev configuration
+method, the Path ID is used to match the ID_PATH environmental variable, in the xorg.conf configuration method it is the prefix
+for the device file name inside the /dev/input/by-id directory. The path ID can vary between ThinkPad models, distributions
+(with varying kernel patches), and between kernel versions. One way to find the path ID for the TrackPoint is to use udev's
+path_id utility on the sysfs device path for the TrackPoint. This device path can be found using the name file which describes
+the TrackPoint. The process can be automated using the following shell command:
+
+/lib/udev/path_id $(find /sys/devices/platform/i8042 -name name | xargs grep -Fl TrackPoint | sed 's/\/sys\(.*\)\/name/\1/')
+
+Retrieved from "http://www.thinkwiki.org/w/index.php?title=How_to_configure_the_TrackPoint&oldid=54518"
+Categories:
+
+  * NeedsEditing
+  * Debian
+
+Personal tools
+
+  * Log in
+
+Namespaces
+
+  * Page
+  * Discussion
+
+Variants
+
+Views
+
+  * Read
+  * View source
+  * View history
+
+Actions
+
+Search
+
+[                    ] [Go] [Search] 
+
+Navigation
+
+  * ThinkWiki
+  * ThinkPad models
+  * Categories
+  * Recent changes
+  * Random page
+  * Help
+  * Literature
+  * Support ThinkWiki
+
+Toolbox
+
+  * What links here
+  * Related changes
+  * Special pages
+  * Printable version
+  * Permanent link
+
+[INS::INS]
+[INS::INS]
+
+  * This page was last modified on 12 April 2013, at 03:59.
+  * This page has been accessed 518,318 times.
+
+  * Privacy policy
+  * About ThinkWiki
+  * Terms of use
+
+  * Powered by MediaWiki
+

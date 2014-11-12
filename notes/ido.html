@@ -1,0 +1,419 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!-- saved from url=(0052)http://www.emacswiki.org/emacs/InteractivelyDoThings -->
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>EmacsWiki: Interactively Do Things</title><link rel="alternate" type="application/wiki" title="編輯本頁" href="http://www.emacswiki.org/emacs?action=edit;id=InteractivelyDoThings">
+<link type="text/css" rel="stylesheet" href="./ido_files/bootstrap-combined.min.css">
+<link type="text/css" rel="stylesheet" href="./ido_files/bootstrap.css">
+<meta name="robots" content="INDEX,FOLLOW"><link rel="alternate" type="application/rss+xml" title="EmacsWiki" href="http://www.emacswiki.org/emacs?action=rss"><link rel="alternate" type="application/rss+xml" title="EmacsWiki: InteractivelyDoThings" href="http://www.emacswiki.org/emacs?action=rss;rcidonly=InteractivelyDoThings">
+<link rel="alternate" type="application/rss+xml" title="Emacs Wiki with page content" href="http://www.emacswiki.org/emacs/full.rss">
+<link rel="alternate" type="application/rss+xml" title="Emacs Wiki with page content and diff" href="http://www.emacswiki.org/emacs/full-diff.rss">
+<link rel="alternate" type="application/rss+xml" title="Emacs Wiki including minor differences" href="http://www.emacswiki.org/emacs/minor-edits.rss">
+<link rel="alternate" type="application/rss+xml" title="Changes for InteractivelyDoThings only" href="http://www.emacswiki.org/emacs?action=rss;rcidonly=InteractivelyDoThings"><meta name="viewport" content="width=device-width">
+<script type="text/javascript" async="" src="http://d1agz031tafz8n.cloudfront.net/thedaywefightback.js/widget.min.js"></script><script type="text/javascript" src="./ido_files/outliner.0.5.0.62-toc.js"></script>
+<script type="text/javascript">
+
+  function addOnloadEvent(fnc) {
+    if ( typeof window.addEventListener != "undefined" )
+      window.addEventListener( "load", fnc, false );
+    else if ( typeof window.attachEvent != "undefined" ) {
+      window.attachEvent( "onload", fnc );
+    }
+    else {
+      if ( window.onload != null ) {
+	var oldOnload = window.onload;
+	window.onload = function ( e ) {
+	  oldOnload( e );
+	  window[fnc]();
+	};
+      }
+      else
+	window.onload = fnc;
+    }
+  }
+
+  var initToc=function() {
+
+    var outline = HTML5Outline(document.body);
+    if (outline.sections.length == 1) {
+      outline.sections = outline.sections[0].sections;
+    }
+
+    if (outline.sections.length > 1
+	|| outline.sections.length == 1
+           && outline.sections[0].sections.length > 0) {
+
+      var toc = document.getElementById('toc');
+
+      if (!toc) {
+	var divs = document.getElementsByTagName('div');
+	for (var i = 0; i < divs.length; i++) {
+	  if (divs[i].getAttribute('class') == 'toc') {
+	    toc = divs[i];
+	    break;
+	  }
+	}
+      }
+
+      if (!toc) {
+	var h2 = document.getElementsByTagName('h2')[0];
+	if (h2) {
+	  toc = document.createElement('div');
+	  toc.setAttribute('class', 'toc');
+	  h2.parentNode.insertBefore(toc, h2);
+	}
+      }
+
+      if (toc) {
+        var html = outline.asHTML(true);
+        toc.innerHTML = html;
+      }
+    }
+  }
+
+  addOnloadEvent(initToc);
+  </script>
+
+<script src="./ido_files/jquery-1.9.1.min.js"></script>
+<script src="./ido_files/bootstrap.min.js"></script>
+<script src="./ido_files/emacs-bootstrap.js"></script>
+<!--[if !(lt IE 8)]><!-->
+   <script type="text/javascript">
+     (function(){var e=document.createElement("script");e.type="text/javascript";e.async=true;e.src=document.location.protocol+"//d1agz031tafz8n.cloudfront.net/thedaywefightback.js/widget.min.js";var t=document.getElementsByTagName("script")[0];t.parentNode.insertBefore(e,t)})()
+   </script>
+<!--<![endif]-->
+</head><body class="http://www.emacswiki.org/emacs"><div class="header container"><div class="navbar"><div class="navbar-inner"><ul class="nav"><li><a class="brand" href="http://www.emacswiki.org/"><img src="./ido_files/ew_logo.png"></a></li><li><a class="local" href="http://www.emacswiki.org/emacs/%e7%b6%b2%e7%ab%99%e5%9c%b0%e5%9c%96">網站地圖</a></li><li><a class="local" href="http://www.emacswiki.org/emacs/%e6%9c%80%e8%bf%91%e6%9b%b4%e6%96%b0">最近更新</a></li><li><a class="local" href="http://www.emacswiki.org/emacs/News">News</a></li><li><a class="local" href="http://www.emacswiki.org/emacs/ElispArea">ElispArea</a></li><li><a class="local" href="http://www.emacswiki.org/emacs/%e6%95%99%e5%af%bc">教导</a></li></ul></div><form method="get" action="http://www.emacswiki.org/cgi-bin/emacs" enctype="multipart/form-data" accept-charset="utf-8" class="search" style="float: right; margin-top: 10px;">
+<p> <input type="text" name="search" size="20" accesskey="f" id="search" class="input-medium search-query">   </p></form></div><h1><a title="按下即可以搜尋參考至本頁的資料" rel="nofollow" href="http://www.emacswiki.org/emacs?search=%22InteractivelyDoThings%22"><span style="padding-right: 0.5ex;">Interactively</span><span style="padding-right: 0.5ex;">Do</span><span style="padding-right: 0.5ex;">Things</span></a></h1><p><a class="comment local btn" accesskey="c" href="http://www.emacswiki.org/emacs/Comments_on_InteractivelyDoThings">讨论</a></p></div><div class="wrapper container"><div class="content browse"><p><strong><a name="Ido" class="definition" title="按下即可搜尋此錨點的相關資料" rel="nofollow" href="http://www.emacswiki.org/emacs?search=%22Ido%22">Ido</a></strong> is part of Emacs, starting with release 22. You can get the latest version from the unofficial <a class="url http outside" href="http://bazaar.launchpad.net/~vcs-imports/emacs/trunk/annotate/head%3A/lisp/ido.el">bzr mirror</a> or <a class="url http outside" href="http://repo.or.cz/w/emacs.git/blob_plain/HEAD:/lisp/ido.el">git mirror</a>. You may get a current version from the canonical emacs bzr repository at Savannah when it gains a web interface (<a class="local anchor" href="http://www.emacswiki.org/emacs/BzrForEmacsDevs#toc6">BzrForEmacsDevs#toc6</a>). Or you can get a very outdated version of it at <a class="url http" href="http://www.cua.dk/">http://www.cua.dk/</a>.</p><div class="toc"><ol><li><a href="http://www.emacswiki.org/emacs/InteractivelyDoThings#toc1">Overview of Ido</a></li><li><a href="http://www.emacswiki.org/emacs/InteractivelyDoThings#toc2">Using IDO</a></li><li><a href="http://www.emacswiki.org/emacs/InteractivelyDoThings#toc3">Using Ido Programmatically</a><ol><li><a href="http://www.emacswiki.org/emacs/InteractivelyDoThings#toc4">Using IDO Select with ERC</a></li><li><a href="http://www.emacswiki.org/emacs/InteractivelyDoThings#toc5">Helper Function to Select Based on Mode</a></li><li><a href="http://www.emacswiki.org/emacs/InteractivelyDoThings#toc6">Limit to Current Major Mode</a></li></ol></li><li><a href="http://www.emacswiki.org/emacs/InteractivelyDoThings#toc7">Mimicking an invocation of ido followed by some keys</a></li><li><a href="http://www.emacswiki.org/emacs/InteractivelyDoThings#toc8">Miscellaneous Applications of Ido</a><ol><li><a href="http://www.emacswiki.org/emacs/InteractivelyDoThings#toc9">M-x mode</a></li><li><a href="http://www.emacswiki.org/emacs/InteractivelyDoThings#toc10">Invoking Bookmarks From Ido</a></li><li><a href="http://www.emacswiki.org/emacs/InteractivelyDoThings#toc11">Complete find-tag using ido</a></li><li><a href="http://www.emacswiki.org/emacs/InteractivelyDoThings#toc12">Find files in Tags File</a></li><li><a href="http://www.emacswiki.org/emacs/InteractivelyDoThings#toc13">Completing Imenu tags</a></li><li><a href="http://www.emacswiki.org/emacs/InteractivelyDoThings#toc14">Use ido to find any file from the project</a></li><li><a href="http://www.emacswiki.org/emacs/InteractivelyDoThings#toc15">Make Ido complete almost anything (except the stuff where it shouldn't)</a><ol><li><a href="http://www.emacswiki.org/emacs/InteractivelyDoThings#toc16">Problem using advice to reset to completing-read</a></li></ol></li><li><a href="http://www.emacswiki.org/emacs/InteractivelyDoThings#toc17">Use ido in ibuffer</a></li></ol></li><li><a href="http://www.emacswiki.org/emacs/InteractivelyDoThings#toc18">ido-ubiquitous</a><ol><li><a href="http://www.emacswiki.org/emacs/InteractivelyDoThings#toc19">ido-ubiquitous compile-log issue</a></li></ol></li><li><a href="http://www.emacswiki.org/emacs/InteractivelyDoThings#toc20">ido-at-point</a></li><li><a href="http://www.emacswiki.org/emacs/InteractivelyDoThings#toc21">Ido Hacks (modifying Ido's behavior)</a><ol><li><a href="http://www.emacswiki.org/emacs/InteractivelyDoThings#toc22">Better flex (fuzzy) matching for Ido</a></li><li><a href="http://www.emacswiki.org/emacs/InteractivelyDoThings#toc23">Display Completions Vertically</a></li><li><a href="http://www.emacswiki.org/emacs/InteractivelyDoThings#toc24">Control-TAB buffer switching with Ido</a></li><li><a href="http://www.emacswiki.org/emacs/InteractivelyDoThings#toc25">Sort files by mtime</a></li><li><a href="http://www.emacswiki.org/emacs/InteractivelyDoThings#toc26">A better (IMHO) ido-edit-input function</a></li><li><a href="http://www.emacswiki.org/emacs/InteractivelyDoThings#toc27">Invoke any command using ido in other window / split window, deciding after the fact instead of before</a></li><li><a href="http://www.emacswiki.org/emacs/InteractivelyDoThings#toc28">Make RET easier to use with ido-find-file</a></li><li><a href="http://www.emacswiki.org/emacs/InteractivelyDoThings#toc29">ido-hacks.el</a></li><li><a href="http://www.emacswiki.org/emacs/InteractivelyDoThings#toc30">Multi-select</a></li></ol></li><li><a href="http://www.emacswiki.org/emacs/InteractivelyDoThings#toc31">ido-preview</a></li><li><a href="http://www.emacswiki.org/emacs/InteractivelyDoThings#toc32">Icicles and Ido</a></li><li><a href="http://www.emacswiki.org/emacs/InteractivelyDoThings#toc33">Ido History</a><ol><li><a href="http://www.emacswiki.org/emacs/InteractivelyDoThings#toc34">Preventing auto-searches unless called explicitly</a></li></ol></li><li><a href="http://www.emacswiki.org/emacs/InteractivelyDoThings#toc35">Bugs</a></li><li><a href="http://www.emacswiki.org/emacs/InteractivelyDoThings#toc36">A Hint About "Too Big"</a></li><li><a href="http://www.emacswiki.org/emacs/InteractivelyDoThings#toc37">Wish list</a><ol><li><a href="http://www.emacswiki.org/emacs/InteractivelyDoThings#toc38">truename files</a></li><li><a href="http://www.emacswiki.org/emacs/InteractivelyDoThings#toc39">bury buffer</a></li><li><a href="http://www.emacswiki.org/emacs/InteractivelyDoThings#toc40">zsh style completion</a></li><li><a href="http://www.emacswiki.org/emacs/InteractivelyDoThings#toc41">ido and ibus</a></li><li><a href="http://www.emacswiki.org/emacs/InteractivelyDoThings#toc42">Searching for unicode characters with IsearchPlus when IdoUbiquitous is enabled.</a></li><li><a href="http://www.emacswiki.org/emacs/InteractivelyDoThings#toc43">Grouping files by directories.</a></li></ol></li></ol></div><h2 id="toc1">Overview of Ido</h2><p>The ido.el package by <a class="local" href="http://www.emacswiki.org/emacs/KimStorm">KimStorm</a> lets you interactively do things with buffers and files.</p><p>To activate, place this in your <a class="local" href="http://www.emacswiki.org/emacs/InitFile">InitFile</a>:</p><pre>    (<span class="keyword">require</span> '<span class="constant">ido</span>)
+    (ido-mode t)</pre><p>Then do</p><pre>    M-x customize-group RET ido RET</pre><p>and configure ido-mode. Another good setting to enable is ido-enable-flex-matching.</p><h2 id="toc2">Using IDO</h2><p>To switch between buffers, press “C-x b”, then:</p><ul><li>type some characters appearing in the buffer name, RET to visit the buffer in the front the list.</li><li>use C-s (next) or C-r (previous) to move through the list.</li><li>[Tab] display possible completion in a buffer (or visit the buffer if there is only one possible completion).</li><li>use C-f to fall back to find file (without ido-mode) or C-b to fall back to switch to buffer (without ido-mode).</li></ul><p>To find a file, press “C-x C-f”.</p><ul><li>type some characters appearing in the file name, RET to choose the file or directory in the front of the list.</li><li>C-s (next) or C-r (previous) to move through the list.</li><li>[Tab] - display possible completion in a buffer (or open the file or go down the directory if there is only one possible completion).</li><li>RET - type to go down inside the directory in front of the list.</li><li>[backspace] - go up to the parent directory.</li><li>// - go to the root directory.</li><li>~/ - go to the home directory.</li><li>C-f - to go back temporarily to the normal find-file.</li><li>C-d - enter Dired for this directory (used to be C-x C-d in older versions)</li><li>C-j - create a new file named with the text you entered (note: this is needed if the text you entered matches an existing file, because RET would open the existing one)</li></ul><p>To restrict the list after a first filtering: </p><ul><li>type some characters appearing in the buffer/file name(say .cpp)</li><li>type C-SPC (C-@)</li><li>continue as normal with a list containing only the filtered names</li></ul><p>Recently visited directories: </p><ul><li>type M-p and M-n to change to previous/next directories from the history</li><li>M-s to search for a file matching your input</li><li>M-k to remove the current directory from the history </li><li>directories are added to the history by navigating inside them via RET </li></ul><p>The documentation for these keys is available via </p><ul><li>M-x describe-function RET ido-find-file RET </li><li>C-h f ido-find-file RET</li></ul><h2 id="toc3">Using Ido Programmatically</h2><p>You can use Ido in your emacs-lisp programs. This is all you need:</p><pre>  (setq mylist (list <span class="string">"red"</span> <span class="string">"blue"</span> <span class="string">"yellow"</span> <span class="string">"clear"</span> <span class="string">"i-dont-know"</span>))
+  (ido-completing-read <span class="string">"What, ... is your favorite color? "</span> mylist)</pre><h3 id="toc4">Using IDO Select with ERC</h3><p>Here is some code showing how to select an erc buffer using IDO features (including flex when enabled)</p><p>– <a class="local" href="http://www.emacswiki.org/emacs/RichardRiley">RichardRiley</a> </p><pre>  (<span class="keyword">defun</span> <span class="function">rgr/ido-erc-buffer</span>()
+  (interactive)
+  (switch-to-buffer
+   (ido-completing-read <span class="string">"Channel:"</span> 
+                        (<span class="keyword elisp">save-excursion</span>
+                          (delq
+                           nil
+                           (mapcar (<span class="keyword elisp">lambda</span> (buf)
+                                     (<span class="keyword cl">when</span> (buffer-live-p buf)
+                                       (<span class="keyword elisp">with-current-buffer</span> buf
+                                         (and (eq major-mode 'erc-mode)
+                                              (buffer-name buf)))))
+                                   (buffer-list)))))))
+
+  (global-set-key (kbd <span class="string">"C-c e"</span>) 'rgr/ido-erc-buffer)
+</pre><h3 id="toc5">Helper Function to Select Based on Mode</h3><p>This is based on what <a class="local" href="http://www.emacswiki.org/emacs/RichardRiley">RichardRiley</a> provided. I extracted it out, so I can easily make one for erc, one for shell, … . – ajvargo </p><pre>(<span class="keyword">defun</span> <span class="function">ido-for-mode</span>(prompt the-mode)
+  (switch-to-buffer
+   (ido-completing-read prompt
+                        (<span class="keyword elisp">save-excursion</span>
+                          (delq
+                           nil
+                           (mapcar (<span class="keyword elisp">lambda</span> (buf)
+                                     (<span class="keyword cl">when</span> (buffer-live-p buf)
+                                       (<span class="keyword elisp">with-current-buffer</span> buf
+                                         (and (eq major-mode the-mode)
+                                              (buffer-name buf)))))
+                                   (buffer-list)))))))
+
+(<span class="keyword">defun</span> <span class="function">ido-shell-buffer</span>()
+  (interactive)
+  (ido-for-mode <span class="string">"Shell:"</span> 'shell-mode))
+
+(global-set-key (kbd <span class="string">"C-c s"</span>) 'ido-shell-buffer)
+</pre><h3 id="toc6">Limit to Current Major Mode</h3><p>Further variation on <a class="local" href="http://www.emacswiki.org/emacs/RichardRiley">RichardRiley</a>’s and ajvargo’s examples: Limit ido to the current major mode, whatever that might be. – <a class="local" href="http://www.emacswiki.org/emacs/wgreenhouse">wgreenhouse</a></p><pre>(<span class="keyword">defun</span> <span class="function">wg/ido-for-this-mode</span>
+  ()
+  (interactive)
+  (<span class="keyword elisp">let</span>
+      ((<span class="keyword cl">the</span>-mode major-mode))
+    (switch-to-buffer
+     (ido-completing-read
+      (format <span class="string">"Buffers of %s: "</span> the-mode)
+      (<span class="keyword elisp">save-excursion</span>
+	(delq
+	 nil
+	 (mapcar
+	  (<span class="keyword elisp">lambda</span>
+	    (buf)
+	    (<span class="keyword cl">when</span>
+		(buffer-live-p buf)
+	      (<span class="keyword elisp">with-current-buffer</span> buf
+		(and
+		 (eq major-mode the-mode)
+		 (buffer-name buf)))))
+	  (buffer-list))))))))
+
+(global-set-key (kbd <span class="string">"H-t"</span>) 'wg/ido-for-this-mode)
+(global-set-key (kbd <span class="string">"C-c t"</span>) 'wg/ido-for-this-mode)
+</pre><h2 id="toc7">Mimicking an invocation of ido followed by some keys</h2><p>I use ERC, and I wanted to bind something to the equivalent of “C-x b #”: that is, launching ido-switch-buffer and hitting a # so that ERC channels are given as options. However, it’s tough in general to write elisp or keyboard macros that run a command and start entering things into a minibuffer without finishing the prompt. For this special case, though, this elisp works:</p><pre>    (ido-buffer-internal ido-default-buffer-method nil nil nil <span class="string">"#"</span>)</pre><h2 id="toc8">Miscellaneous Applications of Ido</h2><h3 id="toc9">M-x mode</h3><pre>    (global-set-key
+     <span class="string">"\M-x"</span>
+     (<span class="keyword elisp">lambda</span> ()
+       (interactive)
+       (call-interactively
+        (intern
+         (ido-completing-read
+          <span class="string">"M-x "</span>
+          (all-completions <span class="string">""</span> obarray 'commandp))))))</pre><p>You can also check out <a class="local" href="http://www.emacswiki.org/emacs/Smex">Smex</a>. On top of a M-x Ido interface it features ranking heuristics and some other extras.</p><p>– hfwang, modified by nsq</p><h3 id="toc10">Invoking Bookmarks From Ido</h3><p>Did you ever want to use <a class="alias" title="BookMarks" href="http://www.emacswiki.org/emacs/BookMarks#bookmark">bookmark</a>s from within ido? I just did a little mashup of bookmark and ido code, just M-C-b from your ido file selection. – <a class="local" href="http://www.emacswiki.org/emacs/AnselmHelbig">AnselmHelbig</a></p><pre>    (setq enable-recursive-minibuffers t)
+    (define-key ido-file-dir-completion-map [(meta control ?b)] 'ido-goto-bookmark)
+    (<span class="keyword">defun</span> <span class="function">ido-goto-bookmark</span> (bookmark)
+      (interactive
+       (list (bookmark-completing-read <span class="string">"Jump to bookmark"</span>
+    				   bookmark-current-bookmark)))
+      (<span class="keyword cl">unless</span> bookmark
+        (<span class="warning">error</span> <span class="string">"No bookmark specified"</span>))
+      (<span class="keyword elisp">let</span> ((filename (bookmark-get-filename bookmark)))
+        (ido-set-current-directory
+         (<span class="keyword elisp">if</span> (file-directory-p filename)
+             filename
+           (file-name-directory filename)))
+        (setq ido-exit        'refresh
+              ido-text-init   ido-text
+              ido-rotate-temp t)
+        (exit-minibuffer)))</pre><p>If you don’t want to set recursive minibuffers globally, you could also activate them locally in the above function using a let declaration.</p><div class="color one level0"><p> The problem with this function is, if my bookmark is a directory, whose path I already started typing before realizing I could invoke it, the last path component will be appended to the bookmark path.</p><p>Eg. if I have a bookmark for path “/Users/gael/Documents/code/2012/my-super-project" and I had typed "/Users/gael/Docu" before invoking the bookmark, then IDO will display the path: "/Users/gael/Documents/code/2012/my-super-project/Docu” and I have to delete “Docu” by hand.</p><p>Here is a better way:</p><pre>  (<span class="keyword">require</span> '<span class="constant">bookmark</span>)
+  (setq enable-recursive-minibuffers t)
+  (define-key ido-file-dir-completion-map [(meta control ?b)] 'ido-goto-bookmark)
+  (<span class="keyword">defun</span> <span class="function">ido-goto-bookmark</span> (bookmark)
+    (interactive
+     (list (bookmark-completing-read <span class="string">"Jump to bookmark"</span>
+      				   bookmark-current-bookmark)))
+    (<span class="keyword cl">unless</span> bookmark
+      (<span class="warning">error</span> <span class="string">"No bookmark specified"</span>))
+    (<span class="keyword elisp">let</span> ((filename (bookmark-get-filename bookmark)))
+      (<span class="keyword elisp">if</span> (file-directory-p filename)
+  	(<span class="keyword elisp">progn</span>
+  	  (ido-set-current-directory filename)
+  	  (setq ido-text <span class="string">""</span>))
+        (<span class="keyword elisp">progn</span>
+  	(ido-set-current-directory (file-name-directory filename))))
+      (setq ido-exit        'refresh
+  	  ido-text-init   ido-text
+  	  ido-rotate-temp t)
+      (exit-minibuffer)))</pre><p>--GaÃ«l Deest</p></div><div class="color two level0"><p>What about the following?</p><pre>  (<span class="keyword">defun</span> <span class="function">ido-bookmark-jump</span> (bname)
+    <span class="string">"*Switch to bookmark interactively using `<span class="constant important">ido</span>'."</span>
+    (interactive (list (ido-completing-read <span class="string">"Bookmark: "</span> (bookmark-all-names) nil t)))
+    (bookmark-jump bname))</pre></div><h3 id="toc11">Complete find-tag using ido</h3><pre>  (<span class="keyword">defun</span> <span class="function">my-ido-find-tag</span> ()
+    <span class="string">"Find a tag using ido"</span>
+    (interactive)
+    (tags-completion-table)
+    (<span class="keyword elisp">let</span> (tag-names)
+      (mapatoms (<span class="keyword elisp">lambda</span> (x)
+                  (push (prin1-to-string x t) tag-names))
+                tags-completion-table)
+      (find-tag (ido-completing-read <span class="string">"Tag: "</span> tag-names))))</pre><p><a class="anchor" name="TagsFile"></a></p><h3 id="toc12">Find files in Tags File</h3><p>From the screencast above:</p><pre>    (<span class="keyword">defun</span> <span class="function">ido-find-file-in-tag-files</span> ()
+      (interactive)
+      (<span class="keyword elisp">save-excursion</span>
+        (<span class="keyword elisp">let</span> ((enable-recursive-minibuffers t))
+          (visit-tags-table-buffer))
+        (find-file
+         (expand-file-name
+          (ido-completing-read
+           <span class="string">"Project file: "</span> (tags-table-files) nil t)))))</pre><p>Selects among the files listed in the <a class="alias" title="TagsFile" href="http://www.emacswiki.org/emacs/TagsFile#tags_file">tags file</a>. Similar to “find file in project” in TextMate; the tags file defines your project.</p><p>Philipp: Is there an equivalent command that supports TAGS generated by GNU gtags?</p><div class="color one level0"><p> <a class="local" href="http://www.emacswiki.org/emacs/Icicles">Icicles</a> command <code>‘icicle-find-file-in-tag-table’</code> does this also. See <a class="local anchor" href="http://www.emacswiki.org/emacs/Icicles_-_Support_for_Projects#TagsFileProject">Icicles - Tags File Projects</a>.</p></div><h3 id="toc13">Completing Imenu tags</h3><p><a class="inter Lisp" href="http://www.emacswiki.org/emacs/idomenu.el"><span class="site">Lisp</span><span class="separator">:</span><span class="page">idomenu.el</span></a></p><h3 id="toc14">Use ido to find any file from the project</h3><p>If you define projects using <a class="local" href="http://www.emacswiki.org/emacs/ProjectSettings"> project-root.el</a> you can quickly find files that belong to the project. Useful as an alternative to bookmarks.</p><pre>    (<span class="keyword">defun</span> <span class="function">my-ido-project-files</span> ()
+      <span class="string">"Use ido to select a file from the project."</span>
+      (interactive)
+      (<span class="keyword elisp">let</span> (my-project-root project-files tbl)
+      (<span class="keyword cl">unless</span> project-details (project-root-fetch))
+      (setq my-project-root (cdr project-details))</pre><pre>      <span class="comment">;; get project files</span>
+      (setq project-files 
+	    (split-string 
+	     (shell-command-to-string 
+	      (concat <span class="string">"find "</span>
+		      my-project-root
+		      <span class="string">" \\( -name \"*.svn\" -o -name \"*.git\" \\) -prune -o -type f -print | grep -E -v \"\.(pyc)$\""</span>
+		      )) <span class="string">"\n"</span>))
+      <span class="comment">;; populate hash table (display repr =&gt; path)</span>
+      (setq tbl (make-hash-table <span class="builtin">:test</span> 'equal))
+      (<span class="keyword elisp">let</span> (ido-list)
+      (mapc (<span class="keyword elisp">lambda</span> (path)</pre><pre>	      <span class="comment">;; format path for display in ido list</span>
+	      (setq key (replace-regexp-in-string <span class="string">"\\(.*?\\)\\([<span class="negation">^</span>/]+?\\)$"</span> <span class="string">"\\2|\\1"</span> path))
+	      <span class="comment">;; strip project root</span>
+	      (setq key (replace-regexp-in-string my-project-root <span class="string">""</span> key))
+	      <span class="comment">;; remove trailing | or /</span>
+	      (setq key (replace-regexp-in-string <span class="string">"\\(|\\|/\\)$"</span> <span class="string">""</span> key))
+	      (puthash key path tbl)
+	      (push key ido-list)
+	      )
+	    project-files
+	    )
+      (find-file (gethash (ido-completing-read <span class="string">"project-files: "</span> ido-list) tbl)))))</pre><pre>    <span class="comment">;; bind to a key for quick access</span>
+    (define-key global-map [f6] 'my-ido-project-files)</pre><p>--fas</p><h3 id="toc15">Make Ido complete almost anything (except the stuff where it shouldn't)</h3><pre>    (<span class="keyword">defvar</span> <span class="variable">ido-enable-replace-completing-read</span> t
+      <span class="string">"If t, use ido-completing-read instead of completing-read if possible.
+    
+    Set it to nil using let in around-advice for functions where the
+    original completing-read is required.  For example, if a function
+    foo absolutely must use the original completing-read, define some
+    advice like this:
+    
+    (<span class="keyword">defadvice</span> <span class="function">foo</span> (around original-completing-read-only activate)
+      (<span class="keyword elisp">let</span> (ido-enable-replace-completing-read) ad-do-it))"</span>)
+    
+    <span class="comment">;; Replace completing-read wherever possible, unless directed otherwise</span>
+    (<span class="keyword">defadvice</span> <span class="function">completing-read</span>
+      (around use-ido-when-possible activate)
+      (<span class="keyword elisp">if</span> (or (not ido-enable-replace-completing-read) <span class="comment">; Manual override disable ido</span>
+              (and (boundp 'ido-cur-list)
+                   ido-cur-list)) <span class="comment">; Avoid infinite loop from ido calling this</span>
+          ad-do-it
+        (<span class="keyword elisp">let</span> ((allcomp (all-completions <span class="string">""</span> collection predicate)))
+          (<span class="keyword elisp">if</span> allcomp
+              (setq ad-return-value
+                    (ido-completing-read prompt
+                                   allcomp
+                                   nil require-match initial-input hist def))
+            ad-do-it))))</pre><h4 id="toc16">Problem using advice to reset to completing-read</h4><p>1. Incompatible Libraries </p><ul><li>kill-ring-search<ul><li>Fix: Use a patched version: <a class="url http" href="http://pastie.org/paste/1017562">http://pastie.org/paste/1017562</a> (builds upon v1.1). Diff: <a class="url http" href="http://pastie.org/paste/1017592">http://pastie.org/paste/1017592</a></li></ul></li></ul><p>2. I like using ido for (almost) everything a lot but it gets slow for a long list of possible completions (e.g. for describe-function).</p><p>Using the defadvice as described does not work for me? Is it just me or is this a bug? TIA – sebhofer</p><p>Fixed. It seems in version &gt;=23, ido-cur-list is always bound and you need to check it as well. – <a class="local" href="http://www.emacswiki.org/emacs/LeWang">LeWang</a></p><p>I found ido-completing-read to interfere when using dired mode buffers (e.g., renaming files). To turn it off:</p><pre>    (add-hook 'dired-mode-hook
+              '(<span class="keyword elisp">lambda</span> () (setq ido-enable-replace-completing-read nil)))</pre><p>– <a class="local" href="http://www.emacswiki.org/emacs/ChrisPoole">ChrisPoole</a></p><p>Fixed: use local varible</p><pre>    (add-hook 'dired-mode-hook
+              '(<span class="keyword elisp">lambda</span> ()
+                 (set (make-local-variable 'ido-enable-replace-completing-read) nil)))</pre><p>– Shihpin </p><h3 id="toc17">Use ido in ibuffer</h3><p>ibuffer mode doesn’t come with an option to use ido-find-file, so here’s a simple adaptation of ibuffer-find-file that uses ido instead of read-file:</p><pre>(<span class="keyword">defun</span> <span class="function">ibuffer-ido-find-file</span> (file <span class="type">&amp;optional</span> wildcards)
+  <span class="string">"Like `<span class="constant important">ido-find-file</span>', but default to the directory of the buffer at point."</span>
+  (interactive
+   (<span class="keyword elisp">let</span> ((default-directory
+           (<span class="keyword elisp">let</span> ((buf (ibuffer-current-buffer)))
+             (<span class="keyword elisp">if</span> (buffer-live-p buf)
+                 (<span class="keyword elisp">with-current-buffer</span> buf
+                   default-directory)
+               default-directory))))
+     (list (ido-read-file-name <span class="string">"Find file: "</span> default-directory) t)))
+  (find-file file wildcards))
+</pre><p>To use this, if you’ve already <code>(require 'ibuffer)</code>’d, <code>(define-key ibuffer-mode-map "\C-x\C-f" 'ibuffer-ido-find-file)</code> should work, if you haven’t required it do  </p><pre>(add-hook 'ibuffer-mode-hook
+          (<span class="keyword elisp">lambda</span> ()
+            (define-key ibuffer-mode-map <span class="string">"\C-x\C-f"</span>
+              'ibuffer-ido-find-file)))
+</pre><p>– <a class="local" href="http://www.emacswiki.org/emacs/BrandonWMaister">BrandonWMaister</a></p><p>– new definition of <code>ibuffer-ido-find-file</code> by <a class="local" href="http://www.emacswiki.org/emacs/TreyHarris">TreyHarris</a> to suppress wrong type argument errors that could happen in some circumstances.</p><p><a class="anchor" name="IdoUbiquitous"></a> </p><h2 id="toc18">ido-ubiquitous</h2><p>The ido ubiquitous module allows you set up to use ido with almost anything that uses completion. For example in <code>‘C-h f’</code>. Extremely useful. Although for <code>‘M-x’</code> there is the improved <a class="local" href="http://www.emacswiki.org/emacs/Smex">Smex</a> package. It is now maintained by Ryan Thompson:</p><p><a class="url http" href="https://github.com/DarwinAwardWinner/ido-ubiquitous">https://github.com/DarwinAwardWinner/ido-ubiquitous</a></p><h3 id="toc19">ido-ubiquitous compile-log issue</h3><p>If ido-ubiquitous 1.6 is used in emacs 24.3, there will always be a compile-log buffer warning:</p><pre>    .emacs.d/elpa/ido-ubiquitous-20121214.2145/ido-ubiquitous.elc<span class="builtin">:Warning</span>:
+        reference to free variable `<span class="constant important">ido-cur-item</span>'
+    .emacs.d/elpa/ido-ubiquitous-20121214.2145/ido-ubiquitous.elc<span class="builtin">:Warning</span>:
+        reference to free variable `<span class="constant important">ido-default-item</span>'
+    .emacs.d/elpa/ido-ubiquitous-20121214.2145/ido-ubiquitous.elc<span class="builtin">:Warning</span>:
+        reference to free variable `<span class="constant important">ido-cur-list</span>'</pre><p>Just add the following three defvars to get around this problem:</p><pre>    (<span class="keyword">defvar</span> <span class="variable">ido-cur-item</span> nil)
+    (<span class="keyword">defvar</span> <span class="variable">ido-default-item</span> nil)
+    (<span class="keyword">defvar</span> <span class="variable">ido-cur-list</span> nil)</pre><p><a class="anchor" name="IdoAtPoint"></a> </p><h2 id="toc20">ido-at-point</h2><p>If you want to have ido-style <code>completion-at-point</code> (the default in-buffer completion), check out the <a class="url http outside" href="https://github.com/katspaugh/ido-at-point">ido-at-point</a> package. It replaces the standard completions buffer on <code>M-tab</code> with ido prompt.</p><h2 id="toc21">Ido Hacks (modifying Ido's behavior)</h2><h3 id="toc22">Better flex (fuzzy) matching for Ido</h3><p>There are at least two options:</p><p><a class="url http outside" href="http://marmalade-repo.org/packages/flx-ido">flx-ido</a>. This does fuzzy matching based on intelligent sorting of the list along with nice highlighting. It doesn’t match out-of-order characters though, unlike:</p><p><a class="url http outside" href="http://marmalade-repo.org/packages/ido-better-flex">ido-better-flex</a> implements just another fuzzy matching algorithm, unlike default Ido flex, it allows you to match candidates even if you type a character that is before the previously matched input.</p><h3 id="toc23">Display Completions Vertically</h3><p>It’s a lot easier to scan long path names if they’re displayed vertically, instead of horizontally. Run this to achieve just that:</p><p>This can be achieved by installing package <a class="url http outside" href="http://marmalade-repo.org/packages/ido-vertical-mode">ido-vertical-mode</a>, which (presumably), does the following, below.</p><pre>  <span class="comment">;; Display ido results vertically, rather than horizontally</span>
+  (setq ido-decorations (quote (<span class="string">"\n-&gt; "</span> <span class="string">""</span> <span class="string">"\n   "</span> <span class="string">"\n   ..."</span> <span class="string">"["</span> <span class="string">"]"</span> <span class="string">" [No match]"</span> <span class="string">" [Matched]"</span> <span class="string">" [Not readable]"</span> <span class="string">" [Too big]"</span> <span class="string">" [Confirm]"</span>)))</pre><pre>  (<span class="keyword">defun</span> <span class="function">ido-disable-line-truncation</span> () (set (make-local-variable 'truncate-lines) nil))
+  (add-hook 'ido-minibuffer-setup-hook 'ido-disable-line-truncation)
+  (<span class="keyword">defun</span> <span class="function">ido-define-keys</span> () <span class="comment">;; C-n/p is more intuitive in vertical layout</span>
+    (define-key ido-completion-map (kbd <span class="string">"C-n"</span>) 'ido-next-match)
+    (define-key ido-completion-map (kbd <span class="string">"C-p"</span>) 'ido-prev-match))
+  (add-hook 'ido-setup-hook 'ido-define-keys)</pre><p>– <a class="local" href="http://www.emacswiki.org/emacs/timcharper">timcharper</a>, <a class="local" href="http://www.emacswiki.org/emacs/jpkotta">jpkotta</a></p><h3 id="toc24">Control-TAB buffer switching with Ido</h3><p><a class="local" href="http://www.emacswiki.org/emacs/NxhtmlMode">nXhtml</a> tweaks Ido to do <a class="local" href="http://www.emacswiki.org/emacs/ControlTABbufferCycling">ControlTABbufferCycling</a> combined with Ido’s normal buffer switching.</p><h3 id="toc25">Sort files by mtime</h3><p>Why would anyone want an alphabetically sorted list? You can save keystrokes if the most recently modified files are at the front:</p><pre>  <span class="comment">; sort ido filelist by mtime instead of alphabetically</span>
+  (add-hook 'ido-make-file-list-hook 'ido-sort-mtime)
+  (add-hook 'ido-make-dir-list-hook 'ido-sort-mtime)
+  (<span class="keyword">defun</span> <span class="function">ido-sort-mtime</span> ()
+    (setq ido-temp-list
+          (sort ido-temp-list 
+                (<span class="keyword elisp">lambda</span> (a b)
+                  (time-less-p
+                   (sixth (file-attributes (concat ido-current-directory b)))
+                   (sixth (file-attributes (concat ido-current-directory a)))))))
+    (ido-to-end  <span class="comment">;; move . files to end (again)</span>
+     (delq nil (mapcar
+                (<span class="keyword elisp">lambda</span> (x) (and (char-equal (string-to-char x) ?.) x))
+                ido-temp-list))))</pre><p>If you want to ensure ‘.’ is not buried by this, change the final lambda as follows (or equivalent): </p><pre>    (<span class="keyword elisp">lambda</span> (x) (and (string-match-p <span class="string">"^\\.."</span> x) x))
+</pre><div class="color one level0"><p> Depending on the type of entities (e.g. file names) in the list and your current context, it can often be more convenient to sort alphabetically. It all depends. For files and directories, this is why we have different sort orders in <a class="local" href="http://www.emacswiki.org/emacs/DiredMode">DiredMode</a> (see, e.g., <a class="local" href="http://www.emacswiki.org/emacs/DiredSortMenu">DiredSortMenu</a>).</p></div><div class="color two level0"><p> On my system (Debian squeeze), there are “files” in the root directory ending in a colon for which applying <code>file-attributes</code> to them invokes tramp, and tramp hangs with “Tramp: Waiting for prompts from remote shell”. Changing the sort predicate in the above code to the following seems to work: </p><pre>    (<span class="keyword elisp">lambda</span> (a b)
+      (<span class="keyword elisp">let</span> ((a-tramp-file-p (string-match-p <span class="string">":\\'"</span> a))
+            (b-tramp-file-p (string-match-p <span class="string">":\\'"</span> b)))
+        (<span class="keyword elisp">cond</span>
+         ((and a-tramp-file-p b-tramp-file-p)
+          (string&lt; a b))
+         (a-tramp-file-p nil)
+         (b-tramp-file-p t)
+         (t (time-less-p
+             (sixth (file-attributes (concat ido-current-directory b)))
+             (sixth (file-attributes (concat ido-current-directory a))))))))
+</pre><p>See also <a class="local anchor" href="http://www.emacswiki.org/emacs/InteractivelyDoThings#SortOrder">SortOrder</a>.</p></div><h3 id="toc26">A better (IMHO) ido-edit-input function</h3><p>In order to be more consistent with the normal find-file HCI, to which I am really really used (and, by the waym with the way command shells do completion), I changed slighlty the behaviour of the backspace and C-e keys in ‘file mode :</p><pre>  (<span class="keyword">defun</span> <span class="function">ido-my-edit-input</span> () <span class="string">"bla"</span> (interactive)
+    (setq ido-current-directory 
+          (concat (abbreviate-file-name ido-current-directory) ido-text ))
+    (setq ido-text <span class="string">""</span>)
+    (ido-edit-input)
+    )
+  
+  (<span class="keyword">defun</span> <span class="function">ido-my-keys</span> ()
+    <span class="string">"Add my keybindings for ido."</span>
+    (<span class="keyword cl">when</span> (eq ido-cur-item 'file)
+      (define-key ido-mode-map (kbd <span class="string">"ESC DEL"</span>) 'ido-delete-backward-updir)
+      (define-key ido-mode-map (kbd <span class="string">"C-e"</span>) 'ido-my-edit-input)
+      (define-key ido-mode-map (kbd <span class="string">"&lt;backspace&gt;"</span>) 'ido-my-edit-input)
+     ))</pre><p>Maybe this is useless with recent versions of emacs/ido, but here I’m forced to use emacs 21, so I downloaded ido 1.56 from cua.dk (see above) and it works like a charm. My only difficulty was that I had to comment this line in  ido-read-internal, and i don’t really know what kind of wizardry I am trying to cheat here.</p><pre>   <span class="comment">;;(process-environment (cons <span class="string">"HOME=/"</span> process-environment)) </span></pre><p>– <a class="local" href="http://www.emacswiki.org/emacs/Gyom">Gyom</a></p><h3 id="toc27">Invoke any command using ido in other window / split window, deciding after the fact instead of before</h3><p>This makes ido-find-file-other-window, ido-switch-buffer-other-window, et. al obsolete. It’s a much better abstraction, and I believe it should become apart of ido mode, because <em style="text-decoration: underline; font-style: normal;">any</em> command that uses ido-completing-read can benefit from it without any additional effort, including textmate.el’s textmate-goto-symbol.</p><p><a class="url http" href="http://gist.github.com/493269">http://gist.github.com/493269</a></p><h3 id="toc28">Make RET easier to use with ido-find-file</h3><p>Both SPC and RET in ido-find-file cause ido to descend directories. C-j can be used to select a matched directory name, but if used after typing a prefix, it creates a new file of that name. What I need is a binding between the two: where RET immediately selects whatever directory is shown in the minibuffer -- or has been partially selected – while SPC or / can be used to keep descending. Doing things required a hack, as there is no customization to achieve this. Here is the code for your .emacs. – <a class="local" href="http://www.emacswiki.org/emacs/JohnWiegley">JohnWiegley</a></p><pre>  (<span class="keyword">defun</span> <span class="function">ido-smart-select-text</span> ()
+    <span class="string">"Select the current completed item.  Do NOT descend into directories."</span>
+    (interactive)
+    (<span class="keyword cl">when</span> (and (or (not ido-require-match)
+                   (<span class="keyword elisp">if</span> (memq ido-require-match
+                             '(confirm confirm-after-completion))
+                       (<span class="keyword elisp">if</span> (or (eq ido-cur-item 'dir)
+                               (eq last-command this-command))
+                           t
+                         (setq ido-show-confirm-message t)
+                         nil))
+                   (ido-existing-item-p))
+               (not ido-incomplete-regexp))
+      (<span class="keyword cl">when</span> ido-current-directory
+        (setq ido-exit 'takeprompt)
+        (<span class="keyword cl">unless</span> (and ido-text (= 0 (length ido-text)))
+          (<span class="keyword elisp">let</span> ((match (ido-name (car ido-matches))))
+            (<span class="keyword">throw</span> '<span class="constant">ido</span>
+                   (setq ido-selected
+                         (<span class="keyword elisp">if</span> match
+                             (replace-regexp-in-string <span class="string">"/\\'"</span> <span class="string">""</span> match)
+                           ido-text)
+                         ido-text ido-selected
+                         ido-final-text ido-text)))))
+      (exit-minibuffer)))
+  
+  (<span class="keyword elisp">eval-after-load</span> <span class="string">"ido"</span>
+    '(define-key ido-common-completion-map <span class="string">"\C-m"</span> 'ido-smart-select-text))</pre><h3 id="toc29">ido-hacks.el</h3><p>Misc collection of ido changes, including making it behave better with dired’s copying and renaming commands (such as putting directory as first option).</p><p>Emacs 23 and lower: <a class="url http" href="http://www0.fh-trier.de/~politza/emacs/ido-hacks.el.gz">http://www0.fh-trier.de/~politza/emacs/ido-hacks.el.gz</a> An Emacs 24 compatible version is available at <a class="url http" href="https://github.com/scottjad/ido-hacks">https://github.com/scottjad/ido-hacks</a></p><h3 id="toc30">Multi-select</h3><p>Simple function that can be used to select multiple items using <code>ido-completing-read</code> by injecting a “sentinel” value into the possible choices and reading in a loop until the user chooses the sentinel value. The selected choices are returned in a list.</p><p><a class="url http" href="https://gist.github.com/1329188">https://gist.github.com/1329188</a></p><p>– <a class="local" href="http://www.emacswiki.org/emacs/mgalgs">mgalgs</a></p><h2 id="toc31">ido-preview</h2><p>Two functions, that allow to view current item contents in a temporary buffer and window(clearing surrounding windows, but it’s safe). Content is either file contents, buffer contents or function description.</p><p>Content can also be second list’s element, that must be string:</p><pre>  (ido-completing-read <span class="string">"What, ... is your favorite color? "</span>
+    (list
+      (list <span class="string">"red"</span> <span class="string">"Red is #ff0000"</span>)
+      (list <span class="string">"blue"</span> <span class="string">"Blue is #0000ff"</span>)
+      <span class="string">"yellow"</span>
+      <span class="string">"clear"</span>
+      (list <span class="string">"i-dont-know"</span> <span class="string">"So why do you think my ido-preview will ever know it?"</span>)))</pre><p><a class="inter Lisp" href="http://www.emacswiki.org/emacs/ido-preview.el"><span class="site">Lisp</span><span class="separator">:</span><span class="page">ido-preview.el</span></a></p><h2 id="toc32">Icicles and Ido</h2><p><a class="local" href="http://www.emacswiki.org/emacs/Icicles">Icicles</a> is similar to Ido in some ways, and the two are sometimes confused. In Icicles, you use the same <a class="alias" title="MiniBuffer" href="http://www.emacswiki.org/emacs/MiniBuffer#minibuffer">minibuffer</a> interface for files, <a class="alias" title="Buffer" href="http://www.emacswiki.org/emacs/Buffer#buffer">buffer</a>s, <a class="alias" title="Command" href="http://www.emacswiki.org/emacs/Command#command">command</a>s – everything (even <a class="alias" title="KeySequence" href="http://www.emacswiki.org/emacs/KeySequence#key">key</a>s). Like Ido, Icicles offers <a class="local" href="http://www.emacswiki.org/emacs/Icicles_-_Cycling_Completions">cycling</a> and several kinds of completion matching (<a class="alias" title="RegularExpression" href="http://www.emacswiki.org/emacs/RegularExpression#regexp">regexp</a>, substring, 5 kinds of <a class="local" href="http://www.emacswiki.org/emacs/Icicles_-_Fuzzy_Completion">fuzzy</a>, prefix).</p><p>Unlike Ido, in Icicles you can:</p><ul><li>Compose match patterns (e.g. regexps), applying them one after the other to narrow down choices (like <code>‘grep’</code> piping) – <a class="alias" title="Icicles_-_Progressive_Completion" href="http://www.emacswiki.org/emacs/Icicles_-_Progressive_Completion#progressive_completion">progressive completion</a>.</li><li>Perform actions on multiple candidates on the fly – see <a class="local" href="http://www.emacswiki.org/emacs/Icicles_-_Multi-Commands">multi-commands</a>.</li><li>Manipulate (union, intersection, diff, complement) and save <a class="local" href="http://www.emacswiki.org/emacs/Icicles_-_Candidate_Sets">sets of candidates</a> and reuse them later. <a class="anchor" name="InvokeBookmarks"></a></li><li>Access <a class="local" href="http://www.emacswiki.org/emacs/Icicles_-_Bookmark_Enhancements">bookmarks</a> on the fly: a file bookmark when you use <code>‘C-x C-f’</code>, an <a class="local" href="http://www.emacswiki.org/emacs/Info">Info</a> bookmark when you use <code>‘g’</code> to go to an Info node, etc. <a class="anchor" name="SortOrder"></a></li><li>Change the completion <a class="local anchor" href="http://www.emacswiki.org/emacs/Icicles_-_Sorting_Candidates#DifferentSortForDifferentUses">sort order</a> on the fly.</li></ul><p>You cannot use Icicles and Ido together – they use the minibuffer differently. You can, however, use Icicles and <a class="alias" title="IswitchBuffers" href="http://www.emacswiki.org/emacs/IswitchBuffers#IswitchB">IswitchB</a> together. (<span>IswitchB</span> provides buffer-switching similar to Ido, but it does not provide Ido’s file visiting.) And you can make Icicles behave more like Ido, if you prefer that interaction – see <a class="local" href="http://www.emacswiki.org/emacs/Icicles_-_Ido_and_IswitchB">Icicles - Ido and IswitchB</a>.</p><h2 id="toc33">Ido History</h2><p>Quote from the history section of ido.el:</p><dl class="quote"><dt></dt><dd>Since I discovered <a class="local" href="http://www.emacswiki.org/emacs/StephenEglen">StephenEglen</a>’s excellent iswitchb package, I just couldn’t live without it, but once being addicted to switching buffers with a minimum of keystrokes, I soon found that opening files in the old-fashioned way was just too slow - so I decided to write a package which could open files with the same speed and ease as iswitchb could switch buffers.</dd><dt></dt><dd>I originally wrote a separate ifindf.el package based on a copy of iswitchb.el, which did for opening files what iswitchb did for switching buffers. Along the way, I corrected a few errors in ifindf which could have found its way back into iswitchb, but since most of the functionality of the two package was practically identical, I decided that the proper thing to do was to merge my ifindf package back into iswitchb.</dd><dt></dt><dd>This is basically what ido (interactively do) is all about; but I found it awkward to merge my changes into the “iswitchb-” namespace, so I invented a common “ido-” namespace for the merged packages.</dd></dl><h3 id="toc34">Preventing auto-searches unless called explicitly</h3><pre>   <span class="comment">;; a better solution</span>
+   (setq ido-auto-merge-work-directories-length -1)</pre><pre>   <span class="comment">;; disable auto searching for files unless called explicitly</span>
+   (setq ido-auto-merge-delay-time 99999)</pre><pre>   (define-key ido-file-dir-completion-map (kbd <span class="string">"C-c C-s"</span>) 
+      (<span class="keyword elisp">lambda</span>() 
+        (interactive)
+        (ido-initiate-auto-merge (current-buffer))))</pre><h2 id="toc35">Bugs</h2><p>I’m not sure where to add this so I’m just putting it here for people who may find a problem with ido-mode. I’ve used iswitchb for a while, but when I would try ido, things just didn’t work, I couldn’t select files, directories, or even go to the next item in the list. What I found was that my customization of MComplete mode was overriding the ido mode such that C-s, etc. weren’t calling ido functions, but mcomplete functions. All I had to do to get ido to work like I would expect was to turn off mcomplete-mode in my customizations. I hope this helps someone - MattSavoie<a class="edit" title="按此即可編輯此頁面" rel="nofollow" href="http://www.emacswiki.org/emacs?action=edit;id=MattSavoie">?</a></p><div class="color one level0"><p> After C-x C-f in ido-mode, M-r doesn’t work as expected. With the default find-file, you can regexp search for recently opened files. With ido, the file names do show up in ido-work-file-list but I always get a ‘no earlier matching history item’ when searching for a history item.</p></div><div class="color two level0"><p> Issuing a M-f or M-d (wide find while at the ido find file prompt) inside a directory with “spaces” doesn’t match anything. Issuing the command a level above matches everything but doesn’t traverse the directory with “spaces”. The space isn’t the first character.</p></div><h2 id="toc36">A Hint About "Too Big"</h2><p>Once upon a time, I created a lot of files in a given directory. When I later tried to open a file in that directory with C-x C-f (ido-find-file), not surprisingly, it displayed [Too Big], rather than showing me a list of files in that directory.</p><p>But after I deleted all those files, it <em style="text-decoration: underline; font-style: normal;">still</em> said [Too Big]. Even after rebooting Emacs!</p><p>I eventually realized that the directory <em style="text-decoration: underline; font-style: normal;">itself</em> was Too Big – Unix directories get bigger as you add files, but, oddly, don’t get smaller when you delete those files – and so I needed to ensmallen it. I did that by creating a new directory “frotz”, and in the old, too-big directory, doing something like <code>find . -mindepth 1 -maxdepth 1 -exec mv {} frotz ';'</code>. That moved everything from the old directory to the new. Then I deleted the old directory, and renamed the new one to the old one’s name. Voila.</p><p>You could call this “garbage-collecting” a directory.</p><hr><div class="color one level0"><p> Alternatively, you can change the value of ido-max-directory-size:</p><pre> (setq ido-max-directory-size 100000)</pre><p>--JasonDunsmore<a class="edit" title="按此即可編輯此頁面" rel="nofollow" href="http://www.emacswiki.org/emacs?action=edit;id=JasonDunsmore">?</a></p></div><h2 id="toc37">Wish list</h2><h3 id="toc38">truename files</h3><div class="color one level0"><p> it would be nice if ido could truename files. ido blows away the truenaming of files that i had set up with ffap. It can be very confusing to open a symlink and have the buffer name be the name of the symlink. I fixed this in ffap with the following code, but I don’t know where to fix it in ido since it does not seem to have a finder variable.</p><pre>  <span class="comment">;;finding file keeps buffer name as symlink name.  all the truename vars do</span>
+  <span class="comment">;;not fix.  this does.  this should use before advice changing filename?</span></pre><pre>  (<span class="keyword">defun</span> <span class="function">alpha-find-file-truename</span> (filename <span class="type">&amp;optional</span> codesys)
+    <span class="string">"used for ffap."</span>
+    (interactive <span class="string">"FFile name (will be truenamed): "</span>)
+    (find-file (file-truename filename) codesys))</pre><pre>  (setf ffap-file-finder 'alpha-find-file-truename)</pre><pre>  <span class="comment">;;here are variables.  they are insufficient for getting the ;;truename.  in emacs 22, you only get truename if you</span>
+  <span class="comment">;;already had the original file in a buffer.  it is as if these</span>
+  <span class="comment">;;variables are simply ignored.  there are no other variables.</span></pre><pre>  (setf find-file-compare-truenames t)    <span class="comment">;xemacs</span></pre><pre>  (setf find-file-existing-other-name t)  <span class="comment">;emacs and xemacs alias for ffct</span></pre><pre>  <span class="comment">;;find-file-use-truenames seems to default to t in xemacs but not in emacs.</span>
+  <span class="comment">;;why can't they compare inode for hard links and what happens if these are nil?</span>
+  (setf find-file-visit-truename t)</pre><p>--gambarimasu</p></div><h3 id="toc39">bury buffer</h3><div class="color one level0"><p> Sometimes I think it would be convenient to be able to bury buffer. I can use bury-buffer command, and it works with standard emacs C-xb, but ido seems to ignore it. Is there a way to bury buffer in ido? – <a class="local" href="http://www.emacswiki.org/emacs/KonstantinAntipin">KonstantinAntipin</a></p></div><h3 id="toc40">zsh style completion</h3><div class="color one level0"><p> I find ido-find-file too intrusive, I would prefer something that ressembles my menu completion in zsh. It would run the regular find-file, and switch to ido when I press TAB twice. From there I could select my item with the arrows and RET then the minibuffer would return to find-file mode.</p><p>The relevant zsh config is here: <a class="url http" href="http://zshwiki.org/home/examples/compquickstart">http://zshwiki.org/home/examples/compquickstart</a> – DenisMartinez<a class="edit" title="按此即可編輯此頁面" rel="nofollow" href="http://www.emacswiki.org/emacs?action=edit;id=DenisMartinez">?</a></p></div><h3 id="toc41">ido and ibus</h3><div class="color one level0"><p> I have a number of files named in Chinese. In the standard find-file I can use ibus to enter their names, or part of their names. This doesn’t work with ido-find-file. – <a class="local" href="http://www.emacswiki.org/emacs/Bernard_Hurley">Bernard Hurley</a></p></div><div class="color two level0"><p> You might get some help here, but this sounds like a bug. Please use <code>‘M-x report-emacs-bug’</code>, providing a recipe from <code>emacs -Q</code>. – <a class="local" href="http://www.emacswiki.org/emacs/DrewAdams">DrewAdams</a></p></div><div class="color one level0"><p>Done!! – <a class="local" href="http://www.emacswiki.org/emacs/Bernard_Hurley">Bernard Hurley</a></p></div><h3 id="toc42">Searching for unicode characters with IsearchPlus when IdoUbiquitous is enabled.</h3><div class="color one level0"><p>In Emacs 24.2.1, and maybe other versions, if you use <a class="local" href="http://www.emacswiki.org/emacs/IsearchPlus">IsearchPlus</a> with Ido Ubiquitous enabled, you find that you can’t search for unicode charaters and if you try an error is generated. In Emacs 24.2.1 the solution is to disable Ido’s advice around ‘completing-read’ when ‘isearchp-read-unicode-char’ is called. This can be done by putting:</p><p><code>
+     (ido-ubiquitous-disable-in isearchp-read-unicode-char)
+</code></p><p>in your .emacs file. When I first did this, I evaluated the form interactively and it didn’t seem to fix the problem - I don’t know why - but it worked next time I started up Emacs. – <a class="local" href="http://www.emacswiki.org/emacs/Bernard_Hurley">Bernard Hurley</a></p></div><h3 id="toc43">Grouping files by directories.</h3><div class="color one level0"><p>It will be very helpful, especially when browsing code, to be able to group files by directories (so that we get some sort of tree representation) in the ibuffer mode.</p></div><hr><p><a class="local" href="http://www.emacswiki.org/emacs/CategoryCommands">CategoryCommands</a> <a class="local" href="http://www.emacswiki.org/emacs/CategoryBufferSwitching">CategoryBufferSwitching</a> <a class="local" href="http://www.emacswiki.org/emacs/CategoryCompletion">CategoryCompletion</a></p></div><div class="wrapper close container"></div></div><div class="footer_wrapper"><div class="footer container"><hr><span class="translation bar"> <a class="translation fr" href="http://www.emacswiki.org/emacs-fr/FaireDesChosesInt%C3%83%C2%A9ractivement">Français</a> <a class="translation new" rel="nofollow" href="http://www.emacswiki.org/emacs?action=translate;id=InteractivelyDoThings;missing=de_es_it_ja_ko_pt_ru_se_zh">Add Translation</a></span><hr><span class="edit bar"><br>  <a class="edit btn" accesskey="e" title="按此即可編輯此頁面" rel="nofollow" href="http://www.emacswiki.org/emacs?action=edit;id=InteractivelyDoThings">編輯本頁</a> <a class="history btn" rel="nofollow" href="http://www.emacswiki.org/emacs?action=history;id=InteractivelyDoThings">參閱其他版本</a> <a class="admin btn" rel="nofollow" href="http://www.emacswiki.org/emacs?action=admin;id=InteractivelyDoThings">管理 Oddmuse</a></span><hr><span class="time"><br> 最後編輯於 2014-05-28 10:51 UTC 由 <a class="author" title="122.248.183.23" href="http://www.emacswiki.org/emacs/sagar">sagar</a> <a class="diff" rel="nofollow" href="http://www.emacswiki.org/emacs?action=browse;diff=2;id=InteractivelyDoThings">(比較差異)</a></span><div style="float: right; margin-left: 1ex; margin-right: 120px; opacity: 0.3; padding-top: 1em;">
+<!-- Creative Commons License -->
+<a class="licence" href="http://creativecommons.org/licenses/GPL/2.0/"><img alt="CC-GNU GPL" style="border:none" src="./ido_files/cc-GPL-a.png"></a>
+<!-- /Creative Commons License -->
+</div>
+
+<!--
+<rdf:RDF xmlns="http://web.resource.org/cc/"
+ xmlns:dc="http://purl.org/dc/elements/1.1/"
+ xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+<Work rdf:about="">
+   <license rdf:resource="http://creativecommons.org/licenses/GPL/2.0/" />
+  <dc:type rdf:resource="http://purl.org/dc/dcmitype/Software" />
+</Work>
+
+<License rdf:about="http://creativecommons.org/licenses/GPL/2.0/">
+   <permits rdf:resource="http://web.resource.org/cc/Reproduction" />
+   <permits rdf:resource="http://web.resource.org/cc/Distribution" />
+   <requires rdf:resource="http://web.resource.org/cc/Notice" />
+   <permits rdf:resource="http://web.resource.org/cc/DerivativeWorks" />
+   <requires rdf:resource="http://web.resource.org/cc/ShareAlike" />
+   <requires rdf:resource="http://web.resource.org/cc/SourceCode" />
+</License>
+</rdf:RDF>
+-->
+
+<p class="legal">
+This work is licensed to you under version 2 of the
+<a href="http://www.gnu.org/">GNU</a> <a href="http://www.emacswiki.org/GPL">General Public License</a>.
+Alternatively, you may choose to receive this work under any other
+license that grants the right to use, copy, modify, and/or distribute
+the work, as long as that license imposes the restriction that
+derivative works have to grant the same rights and impose the same
+restriction. For example, you may choose to receive this work under
+the
+<a href="http://www.gnu.org/">GNU</a>
+<a href="http://www.emacswiki.org/FDL">Free Documentation License</a>, the
+<a href="http://creativecommons.org/">CreativeCommons</a>
+<a href="http://creativecommons.org/licenses/sa/1.0/">ShareAlike</a>
+License, the XEmacs manual license, or
+<a href="http://www.emacswiki.org/OLD">similar licenses</a>.
+</p>
+</div></div>
+
+
+<div class="vimiumReset vimiumHUD" style="right: 150px; opacity: 0; display: none;">Yanked URL</div></body></html>

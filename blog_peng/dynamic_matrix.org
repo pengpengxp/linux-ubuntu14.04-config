@@ -1,0 +1,96 @@
+* 动态分配二维矩阵
+
+C语言中，动态分配一个矩阵的话。我现在找到了一个“模拟”的方法：使用指针数组。为每个指针动态分配？但是有缺陷。
+
+#+BEGIN_SRC c
+  #define N 10
+  char *peng[N];
+  int i;
+  for(i = 0;i < N;i++)
+  {
+       peng[i] = (char*)malloc(N * sizeof(char));
+  }
+#+END_SRC
+然后可以使用。不过这是因为char和int可以通用。所以只能算是模拟的。没有找到完美解决方案。
+
+还是解决了：
+#+BEGIN_SRC c
+  #include<stdio.h>
+  #include<stdlib.h>
+  #define N 4
+  int main()
+  {
+       int **peng;
+       peng = (int **)malloc(2*sizeof(int*));
+       peng[0] = (int*)malloc(2*sizeof(int));
+       peng[1] = (int*)malloc(2*sizeof(int));
+       int i,j;
+
+       for(i = 0;i < 2;i++)
+       {
+            for(j = 0;j < 2;j++)
+            {
+                 peng[i][j] = 1;
+            }
+       }
+
+       for(i = 0;i < 2;i++)
+       {
+            for(j = 0;j < 2;j++)
+            {
+                 printf("%d\t",peng[i][j]);
+            }
+            printf("\n");
+       }
+       free(peng[0]);
+       free(peng[1]);
+       free(peng);
+  }
+#+END_SRC
+
+
+另外：
+#+BEGIN_SRC c
+  #include<stdio.h>
+  #include<stdlib.h>
+  #define N 4
+  int main()
+  {
+       int *peng[N];
+       /* peng = (int **)malloc(N*sizeof(int*)); */
+       peng[0] = (int*)malloc(N*sizeof(int));
+       peng[1] = (int*)malloc(N*sizeof(int));
+       peng[2] = (int*)malloc(N*sizeof(int));
+       peng[3] = (int*)malloc(N*sizeof(int));
+       int i,j;
+
+       for(i = 0;i < N;i++)
+       {
+            for(j = 0;j < N;j++)
+            {
+                 peng[i][j] = N * i + j;
+            }
+       }
+
+       for(i = 0;i < N;i++)
+       {
+            for(j = 0;j < N;j++)
+            {
+                 printf("%d\t",peng[i][j]);
+            }
+            printf("\n");
+       }
+       free(peng[0]);
+       free(peng[1]);
+       free(peng[2]);
+       free(peng[3]);
+       /* free(peng); */
+  }
+#+END_SRC
+也就是说：int *peng[N] 和int **peng的区别就是前者是确定了一维的。动态分配只能分配一维，而后者是完全动态分配的。
+这些都可以帮助理解：指向指针的指针和指针数组。
+另外。多维数组的话，就是完全静态分配的了;
+比如：
+#+BEGIN_SRC c
+  int peng[10][10];
+#+END_SRC

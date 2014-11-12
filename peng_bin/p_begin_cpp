@@ -1,0 +1,20 @@
+#!/bin/sh
+
+DIR=`pwd`
+
+echo "#include <iostream>
+using namespace std;
+int main(int argc, char *argv[])
+{
+     return 0;
+}" > ${DIR}/main.cpp
+
+
+
+echo ".PHONY:a.out
+a.out:
+	g++ main.cpp
+clean:
+	rm -rfv *~ a.out" > ${DIR}/makefile
+
+echo OK

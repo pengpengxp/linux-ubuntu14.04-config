@@ -1,0 +1,662 @@
+CentOs问题集结
+ 
+putty-network error:no route to host
+CentO启动关闭和服务管理  
+
+2010-04-24 17:44:59|  分类： Linux |字号 订阅
+
+转自centospub论坛上tgyouki兄弟，在此多谢了。
+
+CentOS启动顺序
+
+CentO启动关闭和服务管理 - 我无泪 - 我无泪 CentO启动关闭和服务管理 - 我无泪 - 我无泪
+
+下载 (21.42 KB)
+
+2006-12-28 19:38
+
+1.当我们按下电源按钮，把电源投入到机器中后，
+
+  首先被启动执行的就是这个BIOS（BasicInput/Output System）程序。
+
+  BIOS的功能是......并且访问硬盘先头512Bit的MBR（Master Boot Record）。
+
+2.经BIOS的控制，将MBR中的Boot Record调入内存中。
+
+  这里就要说说Linux的Boot程序了，Linux的Boot程序有GRUB和LILO，
+
+  而CentOS默认的Boot程序是ＧＲＵＢ。
+
+3.通过Boot程序，访问硬盘中的Linux内核程序。
+
+4.将内核程序调入内存中。
+
+5.内核程序调用完成后，通过内核访问硬盘中将要用到的其他文件。
+
+内核第一个执行的文件是/sbin/init，而这个文件的设置和定义文件是/etc/inittab这个文件，
+
+也就是说/sbin/init按照/etc/inittab的定义来执行下一步的启动，
+
+那我们就要看看/etc/inittab文件是怎么回事儿了。
+
+    [root@linux ~]# cat -n /etc/inittab
+
+         1  #
+
+         2  # inittab       This file describes how the INIT process should set up
+
+         3  #               the system in a certain run-level.
+
+         4  #
+
+         5  # Author:       Miquel van Smoorenburg, <miquels@drinkel.nl.mugnet.org>
+
+         6  #               Modified for RHS Linux by Marc Ewing and Donnie Barnes
+
+         7  #
+
+         8  
+
+         9  # Default runlevel. The runlevels used by RHS are:
+
+        10  #   0 - halt (Do NOT set initdefault to this)
+
+        11  #   1 - Single user mode
+
+        12  #   2 - Multiuser, without NFS (The same as 3, if you do not have networking)
+
+        13  #   3 - Full multiuser mode
+
+        14  #   4 - unused
+
+        15  #   5 - X11
+
+        16  #   6 - reboot (Do NOT set initdefault to this)
+
+        17  #
+
+        18  id:3:initdefault:    ← 默认的启动模式
+
+        19  
+
+        20  # System initialization.
+
+        21  si::sysinit:/etc/rc.d/rc.sysinit    ← boot时的处理
+
+        22  
+
+        23  l0:0:wait:/etc/rc.d/rc 0     ←  23-29行，各启动模式的处理，分别启动/etc/rc.d/rcX.d脚本
+
+        24  l1:1:wait:/etc/rc.d/rc 1
+
+        25  l2:2:wait:/etc/rc.d/rc 2
+
+        26  l3:3:wait:/etc/rc.d/rc 3
+
+        27  l4:4:wait:/etc/rc.d/rc 4
+
+        28  l5:5:wait:/etc/rc.d/rc 5
+
+        29  l6:6:wait:/etc/rc.d/rc 6
+
+        30  
+
+        31  # Trap CTRL-ALT-DELETE
+
+        32  ca::ctrlaltdel:/sbin/shutdown -t3 -r now    ← Ctrl+Alt+Del被激活时的处理
+
+        33  
+
+        34  # When our UPS tells us power has failed, assume we have a few minutes
+
+        35  # of power left.  Schedule a shutdown for 2 minutes from now.
+
+        36  # This does, of course, assume you have powerd installed and your
+
+        37  # UPS connected and working correctly.  
+
+        38  pf::powerfail:/sbin/shutdown -f -h +2 "Power Failure; System Shutting Down"   ← 电源off时的处理
+
+        39  
+
+        40  # If power was restored before the shutdown kicked in, cancel it.
+
+        41  pr:12345:powerokwait:/sbin/shutdown -c "Power Restored; Shutdown Cancelled"    ← 电源on时的处理
+
+        42  
+
+        43  
+
+        44  # Run gettys in standard runlevels    ←  45-50行是6个虚拟终端
+
+        45  1:2345:respawn:/sbin/mingetty tty1
+
+        46  2:2345:respawn:/sbin/mingetty tty2
+
+        47  3:2345:respawn:/sbin/mingetty tty3
+
+        48  4:2345:respawn:/sbin/mingetty tty4
+
+        49  5:2345:respawn:/sbin/mingetty tty5
+
+        50  6:2345:respawn:/sbin/mingetty tty6
+
+        51  
+
+        52  # Run xdm in runlevel 5
+
+        53  x:5:respawn:/etc/X11/prefdm -nodaemon    ← 启动模式5的时候，启动/etc/X11窗口系统
+
+    [root@linux ~]#
+
+复制代码
+
+在以上的这个文件中，#开头的文件是注释文件，可以忽略不看，但是能够很好的帮我们了解文件。
+
+文件的执行顺序是从上到下的，逐次执行的。
+
+这个文件中的定义形势如下：   
+
+通过下表的说明去看这个文件，就清晰明了的多了！
+
+    <id>:<runlevel>:<action>:<process>
+
+复制代码
+
+id
+
+	不重复的任意数字
+
+runlevel
+
+	
+
+0~6的启动级别（模式）                        
+
+action     
+
+	
+
+initdefault
+
+	
+
+定义默认时的启动级（模式）
+
+sysinit
+
+	
+
+引导（boot）中执行            
+
+wait
+
+	
+
+引导中执行一次，直到init进程为止      
+
+respawn
+
+	
+
+进程停止的情况下，再启动
+
+powerfall
+
+	
+
+当接收到电源异常信号时，执行
+
+ctrlaltdel
+
+	
+
+当接收到Ctrl+Alt+Del指令时，执行
+
+process
+
+	
+
+定义被执行的命令
+
+通过上面的说明，我想你应该可以明白/etc/inittab中的定义是怎么一回事儿了。
+
+※我们可以试想一下，如果我们按照它的书写格式的要求，添加一些自己的执行要求可以吗？
+
+※这个文件很有用的哦！
+
+下面我们重点看18，21，26行（其他的自己研究）。
+
+通过上表我们可以知道：
+
+  18行的定义是默认的启动级别是“3“文本模式。
+
+  21行的定义是启动的过程中执行/etc/rc.d/rc.sysinit文件（启动级别是空，
+
+    也就是说无论什么级别都执行这个文件），这个文件很长有差不多1000行的内容，
+
+    主要功能是启动网络，读取文件系统，使swap有效化和调入模块等动作。
+
+  26行的定义和上面的18行的定义是对应的，也就是说18行定义的启动级别是"X"，
+
+    那么就执行文件23到29行定义中的"X"。
+
+    这里18行定义的是启动级别3，就执行26行中启动级别3的定义，
+
+    执行/etc/rc.d/rc脚本文件（控制文件），并将18行定义的启动级别以参数的形势交给/etc/rc.d/rc文件进行处理。
+
+    这里我们看到“l3:3:wait:/etc/rc.d/rc 3”是把启动级别3交给文件rc处理，
+
+   那我们有必要看看rc文件都定义了什么。
+
+※物理接触保护，可以注释掉32，这样开机后，接触服务器机器也不能重起，只能通过命令重起。
+
+※但是还有关于电源按钮的相关操作，如果是试验的机器，可以捅咕捅咕看看结果。
+
+/etc/rc.d/rc文件内容如下：
+
+    [root@linux ~]# cat -n /etc/rc.d/rc
+
+         1  #! /bin/bash
+
+         2  #
+
+         3  # rc            This file is responsible for starting/stopping
+
+         4  #               services when the runlevel changes.            
+
+         5  #
+
+         6  # Original Author:      
+
+         7  #               Miquel van Smoorenburg, <miquels@drinkel.nl.mugnet.org>
+
+         8  #
+
+         9  
+
+        10  # check a file to be a correct runlevel script
+
+        11  check_runlevel ()
+
+        12  {
+
+        13          # Check if the file exists at all.
+
+        14          [ -x "$1" ] || return 1
+
+        15  
+
+        16          # Reject backup files and files generated by rpm.
+
+        17          case "$1" in
+
+        18                  *.rpmsave|*.rpmorig|*.rpmnew|*~|*.orig)
+
+        19                          return 1
+
+        20                          ;;
+
+        21          esac
+
+        22          return 0
+
+        23  }
+
+        24  
+
+        25  # Now find out what the current and what the previous runlevel are.
+
+        26  argv1="$1"
+
+        27  set `/sbin/runlevel`
+
+        28  runlevel=$2
+
+        29  previous=$1
+
+        30  export runlevel previous
+
+        31  
+
+        32  . /etc/init.d/functions
+
+        33  
+
+        34  # See if we want to be in user confirmation mode
+
+        35  if [ "$previous" = "N" ]; then
+
+        36          if [ -f /var/run/confirm ]; then
+
+        37                  echo $"Entering interactive startup"
+
+        38          else
+
+        39                  echo $"Entering non-interactive startup"
+
+        40          fi
+
+        41  fi
+
+        42  
+
+        43  # Get first argument. Set new runlevel to this argument.
+
+        44  [ -n "$argv1" ] && runlevel="$argv1"
+
+        45  
+
+        46  # Is there an rc directory for this new runlevel?
+
+        47  [ -d /etc/rc$runlevel.d ] || exit 0
+
+        48  
+
+        49  # First, run the KILL scripts.
+
+        50  for i in /etc/rc$runlevel.d/K* ; do
+
+        51          check_runlevel "$i" || continue
+
+        52  
+
+        53          # Check if the subsystem is already up.
+
+        54          subsys=${i#/etc/rc$runlevel.d/K??}
+
+        55          [ -f /var/lock/subsys/$subsys -o -f /var/lock/subsys/$subsys.init ] \
+
+        56                  || continue
+
+        57  
+
+        58          # Bring the subsystem down.
+
+        59          if egrep -q "(killproc |action )" $i ; then
+
+        60                  $i stop
+
+        61          else
+
+        62                  action $"Stopping $subsys: " $i stop
+
+        63          fi
+
+        64  done
+
+        65  
+
+        66  # Now run the START scripts.
+
+        67  for i in /etc/rc$runlevel.d/S* ; do
+
+        68          check_runlevel "$i" || continue
+
+        69  
+
+        70          # Check if the subsystem is already up.
+
+        71          subsys=${i#/etc/rc$runlevel.d/S??}
+
+        72          [ -f /var/lock/subsys/$subsys -o -f /var/lock/subsys/$subsys.init ] \
+
+        73                  && continue
+
+        74                     
+
+        75          # If we're in confirmation mode, get user confirmation
+
+        76          if [ -f /var/run/confirm ]; then
+
+        77                  confirm $subsys
+
+        78                  test $? = 1 && continue
+
+        79          fi
+
+        80  
+
+        81          update_boot_stage "$subsys"
+
+        82          # Bring the subsystem up.
+
+        83          if [ "$subsys" = "halt" -o "$subsys" = "reboot" ]; then
+
+        84                  export LC_ALL=C
+
+        85                  exec $i start
+
+        86          fi
+
+        87          if egrep -q "(daemon |action |success |failure )" $i 2>/dev/null \
+
+        88                          || [ "$subsys" = "single" -o "$subsys" = "local" ]; then
+
+        89                  $i start
+
+        90          else
+
+        91                  action $"Starting $subsys: " $i start
+
+        92          fi
+
+        93  done
+
+        94  rm -f /var/run/confirm
+
+        95  if [ -x /usr/bin/rhgb-client ] && /usr/bin/rhgb-client --ping ; then
+
+        96    /usr/bin/rhgb-client --quit
+
+        97  fi
+
+    [root@linux ~]#
+
+复制代码
+
+在这个文件中我们看看如下的几行：
+
+  50行以K开头的脚本文件
+
+  60行执行stop
+
+  67行以S开头的脚本文件
+
+  91行执行start
+
+在这个文件中，每个程序块的部分都有注释（#开头的行），如果有兴趣的话可以自行研究一下。
+
+似乎不是那么太难，就是check→do，确认后执行，判断后执行的样子。
+
+rc.d目录下面的文件：
+
+    [root@linux ~]# ls -l /etc/rc.d
+
+    总用量 112
+
+    drwxr-xr-x  2 root root  4096 12月 28 12:45 init.d
+
+    -rwxr-xr-x  1 root root  2352 2004-03-17  rc
+
+    drwxr-xr-x  2 root root  4096 12月 28 12:45 rc0.d
+
+    drwxr-xr-x  2 root root  4096 12月 28 12:45 rc1.d
+
+    drwxr-xr-x  2 root root  4096 12月 28 12:45 rc2.d
+
+    drwxr-xr-x  2 root root  4096 12月 28 12:45 rc3.d
+
+    drwxr-xr-x  2 root root  4096 12月 28 12:45 rc4.d
+
+    drwxr-xr-x  2 root root  4096 12月 28 12:45 rc5.d
+
+    drwxr-xr-x  2 root root  4096 12月 28 12:45 rc6.d
+
+    -rwxr-xr-x  1 root root   220 2003-06-24  rc.local
+
+    -rwxr-xr-x  1 root root 27584  8月 13 17:10 rc.sysinit
+
+    [root@linux ~]# 
+
+复制代码
+
+我们看到了，在这个目录下面，有刚才提到的rc文件，还有另外的一些文件，我们来简单说明一下。
+
+1. init.d
+
+  这个不是文件，是一个目录，这个目录下面存放着各各服务的控制脚本，
+
+  这下面的文件和你安装了些什么软件包有关系。
+
+  如果 你有兴趣你可以察看他们的脚本文件，接下来的说明中我们还会说到他，
+
+  因为/etc/rc.d/rcX.d下的文件和这个init.d下面的文件是通过软连接相连的。
+
+2. rc
+
+  这个文件我们上面提到过，跳过了。
+
+3. rc.local
+
+  这个文件也许会用到，如果你安装了一些软件或服务，并非系统标准的服务，
+
+  比如手动的安装了Httpd，这样你用chkconfig命令是无法操作httpd的，
+
+  开启服务器的时候也并不默认的启动这个httpd服务，
+
+  这个时候你就可以将启动命令写到这个文件中，让开机启动服务完毕之后，
+
+  最后启动这个httpd服务，注意是最后。这里说的httpd只是一个例子，
+
+  将来也许会有很多的自己安装的服务会用到这个文件，知道一下，
+
+  要用到的时候自然就明白。当然还有另外一种方法，就是自己写一个启动脚本文件，
+
+  让系统开机时读取脚本文件来对httpd进行启动操作
+
+  ※如果你解除过FreeBSD系统，你会发现它就是那个rc.local文件的功能。
+
+4. rc.sysini
+
+  我们上面提到过这个文件，这个文件是在boot的时候就被执行的脚本，
+
+  它的任务是初始化系统的网络，设定hostname，欢迎信息表示，
+
+  时钟设置，挂载文件系统等。有兴趣可以读它的脚本文件。
+
+5. rcX.d
+
+  这个rcX.d里面的X代表了0~6的数字（6种启动模式）。
+
+  我们看到了它们都是目录，下面放着的都是我们上面说的/etc/rc.d/init.d下面文件的link。
+
+  这里我们已rc3.d为例子，简单说明一下。
+
+在察看这个文件的时候注意2点：
+
+    ls -l 察看它们的详细信息，看看他们的link指向
+    ls -l 察看它们的文件名的头字母，
+
+    形式应该是这样的[S或K <数字> <名称>]的形势。
+
+    S代表启动，K代表停止。
+
+不要迷糊，/etc/rc.d/rc就定义了这个文件名称头文字的“S”和“K”。
+
+也就是开机的时候，已S开头的脚本文件被执行，这个服务就被开机运行；
+
+那么已K开头的文件不被执行，这个文件所控制的服务也不被执行，这个文件控制的服务也不被开机运行。
+
+这样看来，我们在给服务器作优化的时候，就可以直接的将相应的启动模式（rc0.d~rc6.d）
+
+下的相应服务控制脚本的文件名改掉（S改成K,K改成S），就能够简单的优化开机时系统将运行哪儿些个服务。
+
+如果通过命令来控制的话，那命令是chkconfig命令（参照最后部分）。
+
+如果你察看过rc0.d~rc6.d的目录下的文件名称，你会发现，他们以S开都得文件名数量是不同的。
+
+  
+
+/etc/rc.d/rc3.d下都有什么（一部分而已，你可以在自己的系统下面察看全部）
+
+    [root@linux ~]# ls -l /etc/rc.d/rc3.d
+
+    合計 224
+
+    lrwxrwxrwx  1 root root 21  1月  5 05:24 K01tog-pegasus -> ../init.d/tog-pegasus
+
+    lrwxrwxrwx  1 root root 13  1月  5 05:12 K01yum -> ../init.d/yum
+
+    lrwxrwxrwx  1 root root 24  1月  5 05:12 K02NetworkManager -> ../init.d/NetworkManager
+
+    lrwxrwxrwx  1 root root 15  1月  5 05:12 K03rhnsd -> ../init.d/rhnsd
+
+    lrwxrwxrwx  1 root root 19  1月  5 05:08 K05saslauthd -> ../init.d/saslauthd
+
+    lrwxrwxrwx  1 root root 16  1月  5 05:11 K10psacct -> ../init.d/psacct
+
+    lrwxrwxrwx  1 root root 17  1月  5 05:25 K12FreeWnn -> ../init.d/FreeWnn
+
+    lrwxrwxrwx  1 root root 13  1月  5 05:12 K20nfs -> ../init.d/nfs
+
+    lrwxrwxrwx  1 root root 14  1月  5 05:11 K24irda -> ../init.d/irda
+
+    lrwxrwxrwx  1 root root 16  1月  5 05:10 K50ibmasm -> ../init.d/ibmasm
+
+    lrwxrwxrwx  1 root root 17  1月  5 05:12 K50netdump -> ../init.d/netdump
+
+    lrwxrwxrwx  1 root root 16  1月  5 05:26 K73ypbind -> ../init.d/ypbind
+
+    [root@linux ~]# 
+
+复制代码
+
+接下来我们看看控制服务的一些工具
+
+chkconfig
+
+setup
+
+system-config-services
+
+我们分别来看看这3个工具（如果还有别的，告诉我）
+
+chkconfig
+
+这个工具我们很熟悉，并且在我们的网站配置祥解中也提到过他的使用。
+
+执行权限:root
+
+命令路径:/sbin/chkconfig
+
+使用法:  
+
+         chkconfig <服务名> on            #这个和接下来的off这个其实就是把以K开头的脚本文件从命名
+
+         chkconfig <服务名> off            #如果你有兴趣自己试验一下就知道了
+
+         chkconfig --list [服务名]
+
+         chkconfig --add <服务名>
+
+         chkconfig --del <服务名>
+
+         chkconfig [--level <启动级别>] <服务名> <on|off|reset|resetpriorities>
+
+setup
+
+是系统综合的配置工具，命令行下也可以用。这个不多说，操作一下就知道怎么回事了。
+
+system-config-services
+
+如果你安装了gnome这样的窗口桌面系统，你也可以使用这个工具来体验下鼠标点击带来的方便。
+
+（如果你安装了桌面系统，可以# system-config加Tab键，会有很多工具的执行命令，体会下。）
+
+主要服务
+
+参照：
+
+http://www.centospub.com/bbs/viewthread.php?tid=1851&extra=page%3D1
+

@@ -1,0 +1,56 @@
+使用adb shell 'pm list package -f'显示所有已经安装的包。
+adb install一般安装在/data/local/tmp/下面。但是我在小米上没有发现。
+
+
+
+
+Ubuntu下 MIUI V5 adb devices 无法识别
+add by pengpengxp:拨号模式下输入 *#*#717717#*#* 即可，这个可以开启开发者选项，
+可以开启启用usb调试。用完了再重复即可关闭
+把小米手机２直接连接到ubuntu,　ADB工具不能识别，在网上找了一些文章，并折腾了一
+下终于连上了，特记录下来。
+
+参考　http://blog.csdn.net/qclzdh/article/details/7007011
+
+米２手机利用ＵＳＢ连接到Ubuntu12.04 ,　运行  lsusb命令，结果如下：
+
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 002 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 003 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
+Bus 004 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
+Bus 005 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
+Bus 006 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
+Bus 007 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
+Bus 001 Device 002: ID 148f:5370 Ralink Technology, Corp. RT5370 Wireless
+Adapter
+Bus 003 Device 002: ID 192f:0616 Avago Technologies, Pte. 
+Bus 001 Device 004: ID 2717:9039  
+
+断开连接，再次执行lsusb命令，结果如下：
+
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 002 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 003 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
+Bus 004 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
+Bus 005 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
+Bus 006 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
+Bus 007 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
+Bus 001 Device 002: ID 148f:5370 Ralink Technology, Corp. RT5370 Wireless
+Adapter
+Bus 003 Device 002: ID 192f:0616 Avago Technologies, Pte. 
+
+由此可知，Bus 001 Device 004: ID 2717:9039  就是小米手机２的, VID是0x2717　，在
+http://www.linux-usb.org/usb.ids　上找不到 ID为0x2717　的vender名称
+
+ 在用户的 home 目录下，寻找 .android 目录，如果没有就创建。在 .android 目录下新
+建一个文件，叫adb_usb.ini；添加前面获得的 VID值  0x2717　到 adb_usb.ini 中，在
+shell 中分别输入 adb kill-server, adb start-server, adb devices；若能看到
+devices 列出，那么就成功了，之后就可以使用eclipse运行应用开发了.
+
+
+Ritter:
+
+MI2S亲测方法2成功。
+
+直接$ vi adb_usb.ini 创建文件后，在开头写上0x2717即可，然后在adb devices后，若
+出现offline，要观察下手机屏幕，会提示你是否允许这台机器调试，选择允许即可。

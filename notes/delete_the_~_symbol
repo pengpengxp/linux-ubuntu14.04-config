@@ -1,0 +1,13 @@
+如果想在本次使用中不出现
+:set nobackup 
+如果以后都不想出现，修改配置文件，查看有无~/.vimrc文件，如果没有cp /usr/share/vim/vim70/vimrc_example.vim ~/.vimrc
+编辑此文件将如下行用"注释掉就好
+if has(“vms”)
+
+set nobackup
+
+else
+
+set backup
+
+endif

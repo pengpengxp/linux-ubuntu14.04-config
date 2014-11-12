@@ -1,0 +1,71 @@
+Linxu下设置屏幕分辨率方法
+设置分辨率方法
+通常情况下在Linux下屏幕分辨的设置方法有两种：
+	一种是通过图形界面的方式进行设置，但是功能比较单一，不支持自定义设置。
+另一种是通过命令的形式进行设置，正常情况下可以通过xrandr命令进行设置。
+xrandr 命令行可以很方便地切换双屏，常用方式如下：
+xrandr
+查询当前显示设备状态
+xrandr --output VGA --same-as LVDS –auto
+打开外接显示器(最高分辨率)，与笔记本液晶屏幕显示同样内容（克隆）
+xrandr --output VGA --same-as LVDS --mode 1024x768
+打开外接显示器(分辨率为1024x768)，与笔记本液晶屏幕显示同样内容（克隆）
+xrandr --output VGA --right-of LVDS --auto
+打开外接显示器(最高分辨率)，设置为右侧扩展屏幕
+xrandr --output VGA --off
+关闭外接显示器
+xrandr --output VGA --auto --output LVDS --off
+打开外接显示器，同时关闭笔记本液晶屏幕（只用外接显示器工作）
+xrandr --output VGA --off --output LVDS --auto
+关闭外接显示器，同时打开笔记本液晶屏幕 (只用笔记本液晶屏)
+（最后两种情况请小心操作，不要误把两个屏幕都关掉了。。。。）
+
+分辨率强制设置方法
+当外接显示设备无法正常识别时，可以通过手动指定的方式进行设置，设置方法如下：
+1、用cvt命令获取给定分辨率的xrandr所需参数。例如：获取1440x900如下所示。
+#cvt 1440 900
+结果如下：
+# 1440x900 59.89 Hz (CVT 1.30MA) hsync: 55.93 kHz; pclk: 106.50 MHz
+Modeline "1440x900_60.00"  106.50  1440 1528 1672 1904  900 903 909 934 -hsync +vsync
+Modeline后面的值在下边要用。
+2、执行xrandr命令查看显示设备对于命名信息。
+#xrandr
+得到显示器名称，如：VGA1、笔记本为LVDS1等，以此类推，不一定都一样。
+3、用xrandr创建一个新的显示模式。
+#xrandr --newmode "1440x900_60.00"  106.50  1440 1528 1672 1904  900 903 909 934 -hsync +vsync
+参数就是cvt结果中Modeline后面的那一堆，根据自己的参数调整。
+4、查看新添加的显示模式。
+#xrandr
+就可以看到新加的那个设置。
+5、用xrandr添加一个新的显示模式。
+#sudo xrandr --addmode VGA1 "1440x900_60.00"
+6、使用新添加的显示模式。
+#xrandr --output VGA1 --mode 1440x900_60.00 --same-as LVDS1
+打开外接显示器,分辨率设为1440x900，--same-as LVDS代表显示和LVDS1显示内容一样（即：镜面屏幕）。
+
+注意事项：
+1.	在使用1440x900_60.00参数时，要写全，必须一致。
+2.	VGA1、LVDS1、HDMI-0等可以根据xrandr或者xrandr -q命令查询。
+3.	通过xrandr命令配置的效果不能够在关机后保存，要保留效果，可以将相关的配置命令写在脚步中，在系统启动时执行。一个简单的示例如见附录“一种保存xrandr配置方法”。
+附录：
+一种保存xrandr配置方法
+1、创建一个自启动脚本，添加如下代码：
+#!/bin/bash
+xrandr --newmode "1440x900_60.00"  106.50  1440 1528 1672 1904  900 903 909 934 -hsync +vsync;
+xrandr --addmode VGA1 "1440x900_60.00";
+xrandr --output LVDS1 --mode 1366x768
+xrandr --output VGA1 --mode 1440x900_60.00;
+xrandr --output VGA1 --right-of LVDS1;
+2、增加该脚本可执行权限，如命名为xrandr-config.sh。
+#chmod a+x ./xrandr-config.sh
+3、将该脚本设为开机启动，方法有两种：
+	第一种方法：在/etc/rc.d/rc.local中追加入上述脚本执行命令，如：
+1）	打开rc.local文件。
+#vim /etc/rc.d/rc.local
+2）	在rc.local中添加如下内容。
+/root/xrandr-config.sh
+第二种方法：可通过图形化的界面来设置，方法如下。
+开始菜单》控制面板》启动应用程序》添加
+
+可能存在的缺点：
+登录进去之后会有“无法应用原保存的显示器配置”的提示（在使用xorg.conf时），不影响正常使用，因为xranr-config.sh文件已配置正确（该项暂未确认）。

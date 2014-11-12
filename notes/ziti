@@ -1,0 +1,32 @@
+我的字体：zh_CN.UTF-8
+
+
+
+调整tty文本模式终端字体大小
+2010-08-01 02:30 1857人阅读 评论(0) 收藏 举报
+以debian为例，介绍两种设置方法。
+1.通过console-tools设置控制台字体
+1.1.选用并测试合适的字体和字库文件：
+dell:~# ls /usr/share/consolefonts/
+1.2.测试选用喜爱的字库文件：
+dell:~# consolechars -f /usr/share/consolefonts/lat9w-16.psf.gz
+dell:~# consolechars -f /usr/share/consolefonts/lat2-16.psf.gz
+1.3.保存控制台默认字体配置：
+dell:~# vi /etc/console-tools/config
+将合适的字库文件设置为默认，如果选择lat2-16.psf.gz 字库文件，可将SCREEN_FONT设成:
+SCREEN_FONT=lat2-16
+
+
+2.通过console-setup服务，设置控制台字体。
+2.1.安装console-setup服务
+
+apt-get install console-setup console-terminus
+其中：console-terminus是在 Linux 控制台下便于快速阅读的等宽字体，也是很多人比较喜欢的字体
+2.2.配置console-setup服务
+dell:~# dpkg-reconfigure console-setup
+如果要选用terminus字体，在Set of characters that should be supported by the console font: 的对话框中可选择以下中的一项：
+. Combined - Latin; Slavic Cyrillic; Greek
+. Combined - Latin; Slavic and non-Slavic Cyrillic
+2.3.console-setup服务的装载与停用
+/etc/init.d/console-setup {start|reload|restart|force-reload|stop}
+在Ubuntu Linux操作系统下调整终端字体 方法一： sudo vim /etc/default/console-setup 将其中的 CODESET FONTFACE FONTSIZE改了就行。 一般推荐： CODESET="Hebrew" FONTFACE="VGA" FONTSIZE="16" 方法二： sudo dpkg-reconfigure console-setup

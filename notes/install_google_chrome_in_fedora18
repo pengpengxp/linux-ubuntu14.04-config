@@ -1,0 +1,17 @@
+ Google Chrome安装错误，lsb >= 4.0 is needed by google-chrome-stable-13.0.782.112-95650.i386
+ 在feodra 中，安装Google Chrome出现如下的错误提示。
+ $ sudo rpm -ivh Downloads/google-chrome-stable_current_i386.rpm
+ [sudo] password for mutter:
+ warning: Downloads/google-chrome-stable_current_i386.rpm: Header V4 DSA signature: NOKEY, key ID 7fac5991
+ error: Failed dependencies:
+     lsb >= 4.0 is needed by google-chrome-stable-13.0.782.112-95650.i386
+     原因：缺少某些包的依赖关系。到http://rpm.pbone.net当中搜寻下面两个rpm包即可。
+     yum install pax*
+     yum install redhat-lsb*
+     把上面两个包依次顺序安装即可。
+     最后可以顺利安装Google Chrome浏览器了。
+
+     $ sudo rpm -ivh Downloads/google-chrome-stable_current_i386.rpm
+     warning: Downloads/google-chrome-stable_current_i386.rpm: Header V4 DSA signature: NOKEY, key ID 7fac5991
+     Preparing...                ########################################### [100%]
+        1:google-chrome-stable   ########################################### [100%] 

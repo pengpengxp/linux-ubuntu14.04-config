@@ -1,0 +1,64 @@
+Ubuntu不启动XWindow 直接进命令行
+Posted by 冰河 at 13:16 Add comments 4,319 Views
+三 092010
+
+Linux默认启动后进入XWindow，但可以修改参数直接进入命令行界面。到底是进入XWindow还是进入命令行界面，是在系统初始化进行的。
+
+对于大部分linux系统，初始化使用init进程， /etc/inittab 为其配置文件。例如
+
+# The default runlevel
+id:2:initdefault
+
+# Boot-time system configuration/initialization script
+si::sysinit:/etc/init.d/rcS
+
+# Runlevels
+l0:0:wait:/etc/init.d/rc 0
+l1:1:wait:/etc/init.d/rc 1
+l2:2:wait:/etc/init.d/rc 2
+l3:3:wait:/etc/init.d/rc 3
+l4:4:wait:/etc/init.d/rc 4
+l5:5:wait:/etc/init.d/rc 5
+l6:6:wait:/etc/init.d/rc 6
+z6:6:respawn:/sbin/sulogin
+
+# How to react to ctrl-alt-del
+ca:12345:ctrlaltdel:/sbin/shutdown -t1 -a -r now
+
+这些内容的通用格式为 id:runlevels:action:process。id 是惟一标识该项的字符序列。runlevels 定义了操作所使用的运行级别。action 指定了要执行的特定操作。process 定义了要执行的进程。
+
+# 对各个运行级的详细解释：
+0 为停机，机器关闭。
+1 为单用户模式，就像Win9x下的安全模式类似。
+2 为多用户模式，但是没有NFS支持。
+3 为完整的多用户模式，是标准的运行级。
+4 一般不用，在一些特殊情况下可以用它来做一些事情。例如在笔记本电脑的电池用尽时，可以切换到这个模式来做一些设置。
+5 就是X11，进到X Window系统了。
+6 为重启，运行init 6机器就会重启。
+
+XWindow是init5，字符是init3。将id设置为runlevel设置为3，就可以直接在系统初始化的时候直接进入文本界面。
+
+但Ubuntu并没有采用init的方法，并没有 /etc/inittab这个文件。init使用的是串行的方式，引导很耗时。RedHat9启动时串行执行大量的脚本以启动各种需要的服务（启动时可以 看到）。Ubuntu采用了upstart，是一个基于事件的 init 的替代程序，用于 Ubuntu 发行版。
+
+Ubuntu中没有 /etc/inittab这个文件，但用户可以自己添加。当系统中有 /etc/inittab 时Ubuntu会按照配置来启动。
+
+所以要想直接进命令行，第一种方法是用户添加 /etc/inittab，不过Debian或是Ubuntu中默认run level是2，且2~5都是指X环境。（但命令行是几？不确定，尚未测试）
+
+另外一种方法，可以考虑在对应的runlevel级别停止gdm服务：
+
+$ sudo mv /etc/rc2.d/S30gdm /etc/rc2.d/K30gdm （有可能是S13gdm，不一定）
+还可以把gdm删掉。先备份/etc/init.d/gdm到其它位置:
+
+$ sudo /etc/init.d/gdm /usr/gdm
+
+然后删除/etc/init.d/gdm,删除后只是不启动XWindow,其它服务不变。需要直接进入XWindow到话，再复制回来。
+
+其实如果仅仅是为了在命令行下的话，在xwindows界面下按Ctrl + Alt + F2 进入字符界面，按Ctrl + Alt + F7 回到图形界面。
+
+还有一种方法：
+
+$sudo apt-get rcconf
+
+$sudo rcconf
+
+在启动中将gdm去掉

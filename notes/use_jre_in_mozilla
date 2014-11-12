@@ -1,0 +1,5 @@
+cd /usr/lib/mozilla/plugins
+
+ln -s /usr/java/jre1.6.0_27/lib/i386/libnpjp2.so--------------->>>>>这里其实就是jre的安装路径
+
+就是建立一个符号连接。注意必须是符号连接。直接拷贝过去是不行的。

@@ -1,0 +1,21 @@
+在 ThinkPad 的键盘上有鼠标键和小红帽，通过简单的方法就可以让中键加小红帽模拟鼠标滚轮。
+
+yum install gpointing-device-settings
+
+运行 gpointing-device-settings
+选者 TPPS/2 IBM TrackPoint (这个就是小红帽)
+选择 Use Wheel emulation，把 button 修改为 2
+
+
+
+Fedora 对 ThinkPad 的支持还不错。但 Fedora 16 安装在 ThinkPad 上后，小红帽（TrackPoint）中键的垂直滚动功能默认是没有的，如果启用该功能，需要采取如下办法：
+
+1. 安装 xinput 依赖包 xorg-x11-apps-7.6-2.xxxx.rpm，具体的软件包名称依据发行版体系架构而定。
+
+2. 启用垂直滚动
+xinput set-int-prop "TPPS/2 IBM TrackPoint" "Evdev Wheel Emulation" 8 1  
+xinput set-int-prop "TPPS/2 IBM TrackPoint" "Evdev Wheel Emulation Button" 8 2  
+xinput set-int-prop "TPPS/2 IBM TrackPoint" "Evdev Wheel Emulation Timeout" 8 200  
+
+以上在 Fedora 16 上是可行的，应该也可以应用于 Fedora 17。
+该方法来源：http://www.thinkwiki.org/wiki/How_to_configure_the_TrackPoin

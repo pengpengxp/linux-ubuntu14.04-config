@@ -1,0 +1,110 @@
+ emacs中使用auto-complete的详细设置
+分类： emacs 2012-04-30 17:22 2207人阅读 评论(1) 收藏 举报
+emacs
+
+目录(?)[+]
+作者：winterTTr 转载请注明
+使用auto-complete-mode
+1 下载auto-complete完整源码
+
+大多数情况下，我还是推荐使用源码库中的最新版本，这样可以避免很多奇怪的问题。所以这里列出了使用auto-complete-mode所涉及的一些源码库：
+
+    auto-complete-mode 主源码库
+
+      https://github.com/m2ym/auto-complete.git
+
+    popup功能库
+
+      https://github.com/m2ym/popup-el.git
+
+    使用fuzzy模式匹配
+
+      https://github.com/m2ym/fuzzy-el.git
+
+    增强列表模式
+
+      https://github.com/winterTTr/emacs-of-winterTTr/blob/master/.emacs.d/plugins/auto-complete-suite/pos-tip/pos-tip.el
+
+在我这里，我使用了上面这些源码库中的最新代码作为配置。我们可以看到，前三者的作者是同一人。原本三个库都是作为auto-complete的一部分的，但是作者现在将三者分开成独立的源码进行管理。所以要使用相应的功能，应该保证三个源码都已经下载(clone)到本地。
+2 auto-complete的配置
+2.1 将路径添加到emacs系统中
+
+(add-to-list 'load-path "path-to-download-folder/pos-tip")
+(add-to-list 'load-path "path-to-download-folder/fuzzy-el")
+(add-to-list 'load-path "path-to-download-folder/popup-el")
+(add-to-list 'load-path "path-to-download-folder/auto-complete")
+
+2.2 加载auto-complete并添加字典路径
+
+在auto-complete的源码中，已经预先定义了一些非常常用的补全模板，这就是这里的字典路径。
+
+(require 'auto-complete-config)
+(add-to-list 'ac-dictionary-directories
+             "path-to-download-folder/auto-complete/dict")
+(ac-config-default)
+
+2.3 使用增强的popup列表
+
+在auto-complete中，默认的popup列表使用的是native的模式的，这并不是非常的好看。而且，在很多时候，会出现排版错误的情况。所以在这里，建议使用增强型的popup，这也是pos-tip存在的原因。我们可以简单比较一下：
+
+    这是使用native模式
+
+
+    使用pos-tip模式
+
+
+从截图来看，效果不大，但是在实际使用的情况下，还是能有比较明显的区别的。配置代码如下：
+
+(require 'pos-tip)
+(setq ac-quick-help-prefer-pos-tip t)   ;default is t
+
+这里说明一点：查看ac-quick-help-use-pos-tip-p的实现，可以发现单一的设置ac-quick-help-prefer-pos-tip是无法激活pos-tip模式的，必须还需要显示的加载pos-tip。所以，这两句都是必须的。
+2.4 使用quick-help
+
+在默认情况下，quick-help应该是打开的。quick-help的功能指的是，除了给出当前可以补全的关键词之外，还在旁边弹出的popup中显示当前这个关键字的帮助，上面图中已经给出了效果。
+
+(setq ac-use-quick-help t)
+(setq ac-quick-help-delay 1.0)
+
+2.5 设置tab键的使用模式
+
+(setq ac-dwim t)
+
+2.6 设置auto-complete的触发键
+
+如果你不喜欢使用默认的自动触发ac的话，可以显示的给ac指定一个触发键，这在当前ac的功能比较费时(例如：结合clang补全)的时候，会更加有效率一些。例如：在c-mode-hook里面，我关闭了自动激活ac，并使用自定义按键Ctrl+Enter键。
+
+(setq ac-auto-start nil)              ;auto complete using clang is CPU sensitive
+(ac-set-trigger-key "<C-return>")
+
+2.7 期望某些情况仍旧触发ac功能
+
+在使用ac时，我发现，并不是所有的按键都能触发ac的自动补全功能的，例如backspace之后，ac的补全就消失了，除非再次输入一个按键。其实，这些是可以由我们控制的，例如：这里将backspace的删除后仍旧可以触发ac补全：
+
+(setq ac-trigger-commands
+      (cons 'backward-delete-char-untabify ac-trigger-commands))
+
+其实，只要将对应的功能的函数名称加入ac-trigger-commands列表就可以，默认的情况下，这个列表里面只有self-insert-command。这也解释了，为什么只有输入字符才能激活ac的功能。
+2.8 使用fuzzy功能
+
+(setq ac-fuzzy-enable t)
+
+这个功能，简单来说，就是在你输入错误信息的时候，仍旧采用模糊匹配去给出合理的补全关键字。当然，在输入错误的情况下，已经不能自动激活ac的功能，这时需要使用按键强制启动ac。下图就是一个fuzzy功能的例子：
+
+
+2.9 与yasnippet相兼容
+
+其实，ac中是可以使用yasnippet的关键字也出现在补全列表的，同时利用这个关键字补全，将直接触发yasnippet的功能。这个在我当前版本的默认设置中已经包含了。如果没有，可以查看 ac-sources中是否包含 ac-source-yasnippet并添加。
+
+我们可以通过颜色区分yasnippet的补全关键字，还是非常明显的。在我这里，橘红色的关键字，就是yasnippet的关键字，和其他的有明显的区分。
+
+
+2.10 与clang相结合补全c/c++上下文
+
+请参考http://blog.csdn.net/winterttr/article/details/7273345
+
+
+
+有关auto-complete的一些常用到设置和使用，已经基本上包含了，欢迎大家一起交流。
+
+以上~~

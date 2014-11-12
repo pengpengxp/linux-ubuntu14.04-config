@@ -1,0 +1,20 @@
+二、SSH管道进行文件传输
+
+虽然SCP可以实现本地和远程服务器之间的文件传输，然而SCP不能跨越子目录，也不能保留文件的所有者和权限位。而SSH在没有登陆交互式会话时，是接收标准输入（STDIN）并将结果打印到标准输出（STDOUT），这就意味着可以通过SSH和管道命令来实现本地和远程服务器之间的数据交互和文件传输。
+1、连接SSH时执行控制脚本
+
+在某些情况下，并不需要远程登陆到服务器上，而仅仅是需要启动某个应用脚本，这时只需要在SSH连接中加入相应的命令操作
+
+命令格式为：ssh user@server "cd /directory; mkdir new directory;....."
+2、使用SSH上传文件到远程服务器
+
+命令格式为：tar -cvzf - /directory | ssh user@server "cat > file.tar.gz"
+
+或者直接解压：tar -cvf - /directory | ssh user@server "tar -xf -"
+
+PS:在本命令中-是必不可少的，创建压缩包的-的作用是将tar打包后的内容直接显示在标准输出，而并不是将其写入到某个文件中；而解压缩包中“-”的作用是从标准输入中获取压缩包的内容，而不是从某个文件中进行读取。这是个人理解，并没有找到准确的说明，如有读者知道明确说法，烦请告知。
+3、使用SSH将远程服务器上的文件拷贝到本地
+
+命令格式为：ssh user@server "cat file.tar.gz" | tar -xf -
+
+或者使用命令：ssh user@server "cd /directory && tar -cvf - /directory" > file.tar.gz

@@ -1,0 +1,252 @@
+安装hadoop是一件非常容易的事情,读者可以在官网上下载到最近的几个hadoop版本。网址为http://apache.etoak.com//hadoop/core/.
+   目前，hadoop可以运行在linux，unix，windows系统上。实际上hadoop是为在linux平台上使用而开发出来的。但是hadoop 在一些主流的unix版本（甚至包括Mac OS X）也运行良好。对于windows，这个问题有些复杂。如果想在windows上运行hadoop，那么必须先安装Cygwin以模拟linux环境，然后再安装hadoop。在unix上安装hadoop和在linux上安装hadoop的过程基本相同，因此对在unix上安装hadoop的过程不再赘述。
+
+   安装与配置
+
+   在linux安装Hadoop之前，需要先安装两个程序：
+      Sun公司的java-1.6
+      SSH，推荐安装OpenSSH
+
+   安装JDK
+
+   安装JDK是一个很简单的过程，以ubuntu为例。
+   （1）下载安装JDK
+   确保可以连接到互联网，输入命令：
+   sudo apt-get install sun-java6-jdk
+   输入密码，确认，就可以安装java了
+   （2）配置环境变量：
+   输入命令：
+   sudo gedit /etc/profile
+   输入密码，打开profile文件
+   在最下面输入如下内容：
+   #set Java Environment
+   export JAVA_HOME= （你的java安装位置，一般为/usr/lib/jvm/java-6-sun）
+   export CLASSPATH=".:$JAVA_HOME/lib:$CLASSPATH"
+   export PATH="$JAVA_HOME/:$PATH"
+  若手动：
+   1PATH＝"/usr/lib/java/jdk1.6.0_20/bin:$PATH
+  2.CLASSPATH="/usr/lib/java/jdk1.6.0_20/lib"    
+  3.JAVA_HOME="/usr/lib/java/jdk1.6.0_20" 
+或者
+#set Java Environment
+export JAVA_HOME=/home/timing/java
+export CLASSPATH=".:$JAVA_HOME/lib:$CLASSPATH"
+export PATH="$JAVA_HOME/bin:$PATH"
+
+PATH＝"/usr/lib/jvm/SunJDK/jdk1.6.0_25/bin"
+CLASSPATH="/usr/lib/jvm/SunJDK/jdk1.6.0_25/lib"
+JAVA_HOME="/usr/lib/jvm/SunJDK/jdk1.6.0_25"
+
+然后终端里输入命令：
+1.$ sudo update-alternatives --install /usr/bin/java java /usr/lib/java/jdk1.6.0_20/（从user开始是jdk安装的位置，下面一样）bin/java 300    
+2.  
+3.$ sudo update-alternatives --install /usr/bin/javac javac /usr/lib/java/jdk1.6.0_20/bin/javac 300  
+4.  
+5.$ sudo update-alternatives --config java  
+
+   （3）验证java是否安装成功
+   输入命令：
+   java -version
+   查看信息
+   java version "1.6.0_14"
+   Java(TM) SE Runtime Environment (build 1.6.0_14-b08)
+   Java HotSpot(TM) Server VM (build 14.0-b16, mixed mode)
+
+   配置ssh免密码登录
+
+   同样的，以ubuntu为例，用户名为u：
+   （1）确认已经连接上互联网，输入命令：sudo apt-get install openssh-server openssh-client   （如果安不上，先更新一下 命令：sudo apt-get update)
+   （2）配置可以无密码登陆本机:
+   首先查看在u用户下是否存在.ssh文件夹（注意ssh前面有“.”，这是一个隐藏文件夹），输入命令：
+   ls -a /home/timing。
+   接下来，输入命令：
+   ssh-keygen -t dsa -P '' -f ~(/home/timing)/.ssh/id_dsa
+   这个命令会在.ssh文件夹下创建两个文件id_dsa及id_dsa.pub，这是ssh的一对私钥和公钥，类似于钥匙及锁，把id_da.pub（公钥）追加到授权的key里面去，
+   输入命令：
+   cat ~/cat.ssh/id_dsa.pub >> ~/.ssh/authorized_keys
+这段话的意思是把公钥加入到用于认证的公钥文件中，这里authorized_keys是用于认证的公钥文件。
+   至此无密码登陆本机以安装完成。
+   （3）验证ssh已安装成功及无密码登陆本机
+   输入命令：
+   ssh -version
+   显示结果：
+   OpenSSH_5.1p1 Debian-6ubuntu2, OpenSSL 0.9.8g 19 Oct 2007
+   Bad escape character 'rsion'.
+   这显示了ssh已经安装成功
+   输入命令：
+   ssh localhost
+   会有如下显示：
+   The authenticity of host 'localhost (::1)' can't be established.
+   RSA key fingerprint is 8b:c3:51:a5:2a:31:b7:74:06:9d:62:04:4f:84:f8:77.
+   Are you sure you want to continue connecting (yes/no)? yes
+   Warning: Permanently added 'localhost' (RSA) to the list of known hosts.
+   Linux master 2.6.31-14-generic #48-Ubuntu SMP Fri Oct 16 14:04:26 UTC 2009 i686
+
+   To access official Ubuntu documentation, please visit:
+   http://help.ubuntu.com/
+
+   Last login: Mon Oct 18 17:12:40 2010 from master
+   admin@hadoop:~$
+   如上显示，说明已经安装成功，第一次登录时会询问你是否继续链接，输入yes即可以进入。
+   实际上，在hadoop的安装过程中，是否无密码登陆不是必须的，但是如果不配置无密码登陆的话，每次启动hadoop，都需要输入密码以登陆到每台daotanode，考虑到一般的hadoop集群动辄数十数百台机器，因此一般来说都会配置ssh的无密码登陆。
+
+   安装运行Hadoop
+
+   介绍hadoop的安装之前，介绍一下hadoop对各个节点的角色定义。
+   Hadoop 按三类分别将主机划分为两种角色，首先，最基本的就是master和slave，主人与奴隶；第二，按hdfs的角度，将主机划分为namenode和 datanode（在分布式文件系统中，目录的管理很重要，管理目录的就相当于主人，而namenode就是目录管理者）；第三，按mapreduce的角度，将主机划分为jobtracker和tasktracker（一个job经常被划分为多个task，从这个角度不难理解他们之间的关系）。
+hadoop有官方发行版与cloudera版，其中cloudera版式hadoop的商用版本，这里笔者先介绍hadoop官方发行版的安装方法。
+   （1）hadoop官方发行版
+   Hadoop有三种运行方式，单节点方式，单机伪分布方式与集群方式。乍看之下，前两种方式并不能体现云计算的优势，在实际应用并没有什么意义，但是在程序的测试与调试中，还是很有意义的。
+   你可以在以下地址获得hadoop的官方发行版
+   http://www.apache.org/dyn/closer.cgi/hadoop/core/ 
+   下载hadoop-0.20.2.tar.gz并将其解压，这里将其解压到用户目录下，一般为/home/[你的用户名]/。
+   单节点配置方式：
+   安装单节点的hadoop无需配置，在这种方式下，hadoop被认作为一个单独的java进程，这种方式经常用来调试。
+   伪分布式hadoop配置：
+   你可以把伪分布式的hadoop看作为一个只有一个节点的集群，在这个集群中，这歌节点既是master，也是slave；既是namenode也是datanode；既是jobtracker，也是tasktracker。
+   配置伪分布的过程也很简单，只需要修改几个文件
+   进入conf文件夹，修改配置文件：
+   Hadoop-env.sh:
+   export JAVA_HOME=“你的java安装地址”
+   指定java位置：
+   conf/core-site.xml:
+<configuration>
+     <property>
+ <name>fs.default.name</name>
+ <value>hdfs://localhost:9000</value>
+     </property>
+</configuration>
+   这是hadoop核心的配置文件，这里配置的是hdfs（hadoop的分布式文件系统）的地址及端口号
+   conf/hdfs-site.xml:
+<configuration>
+     <property>
+ <name>dfs.replication</name>
+ <value>1</value>
+     </property>
+</configuration>
+   这是hadoop中hdfs的配置，配置的备份方式，默认为3，在单机版hadoop中，需要将其改为1
+   conf/mapred-site.xml:
+<configuration>
+     <property>
+ <name>mapred.job.tracker</name>
+ <value>localhost:9001</value>
+     </property>
+</configuration>
+   这是hadoop中mapreduce的配置文件，配置的是jobtracker的地址及端口
+   需要注意的是，如果安装的是0.20之前的版本，那么只有一个配置文件，即为hadoop-site.xml。
+   接下来，启动hadoop前，需格式化hadoop的文件系统hdfs（这点与windows是一样的，重新分区后的卷总是需要格式化的），进入hadoop文件夹
+   输入命令：
+   bin/hadoop namenode ?format
+   格式化文件系统，接下来，启动hadoop
+   输入命令：
+   bin/start-all.sh（全部启动）
+   最后，验证hadoop是否安装成功
+   打开浏览器，分别输入网址
+   http://localhost:50030 (mapreduce的web页面)
+   http://localhost:50070 (hdfs的web页面)
+   如果都能查看，说明hadoop已经安装成功。
+   对于hadoop来说，mapreduce及hdfs都是必须的，但是如果有必要的话，你依然可以只启动hdfs（start-dfs.sh）或mapreduce（start-mapred.sh）。
+
+
+
+强老师：
+
+       你好，今天上午终于在虚拟机上搭建好了真实的分布式Hadoop环境，下午想在两台机器上搭建一次，但是有他们两台电脑有点问题，一个装linux有问题，一个装JDK有问题，不过在多台机器之间装Hadoop和在虚拟机中装真实的分布式环境是一样的，明天上午再看试一下。另外今天下午在陈明的指导下还在虚拟机下的真实分布环境中运行了一些他们已经写好的程序，明天争取把他们写的程序看懂。
+
+
+
+
+
+
+
+
+更改Ubuntu下的MAC地址(ZZ) 
+标题：更改Ubuntu下的MAC地址
+.W x A j [ s/R y,_0出处：ZiQi's Blog
+5q7|5f i4l8J/E a a y0时间：Fri, 24 Nov 2006 13:05:57 +0000LUPA开源社区 H:R!f0f S |#|(^
+作者：ZiQi
+m N M h w#y ^;v1D n0地址：http://www.ziqi.cn/post/795.htm Q$a d y*P _ e h0 LUPA开源社区 w p6]'z y6C X r 
+内容：
+)?&N I e.a0y5? j%N7~#]0在以前的文章提及Ubuntu不能保存更改之后的MAC地址，好久没用这个系统了，今天空闲一点，找了点资料，希望能解决问题吧。
+v K"M S;N5r.j U w+g7e0方法一：
+@'m K J Q z0引用LUPA开源社区 q$m D([ W1P B U;h Y
+sudo gedit /etc/network/interfaces LUPA开源社区0b q b1f%X(h)h g
+将iface eth0 inet static后面添加一行 LUPA开源社区*f ~ P7|#V;d-o#V
+hwaddress ether 00:00:00:00:00:00 （你的MAC地址）
+
+V F @'O l g S:m t0 
+P C k(? C y c/y j0LUPA开源社区 n p e,u t R h [
+方法二：
+){*| Q t?L:^ a4Q0引用
+| f#W ] C C z \.[2W0首先必须关闭网卡设备，否则会报告系统忙，无法更改。LUPA开源社区!P v;x f A"P F m;\ D
+sudo /sbin/ifconfig eth0 down LUPA开源社区.N ]5X _#O4q*q Q
+修改 MAC 地址，这一步较 Windows 中的修改要简单。
+7b c0m"r#c0sudo /sbin/ifconfig eth0 hw ether 00:AA:BB:CC:DD:EE （你的MAC地址）LUPA开源社区*A b V?T8d T
+重新启用网卡sudo /sbin/ifconfig eht0 up网卡的 MAC 地址更改就完成了 如果计算机每次启动都要修改mac地址 修改你的源,并升级到最新的系统: LUPA开源社区 i#N*a g.a*~ { A/r
+sudo gedit /etc/init.d/rc.localLUPA开源社区 e Y V/J ~8F6C.p2H
+增加 LUPA开源社区4q t X M#P e
+sudo /sbin/ifconfig eth0 down
+z+J:J-J @ U'D!`+z Z0sudo /sbin/ifconfig eth0 hw ether 00:AA:BB:CC:DD:EE （你的MAC地址）LUPA开源社区/I ` L'F h i+Q
+sudo /sbin/ifconfig eth0 up LUPA开源社区3c(P Z P A K x q
+到最后以后他就会每次启动计算机的时候自动修改网卡地址======================注释：查看IP MAC地址命令IP ADDR除非另行指定，Red Hat Linux 系统中
+
+C z2y \ T"b L X0 
+0] x&D b.o E5H"x2y ]3K/g w0LUPA开源社区)`6n ~8L!a \ ~ B h
+第一种方法应该比较简单，第二种方法比较实在，可以比较选择。
+
+
+一、 背景
+我们知道每块网卡（NIC）都有一个固化在硬件存储器中物理地址（或称硬件地址），也就是MAC，这个地址，在出厂上就已经固定，除非是使用可擦写编程器重写，否则是无法变更的。
+
+这 里所说的更改网卡的MAC地址，其实是针对操作系统对MAC地址的读取规律，而对OS做出的一种欺骗方法。因为操作系统通常是从硬件网卡读取 MAC地址后，再存储在注册表（如windows）、配置文件等之中，以后就直接从这些存储空间读取了。所以可以通过修改这里面的MAC地址，来“更改” 网卡的MAC地址。
+
+之所以摸索ubuntu下更改网卡的地址，乃是因为有些上网服务与MAC地址绑定，这样，如果原先的网卡坏了更换新的而又不想去经历官僚的变更手续，或者是又有台式机又有笔记本的时候，希望在能够在两台机器都上网（同时只能使用一台）的话，那就要考虑使用了。
+
+二、修改MAC地址
+
+1. 暂时修改
+在ubuntu下更改MAC地址的命令是ifconfig（和windows下的ipconfig还是比较相似的），如果要更改MAC地址，可以新开一个终端，依次使用以下命令：
+
+sudo ifconfig eth0 down （停用网卡）
+sudo ifconfig eth0 hw ether XX:XX:XX:XX:XX:XX(需要更改的MAC地址)
+sudo ifconfig eth0 up （启用网卡） 
+
+然后再用ifconfig查看一下，需要查看ifconfig的各个参数含义，可以用man ifconfig查看帮助。
+
+sudo ifconfig eth0 (查看eth0网卡信息) 
+
+2. 永久修改（两种方法）
+
+方法一
+以上只是暂时修改mac地址，如果需要每次系统启动后，都自动修改好MAC地址的话，那么可以将以上命令写入启动脚本中，我使用的方法是将它写入/etc/init.d/rc.local 的最后。
+
+sudo nano /etc/init.d/rc.local 
+
+重启rc.local
+sudo /etc/init.d/rc.local start 
+
+方法二
+直接编辑 /etc/network/interfaces 文件，在 iface eth0 inet static 后面添加一行：
+
+pre-up ifconfig eth0 hw ether xx:xx:xx:xx:xx:xx（要改成的MAC） 
+
+编辑interfaces文件
+sudo nano /etc/network/interfaces 
+
+如下所示：
+face eth0 inet static
+pre-up ifconfig eth0 hw ether xx:xx:xx:xx:xx:xx（要改成的MAC）
+
+address 192.168.1.10
+netmask 255.255.255.0
+gateway 192.168.1.1
+
+重启网卡
+sudo /etc/init.d/networking restart
+Linux学习网收集整理 ,转贴请标明原始链接。 
+
+
+http://blog.163.com/da2qia1ku5@126/blog/static/3548593520100935459700/
+
+http://bbs.genedog.net/thread-118-1-1.html
+http://v.youku.com/v_show/id_XMjY3NjkyODY4.html

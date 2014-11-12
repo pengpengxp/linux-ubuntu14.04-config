@@ -1,0 +1,55 @@
+gdb 断点设置方法
+gdb 断点有基本的三种设置方法：break,catch,watch
+break 是最简单的，这里主要说说break设置。
+一. 断点设置
+当我们gdb一个可执行程序的时候，这个程序要可调式，必须在编译的时候加了调式选项 -g，但是我们如果下载的别人的开源项目，一般是没有加调试选项的，所以一般要自己修改makefile文件，把调试选项加上。
+比如我现在调试 一个项目的可执行程序 project
+gdb project
+我们这个时候可以设置断点了:比如
+b main 表示在main函数入口设置断点
+b 12  表示在12行设置断点  
+这里的断点设置在这个项目的主程序文件里面在，但是我们知道一个项目有很多文件，如果要在其他文件设置断点，这样是不行的，需要加上其他文件名称，假如这个项目有个source文件 叫 uploadmgr.c  那么我要在这个文件设置断点就应该是这样的：
+b uploadmgr.c:upload 表示在uploadmgr.c文件的upload函数打上断点。
+b uploadmgr.c:12  表示在uploadmgr.c文件的12行打上断点.
+二.断点查看
+info break可以查看当前的断点信息，比如：
+(gdb) info break
+Num     Type           Disp Enb Address    What
+1       breakpoint     keep y   0xb76b1650 in uploader_create_dir_config(apr_pool_t*, char*) at mod_uploader.cpp:202
+breakpoint already hit 4 times
+2       breakpoint     keep y   0xb76b1650 in uploader_create_dir_config(apr_pool_t*, char*) at mod_uploader.cpp:202
+breakpoint already hit 4 times
+三.断点清除
+clear  清除当前运行文件指定行或函数的断点。如果没有参数，clears all breakpoints in the line that the selected frame
+is executing in.（不太明白）
+delete  1 表示删除第一个断点  （用info break查看的 断点号)
+delete 不带参数是删除所有断点
+ 
+  四.一些小技巧
+  1.gdb有个很友好的调式界面，就是layout方式调试，可以让你边调试变查看源码，效果图如下：
+
+  但是layout方式有时候有点bug，不过基本上还可以使用，可以用ctrl+x和ctrl+a（要以前使用，先按ctrl+x再按ctrl+a）来切换。可能layout会造成控制台花屏，使用ctrl+L清屏。
+  2.rbreak 可以用正则表达式来设置断点，这个还是比较有用，比如你想给一个文件所有函数设置断点：
+  rbreak xxx.c:*
+  就行了，但是有个要求，你这个程序必须已经处于调试状态了，也就是run 之后来设置才有效。不然设置了没反应。(*可要可不要，加上要直观点）
+  3.当我们要打印某个复杂变量的时候，可以先用pt 打印出改变量的数据结构，然后在打印比较感兴趣的值。比如：
+
+  (gdb) pt progress
+  type = struct RequestReader::PostProgress {
+      apr_uint32_t id;
+          apr_uint64_t total_size;
+	      apr_uint64_t read_size;
+	          apr_time_t end_time;
+		      bool is_succeeded;
+		          apr_size_t item_id;
+			  } *
+			  当然你也可以输入p,然后按住tab键来自动提示，例如：
+			  (gdb) p progress->
+			  end_time      is_succeeded  read_size     
+			  id            item_id       total_size    
+			  (gdb) p progress->
+			  不过这样缺少了类型。
+			  4. 当我们答应一个char* 类型变量(long_var)的时候，如果该变量很长，你直接p long_var ，一般gdb不会全部打印出来，会显示 ...3个省略号。我们可以用 printf "%s",long_var 打印全部内容。
+			   
+			   5.当我们进入一个函数的时候，想知道是从那里进来的，这个时候就需要打印栈帧来查看了，如果你加上 full参数，信息更多。
+			   bt full

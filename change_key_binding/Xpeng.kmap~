@@ -1,0 +1,36 @@
+!Swap life control and left alt
+!!only switch on one level is enough 
+remove mod1 = Alt_L
+remove control = Control_L
+keycode 37 = Alt_L
+keycode 64 = Control_L
+keycode 134 = Control_L
+keycode 135 = Control_L
+add control = Control_L
+add mod1 = Alt_L
+
+
+!chang the insert to the Caps_Lock
+!THIS CAN'T WORK.I'm tired to change this one
+!clear lock
+!keycode 118 = Caps_Lock
+!add lock = Caps_Lock
+
+!another method which can also work->change the other level.word flawlessly
+clear lock
+add lock = Insert
+
+!change the caps_lock to control->IMPORTANT:I clear the lock befor
+!!the same name of control can work,BUT i don't know why
+keycode 66 = Control_L
+add control = Control_L
+
+
+
+!Swap right control and right alt
+!remove Control = Control_R
+!remove Mod1 = Alt_R
+!keycode 105 = Alt_R
+!keycode 108 = Control_R
+!add Control = Control_R
+!add Mod1 = Alt_R

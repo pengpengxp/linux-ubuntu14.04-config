@@ -1,0 +1,12 @@
+fedora18 取消关闭盖子挂起功能
+分类： linux 2013-01-19 23:47 153人阅读 评论(0) 收藏 举报
+fedora18lidsupend挂起
+        但愿不是我把fedora18搞坏了，目前还在经历的两个中的一个问题是，fedora18系统每一关闭盖子就自动挂起，这个默认设置搞得真有点不爽。还想以前那样点左上角出现suspend(挂起)选项多好。于是我找方法将关闭盖子挂起功能功能取消掉。诸如gsettings set org.gnome.settings-daemon.plugins.power lid-close-ac-action "nothing" 或者 gsettings set org.gnome.settings-daemon.plugins.power lid-close-ac-action "blank" 和在system settings、tweak tool 、dconf editor更改设置都不行。我是奇了怪了，对于fedora18这些方法竟然都不行？莫不是我把fedora18给搞坏了？可别啊，多纯净的系统啊。当第一次用fedora17折腾的啊，后来evolution给挂掉了，只好用thunderbird~
+        不是百度不给力，确实是fedora中国的用户群太少了？总之老是这些设置方法。求助于google 英文版。返回的搜索结果很多。
+        但其中有篇文章是专门针对fedora18系统的。文末给出链接。 方法：     
+[plain] view plaincopy
+$ vim /etc/systemd/logind.conf  
+        找到关键字 HandleLidSwitch 将其值改为 ignore。并把本行头的注释去掉：     
+[plain] view plaincopy
+HandleLidSwitch=ignore  
+        reboot，试试效果吧，奏效了！

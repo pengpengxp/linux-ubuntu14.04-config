@@ -1,0 +1,190 @@
+# Automatically generated file. Do not edit (see /usr/share/doc/menu/html/index.html)
+
+   [submenu] (帮助) {}
+      [exec] (Info) { x-terminal-emulator -T "Info" -e info} <>
+      [exec] (TeXdoctk) {/usr/bin/texdoctk} <>
+      [exec] (Xman) {xman} <>
+      [exec] (yelp) {/usr/bin/yelp} <>
+   [end]
+   [submenu] (窗口管理器) {}
+      [restart] (FluxBox)  {/usr/bin/startfluxbox}
+      [restart] (FVWM)  {/usr/bin/fvwm2}
+      [restart] (XFwm)  {xfwm4}
+   [end]
+   [submenu] (屏幕) {}
+      [submenu] (屏保) {}
+         [exec] (Activate ScreenSaver (Next\)) {/usr/bin/xscreensaver-command -next} <>
+         [exec] (Activate ScreenSaver (Previous\)) {/usr/bin/xscreensaver-command -prev} <>
+         [exec] (Activate ScreenSaver (Random\)) {/usr/bin/xscreensaver-command -activate} <>
+         [exec] (Demo Screen Hacks) {/usr/bin/xscreensaver-command -demo} <>
+         [exec] (Disable XScreenSaver) {/usr/bin/xscreensaver-command -exit} <>
+         [exec] (Enable XScreenSaver) {/usr/bin/xscreensaver} <>
+         [exec] (Reinitialize XScreenSaver) {/usr/bin/xscreensaver-command -restart} <>
+         [exec] (ScreenSaver Preferences) {/usr/bin/xscreensaver-command -prefs} <>
+      [end]
+      [submenu] (锁定) {}
+         [exec] (Lock Screen (XScreenSaver\)) {/usr/bin/xscreensaver-command -lock} <>
+      [end]
+   [end]
+   [submenu] (应用程序) {}
+      [submenu] (Shell) {}
+         [exec] (Bash) { x-terminal-emulator -T "Bash" -e /bin/bash --login} <>
+         [exec] (Dash) { x-terminal-emulator -T "Dash" -e /bin/dash -i} <>
+         [exec] (Sh) { x-terminal-emulator -T "Sh" -e /bin/sh --login} <>
+      [end]
+      [submenu] (办公) {}
+         [exec] (LibreOffice Calc) {/usr/bin/libreoffice --calc} </usr/share/icons/hicolor/32x32/apps/libreoffice-calc.xpm>
+         [exec] (LibreOffice Impress) {/usr/bin/libreoffice --impress} </usr/share/icons/hicolor/32x32/apps/libreoffice-impress.xpm>
+         [exec] (LibreOffice Writer) {/usr/bin/libreoffice --writer} </usr/share/icons/hicolor/32x32/apps/libreoffice-writer.xpm>
+      [end]
+      [submenu] (编程) {}
+         [exec] (GDB) { x-terminal-emulator -T "GDB" -e /usr/bin/gdb} <>
+         [exec] (Python (v2.7\)) { x-terminal-emulator -T "Python (v2.7)" -e /usr/bin/python2.7} </usr/share/pixmaps/python2.7.xpm>
+         [exec] (Python (v3.4\)) { x-terminal-emulator -T "Python (v3.4)" -e /usr/bin/python3.4} </usr/share/pixmaps/python3.4.xpm>
+         [exec] (Ruby (irb1.9.1\)) { x-terminal-emulator -T "Ruby (irb1.9.1)" -e /usr/bin/irb1.9.1} <>
+         [exec] (Tclsh8.6) { x-terminal-emulator -T "Tclsh8.6" -e /usr/bin/tclsh8.6} <>
+         [exec] (TkWish8.6) {x-terminal-emulator -e /usr/bin/wish8.6} <>
+      [end]
+      [submenu] (编辑器) {}
+         [exec] (Emacs 24 (text\)) { x-terminal-emulator -T "Emacs 24 (text)" -e /usr/bin/emacs24 -nw} <>
+         [exec] (Emacs 24 (X11\)) {/usr/bin/emacs24} <>
+         [exec] (Gedit) {/usr/bin/gedit} </usr/share/pixmaps/gedit-icon.xpm>
+         [exec] (Gummi) {/usr/bin/gummi} <>
+         [exec] (Kile) {/usr/bin/kile} </usr/share/pixmaps/kile.xpm>
+         [exec] (Nano) { x-terminal-emulator -T "Nano" -e /bin/nano} </usr/share/nano/nano-menu.xpm>
+         [exec] (texmaker) {/usr/bin/texmaker} </usr/share/pixmaps/texmaker.xpm>
+         [exec] (Xedit) {xedit} <>
+      [end]
+      [submenu] (查看器) {}
+         [exec] (Evince) {/usr/bin/evince} </usr/share/pixmaps/evince.xpm>
+         [exec] (Eye of GNOME) {/usr/bin/eog} </usr/share/pixmaps/gnome-eog.xpm>
+         [exec] (gThumb Image Viewer) {/usr/bin/gthumb} </usr/share/pixmaps/gthumb.xpm>
+         [exec] (Shotwell) {/usr/bin/shotwell} <>
+         [exec] (Xditview) {xditview} <>
+         [exec] (XDvi) {/usr/bin/xdvi} <>
+      [end]
+      [submenu] (辅助工具) {}
+         [exec] (Xmag) {xmag} <>
+      [end]
+      [submenu] (科学) {}
+         [submenu] (工程) {}
+            [exec] (Dia) {/usr/bin/dia} </usr/share/pixmaps/dia_menu.xpm>
+         [end]
+         [submenu] (数学) {}
+            [exec] (Bc) { x-terminal-emulator -T "Bc" -e /usr/bin/bc} <>
+            [exec] (Dc) { x-terminal-emulator -T "Dc" -e /usr/bin/dc} <>
+            [exec] (LibreOffice Math) {/usr/bin/libreoffice --math} </usr/share/icons/hicolor/32x32/apps/libreoffice-math.xpm>
+            [exec] (Xcalc) {xcalc} <>
+         [end]
+      [end]
+      [submenu] (声音) {}
+         [exec] (grecord (GNOME 2.0 Recorder\)) {/usr/bin/gnome-sound-recorder} </usr/share/pixmaps/gnome-grecord.xpm>
+         [exec] (Rhythmbox) {/usr/bin/rhythmbox} </usr/share/pixmaps/rhythmbox-small.xpm>
+         [exec] (Sound Juicer) {/usr/bin/sound-juicer} </usr/share/pixmaps/sound-juicer.xpm>
+         [exec] (Xfce Mixer) {/usr/bin/xfce4-mixer} </usr/share/pixmaps/xfce4-mixer.xpm>
+      [end]
+      [submenu] (视频) {}
+         [exec] (SMPlayer) {smplayer} </usr/share/pixmaps/smplayer.xpm>
+         [exec] (Totem) {/usr/bin/totem} </usr/share/pixmaps/totem.xpm>
+      [end]
+      [submenu] (数据管理) {}
+         [exec] (Tomboy) {/usr/bin/tomboy} <>
+      [end]
+      [submenu] (图形) {}
+         [exec] (Dia (GNOME\)) {/usr/bin/dia} </usr/share/pixmaps/dia_menu.xpm>
+         [exec] (ImageMagick) {/usr/bin/display.im6 logo:} </usr/share/pixmaps/display.im6.xpm>
+         [exec] (Inkscape) {/usr/bin/inkscape} </usr/share/pixmaps/inkscape.xpm>
+         [exec] (LibreOffice Draw) {/usr/bin/libreoffice --draw} </usr/share/icons/hicolor/32x32/apps/libreoffice-draw.xpm>
+         [exec] (The GIMP) {/usr/bin/gimp} </usr/share/pixmaps/gimp.xpm>
+         [exec] (X Window Snapshot) {xwd | xwud} <>
+      [end]
+      [submenu] (网络) {}
+         [submenu] (通信) {}
+            [exec] (Evolution) {/usr/bin/evolution} </usr/share/pixmaps/evolution.xpm>
+            [exec] (Remmina) {/usr/bin/remmina} <>
+            [exec] (Telnet) { x-terminal-emulator -T "Telnet" -e /usr/bin/telnet} <>
+            [exec] (Vinagre) {vinagre} <>
+            [exec] (Xbiff) {xbiff} <>
+         [end]
+         [submenu] (网络浏览) {}
+            [exec] (w3m) { x-terminal-emulator -T "w3m" -e /usr/bin/w3m /usr/share/doc/w3m/MANUAL.html} <>
+         [end]
+         [submenu] (文件传输) {}
+            [exec] (qBittorrent) {/usr/bin/qbittorrent} </usr/share/pixmaps/qbittorrent.xpm>
+            [exec] (Transmission BitTorrent Client (GTK\)) {/usr/bin/transmission-gtk} </usr/share/pixmaps/transmission.xpm>
+         [end]
+      [end]
+      [submenu] (文本) {}
+         [exec] (Character map) {/usr/bin/gucharmap} <>
+         [exec] (GNOME Dictionary) {/usr/bin/gnome-dictionary} </usr/share/pixmaps/gdict.xpm>
+         [exec] (stardict) {/usr/bin/stardict} </usr/share/pixmaps/stardict_32x32.xpm>
+      [end]
+      [submenu] (文件管理) {}
+         [exec] (Baobab) {/usr/bin/baobab} </usr/share/pixmaps/baobab.xpm>
+         [exec] (Brasero) {/usr/bin/brasero} <>
+         [exec] (File-Roller) {/usr/bin/file-roller} </usr/share/pixmaps/file-roller.xpm>
+         [exec] (Nautilus) {/usr/bin/nautilus} </usr/share/pixmaps/nautilus.xpm>
+         [exec] (Thunar) {/usr/bin/thunar} <>
+         [exec] (Xfdesktop) {xfdesktop} <>
+      [end]
+      [submenu] (系统) {}
+         [submenu] (安全) {}
+            [exec] (Seahorse) {/usr/bin/seahorse} </usr/share/pixmaps/seahorse.xpm>
+         [end]
+         [submenu] (管理) {}
+            [exec] (DSL/PPPoE configuration tool) { x-terminal-emulator -T "DSL/PPPoE configuration tool" -e /usr/sbin/pppoeconf} </usr/share/pixmaps/pppoeconf.xpm>
+            [exec] (Editres) {editres} <>
+            [exec] (Gnome Control Center) {/usr/bin/gnome-control-center} </usr/share/pixmaps/gnome-control-center.xpm>
+            [exec] (GNOME Network Tool) {/usr/bin/gnome-nettool} </usr/share/pixmaps/gnome-nettool.xpm>
+            [exec] (pppconfig) { x-terminal-emulator -T "pppconfig" -e su-to-root -p root -c /usr/sbin/pppconfig} <>
+            [exec] (TeXconfig) { x-terminal-emulator -T "TeXconfig" -e /usr/bin/texconfig} <>
+            [exec] (Xclipboard) {xclipboard} <>
+            [exec] (Xfce Application Finder) {xfce4-appfinder} </usr/share/pixmaps/xfce4-appfinder.xpm>
+            [exec] (Xfontsel) {xfontsel} <>
+            [exec] (xkeycaps) {/usr/bin/xkeycaps} <>
+            [exec] (Xkill) {xkill} <>
+            [exec] (Xrefresh) {xrefresh} <>
+         [end]
+         [submenu] (系统监控) {}
+            [exec] (GNOME system monitor) {/usr/bin/gnome-system-monitor} <>
+            [exec] (Pstree) { x-terminal-emulator -T "Pstree" -e /usr/bin/pstree.x11} </usr/share/pixmaps/pstree16.xpm>
+            [exec] (Top) { x-terminal-emulator -T "Top" -e /usr/bin/top} <>
+            [exec] (Xconsole) {xconsole -file /dev/xconsole} <>
+            [exec] (Xev) {x-terminal-emulator -e xev} <>
+            [exec] (Xload) {xload} <>
+         [end]
+         [submenu] (硬件) {}
+            [exec] (Xvidtune) {xvidtune} <>
+         [end]
+         [submenu] (语言环境) {}
+            [exec] (Input Method Configuration) { x-terminal-emulator -T "Input Method Configuration" -e /usr/bin/im-config} <>
+         [end]
+      [end]
+      [submenu] (终端) {}
+         [exec] (Gnome Terminal) {/usr/bin/gnome-terminal} </usr/share/pixmaps/gnome-terminal.xpm>
+         [exec] (Rxvt-Unicode) {urxvt} </usr/share/pixmaps/urxvt.xpm>
+         [exec] (Rxvt-Unicode (Black, Xft\)) {urxvt -fn "xft:Mono" -rv} </usr/share/pixmaps/urxvt.xpm>
+         [exec] (Xfce Terminal) {/usr/bin/xfce4-terminal} </usr/share/pixmaps/xfce4-terminal.xpm>
+         [exec] (XTerm) {xterm} </usr/share/pixmaps/xterm-color_32x32.xpm>
+         [exec] (X-Terminal as root (GKsu\)) {/usr/bin/gksu -u root /usr/bin/x-terminal-emulator} </usr/share/pixmaps/gksu-debian.xpm>
+         [exec] (XTerm (Unicode\)) {uxterm} </usr/share/pixmaps/xterm-color_32x32.xpm>
+      [end]
+   [end]
+   [submenu] (游戏) {}
+      [submenu] (方块类) {}
+         [exec] (TINT Is Not Tetris(tm\)) { x-terminal-emulator -T "TINT Is Not Tetris(tm)" -e sh -c '/usr/games/tint -l 5;echo;echo PRESS ENTER;read line'} <>
+      [end]
+      [submenu] (棋盘类) {}
+         [exec] (GnuChess) { x-terminal-emulator -T "GnuChess" -e /usr/games/gnuchess} <>
+      [end]
+      [submenu] (玩具类) {}
+         [exec] (Oclock) {oclock} <>
+         [exec] (Xclock (analog\)) {xclock -analog} <>
+         [exec] (Xclock (digital\)) {xclock -digital -update 1} <>
+         [exec] (Xeyes) {xeyes} <>
+         [exec] (Xlogo) {xlogo} <>
+      [end]
+      [submenu] (纸牌类) {}
+         [exec] (Gnome Solitaire Games) {/usr/games/sol} </usr/share/pixmaps/aisleriot.xpm>
+      [end]
+   [end]

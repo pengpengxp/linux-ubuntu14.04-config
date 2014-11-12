@@ -1,0 +1,255 @@
+http://blog.sina.com.cn/s/blog_700fa63b01019ygo.html
+
+debian 7.0 wheezy amd64 从2012年开始试用，通过长期实际运用，在最近2-3年里获得了不少经验。
+        首先是学会了Xfce桌面，用chromium浏览器，用金山wps处理office文档，用vlc看电影，用audacious听mp3，用evince打开pdf文件，用transmission来bt，用amule来电驴，用filezilla做ftp，用arandr配置双屏，用ibus-pinyin输入法，用network-manager做pptp拨号，用k3b、brasero刻光盘、用nerolinux刻蓝光盘，用mkvtool编辑mkv视频流，用subtitleedit编辑电影字幕，用audacity编辑音频音乐等桌面应用。
+       其次，在服务器方面，用virtualbox、kvm做虚拟系统，用bind9做dns caching和域名解释，用dhcp分配网络ip，用wins做windows名字解释，用xrdp、rdesktop做远程控制。
+       最后开发方面用java、tomcat、postgres、pgadmin、netbeans来做应用等等。
+http://d1.sina.com.cn/201401/03/532362_25x150-10.jpg
+
+前言
+
+        从毕业到现在，一晃15年，类Unix操作系统也用了差不多15年。
+        从99年开始用linux，试过不少版本，早期主要用redhat来做服务器，比如做proxy、dhcp、samba、dns、ntp等网络服务。
+        后来发现linux做proxy、防火墙之类的网络服务不够稳定，不够安全，于是改用freebsd和openbsd来做一些比较强调稳定、安全的网络服务，尤其是放在互联网上的防火墙和网站。linux则用在了内网，用来跑java应用，比如tomcat、groovy、数据库等。
+        debian大约是从2011年初开始使用，当时的版本是 6.0 squeezy i386。想用linux做桌面主要是看到微软已经老了，老用新瓶装旧酒，xp已老，win7只是换个脸玩花俏。而redhat没把心思放在桌面上，用户体验很差，目光只好转向debian系和suse。比较过ubuntu和debian后发现debian更简洁好懂、更严谨和稳定，而且debian远比suse流行，支持众多，最后就选了 6.0 版本开始使用起来。
+       作为一名redhat/centos老用户，刚学debian/ubuntu时，非常不习惯apt-get命令，当然apt-get的确也不太好用。常常需要apt-cache命令来配合。但是后来发现原来还有一套更好的 aptitude 命令系统，心理就开始接受了很多。再后来发现debian的资源非常多，比redhat系还多时，感觉就已经完全不同了。
+
+        debian 7.0 wheezy amd64 从2012年开始试用，通过长期实际运用，在最近2-3年里获得了不少经验。
+        首先是学会了Xfce桌面，用chromium浏览器，用金山wps处理office文档，用vlc看电影，用audacious听mp3，用evince打开pdf文件，用transmission来bt，用amule来电驴，用filezilla做ftp，用arandr配置双屏，用ibus-pinyin输入法，用network-manager做pptp拨号，用k3b、brasero刻光盘、用nerolinux刻蓝光盘，用mkvtool编辑mkv视频流，用subtitleedit编辑电影字幕，用audacity编辑音频音乐等桌面应用。
+       其次，在服务器方面，用virtualbox、kvm做虚拟系统，用bind9做dns caching和域名解释，用dhcp分配网络ip，用wins做windows名字解释，用xrdp、rdesktop做远程控制。
+       最后开发方面用java、tomcat、postgres、pgadmin、netbeans来做应用等等。
+
+
+
+wheezy 技术笔记
+
+
+1. 下载光盘镜像
+[2012.3.25] 
+1.1 去官网 http://cdimage.debian.org/cdimage/weekly-builds/amd64/iso-cd/ 下载testing版，每周一个版本，刻盘。
+
+[2013.5.28]
+1.2  Debian 7.0 已经在今年5月初正式发布，可以到国内各大镜像下载：
+http://debian.ustc.edu.cn/debian-cd/7.0.0/amd64/iso-cd/
+http://debian.cn99.com/debian-cd/7.0.0/amd64/iso-cd/
+
+
+
+
+2. 系统安装
+[2012.3.26] - [2012.3.27]
+2.1  分区，试用btrfs文件系统
+注意：
+    btrfs暂时不适用于/boot，否则安装后期，update-grub时会出错（等了几小时）
+    btrfs暂时不适用于/，否则系统安装后首次启动，会扫描/，就会提示找不到fsck.btrfs,系统用/sbin/fsck.btfs去扫描 / ，典型先有鸡还是先有蛋的问题(又等一小时）
+
+小结：
+    第1次安装失败。分区时，/boot和/均采用btrfs格式，到安装后期，update-grub失败。
+    第2次安装失败。分区时，/boot用EXT4格式，/ 用btrfs格式，安装顺利结束；首次启动，系统调用/sbin/fsck.btrfs去扫描/，找不到fsck.btrfs，无法正常启动，失败。
+    第3次安装不太成功。分区时，/boot和/ 均采用EXT4格式，安装顺利结束；首次启动，系统自动进入gnome3，但提示显卡不支持gnome3，未知是否因此而导致gnome3不完整，不会用gnome3，放弃gnome3。在此系统基础上试装了xfce4、vlc，安装拼音输入法(scim、scim-pinyin)后，无法调出输入法，怀疑gnome和xfce4冲突，决定再重装。
+    第4次，先最小化安装系统，然后装xfce4，之后一切顺利。
+
+
+
+
+3. 安装xfce4
+[2012.3.28]
+3.1   先装图形驱动xorg，再装xfce4
+    aptitude install xorg
+    aptitude install xfce4
+    aptitude install xfce4-goodies
+3.2   无需其他配置，用命令 startx 即可启动轻量级图形界面Xfce4!
+    （假如安装了 slim、xdm或lightdm，系统在启动时会自动开启图形界面）
+
+
+
+
+4. 安装拼音输入法 ibus-pinyin
+    aptitude install ibus-pinyin
+    装好后，重新启动，手动添加拼音输入法：系统菜单->设置->IBus设置->选择输入法->汉语->拼音->添加。
+
+
+
+
+5. 安装字体
+[2012.3.29]
+5.1 安装文泉宋体
+     aptitude install xfonts-wqy
+     aptitude install ttf-wqy-zenhei ttf-wqy-microhei
+5.2 安装uming宋体
+     aptitude install fonts-arphic-uming ttf-arphic-uming
+5.3 安装外来字体（比如windows字体）
+     把字体文件（比如simsun.ttc）直接cp 到 ~/.fonts下，即可。
+ 
+
+
+
+6. 美化桌面，细调样式、字体
+6.1 设置系统字体
+     应用程序菜单 -> 设置 -> 外观 -> 字体 -> 默认字体：WenQuanYi Bitmap Song, 9；启用字体光滑。
+6.2 设置桌面风格
+     应用程序菜单 -> 设置 -> 外观 -> 风格 -> Xfce-orange，界面更简洁、紧凑、醒目。
+6.3 设置系统图标
+     安装新图标：
+     aptitude install gnome-human-icon-theme
+     应用程序菜单 -> 设置 -> 外观 -> 图标 ->  Human-icon，图标顺眼些。
+6.4 设置终端字体
+     Xfce终端 -> 编辑 -> 首选项 -> 外观 -> 字体：试用不同的字体如
+     AR PL UMing CN Light, 10；DejaVu Sans Mono bold；Mono space bold等等。
+     用反锯齿，允许粗字体
+6.5 设置窗口管理器
+     应用程序菜单 -> 设置 -> 窗口管理器 -> 样式 -> 主题 -> Fbx
+6.6 设置键盘
+      Xfce终端里，TAB键不能补全命令的解决
+      应用程序菜单->设置->窗口管理器->键盘(Y)->"切换同一应用程序的窗口：super Tab"， 清除super Tab。
+
+
+
+
+7. 安装常用软件
+    aptitude install filezilla evince  gcalc mousepad gedit
+    aptitude install vlc audacious 
+    aptitude install pgadmin netbeans
+
+
+
+
+8. 安装Chromium浏览器
+[2012.3.30]
+      Google被封了，伟大的和谐，腹诽一下。只好装chromium，chromium需要自行装flash。
+8.1  aptitude install chromium-browser-l10n（中文支持）
+8.2 优化chromium字体，设置字体，全部改为:  UMing CN
+
+8.4  如果要为chromium 安装 flash
+8.4.1  修改sources.list，每一项追加：non-free contrib
+8.4.2  aptitude update && aptitude search  flashplugin
+8.4.3  aptitude install  flashplugin-nonfree
+
+
+
+ 
+
+9. 安装远程桌面协议，以便可以使用windows远程桌面
+     aptitude install xrdp
+     在slim、xdm或lightdm没有安装的情况下，本地需要用startx来手动启动图形界面；如果本地没有启动startx，此时远端用xrdp协议登陆，远端能看到图形界面，但本地依旧是console界面。
+  
+
+
+
+10. VPN（pptp） 拨号
+[2012.4.30]
+10.1 安装软件pptp软件和界面
+aptitude install network-manager
+aptitude install network-manager-pptp
+aptitude install network-manager-pptp-gnome
+
+[2013.5.28]
+10.2 # 安装后处理
+手工运行nm-applet可调出界面，但此时未必能通过此界面控制网络，还需
+修改 /etc/NetworkManager/NetworkManager.conf
+   managed=false   ->   managed=true
+reboot后，才可用网络面板做pptp拨号。
+
+
+
+
+11. 细调自启动服务
+    debian也有redhat的chkconfig，用法相似。
+    aptitude install chkconfig
+ 
+
+
+
+12. 修改窗口启动器
+[2012.05.03]
+修改/etc/slim.conf，把xfce4作为default
+# login_cmd           exec /bin/bash -login /etc/X11/Xsession %session
+login_cmd           exec /bin/bash -login /etc/X11/Xsession startxfce4
+
+# 注意： 后期改用 lightdm代替slim、xdm
+
+
+
+
+13. 安装kvm
+    aptitude install kvm qemu-kvm virt-manager
+    用普通帐号运行管理界面，说不够权限，改用root，可以。
+    普通账号要运行虚拟管理器，需把普通账号加入到libvirt组, gpasswd -a <普通账号>  <libvirt组>
+13.1 检查是否成功
+     virsh -c qemu:///system list
+ 
+
+
+
+14. smbfs支持
+    xfce4 的 thunar 不支持 nautilus 的 samba网络文件系统。
+    只能用smbmount的方式。找了半天，原来smbmount包含在smbfs软件包里.
+    aptitude install smbfs
+    smbmount -o username=??,password=??  //server/share  /mnt/filex
+
+
+15. 安装笔记本，家庭用
+[2012.4.3]
+15.1  安装过程选上 laptop, sshd, 基本系统 三项
+15.2 其余过程参考上述1-15项
+15.3 wheezy识别出两显示设备，但无法布局。另装ARandR，进行多屏幕布局设置。
+
+  
+
+16 声音设置
+  笔记本没声音。
+16.1 alsactl init
+16.2 /etc/init.d/alsa-utils restart
+16.3 查看声音设备的命令：
+   查看声卡型号： lspci -nn | grep Audio
+   查看声卡模块： lsmod | grep snd
+   aplay -l
+  modprobe snd-pcm-oss
+  cat /dev/sndstat,   
+分享： [分享到微米] [分享到新浪Qing]
+
+0
+
+喜欢
+阅读(272)┊ 评论 (0)┊	收藏(0) ┊转载原文	┊ 喜欢▼ ┊打印┊举报
+已投稿到： 	
+[圈子] 圈子	
+前一篇：chrome firefox plugins/播放有声音 没图像
+后一篇：debian7 wheezy jdk7(摘自网络)
+评论 重要提示：警惕虚假中奖信息 | 当主席吃包子不是新闻中国就进步了
+[发评论]
+
+    评论加载中，请稍候...
+
+发评论 鲁迅的＂偏激＂与家庭婚姻遭遇有关 | 揭秘：历史上唯一的一位绝色男皇后
+
+    灌水
+    赞
+    美好
+    顶
+    顶
+    顶
+    开心
+    路过
+
+登录名： 密码： 找回密码 注册	记住登录状态
+
+分享到微博 [新]    
+
+验证码： 请点击后输入验证码 收听验证码	
+发评论
+
+以上网友发言只代表其个人观点，不代表新浪网的观点或立场。
+< 前一篇chrome firefox plugins/播放有声音 没图像
+后一篇 >debian7 wheezy jdk7(摘自网络)
+  
+
+新浪BLOG意见反馈留言板　不良信息反馈　电话：4006900000 提示音后按1键（按当地市话标准计费）　欢迎批评指正
+
+新浪简介 | About Sina | 广告服务 | 联系我们 | 招聘信息 | 网站律师 | SINA English | 会员注册 | 产品答疑
+
+Copyright © 1996 - 2014 SINA Corporation, All Rights Reserved
+
+新浪公司 版权所有
+[将选中内容分享到新浪微博]
+幻灯播放

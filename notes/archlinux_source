@@ -1,0 +1,46 @@
+ArchLinux国内源。pacman常用命令
+来源： 何鑫的日志
+*修改源*
+1)在/etc/pacman.d/mirrorlist设置安装源,视情况加入:
+Server = http://mirrors.163.com/archlinux/$repo/os/i686 
+Server = http://mirrors.sohu.com/archlinux/$repo/os/i686 
+Server = http://mirror.lupaworld.com/archlinux/$repo/os/i686 
+Server = http://ftp.sjtu.edu.cn/pub/mirror2/www.archlinux.org/$repo/os/i686/ 
+Server = ftp://ftp.archlinux.org/$repo/os/i686 
+2)/etc/pacman.conf类似这样:
+[core]
+# Add your preferred servers here, they will be used first
+Include = /etc/pacman.d/mirrorlist
+[extra]
+# Add your preferred servers here, they will be used first
+Include = /etc/pacman.d/mirrorlist
+[community]
+# Add your preferred servers here, they will be used first
+Include = /etc/pacman.d/mirrorlist
+
+ArchLinux的包管理系统: pacman
+
+常用命令有：
+pacman -Sy abc                    和源同步后安装名为abc的包
+pacman -S abc                     从本地数据库中得到abc的信息，下载安装abc包
+pacman -Sf abc                    强制安装包abc
+pacman -Ss abc                   搜索有关abc信息的包
+pacman -Si abc                    从数据库中搜索包abc的信息
+pacman -Syu                        同步源，并更新系统
+pacman -Sy                          仅同步源
+pacman -R abc                     删除abc包
+pacman -Rc abc                   删除abc包和依赖abc的包
+pacman -Rsn abc                 移除包所有不需要的依赖包并删除其配置文件
+pacman -Sc                          清理/var/cache/pacman/pkg目录下的旧包
+pacman -Scc                        清除所有下载的包和数据库
+pacman -Sd abc                   忽略依赖性问题，安装包abc
+pacman -Su --ignore foo       升级时不升级包foo
+pacman -Sg abc                   查询abc这个包组包含的软件包
+pacman -Q                           列出系统中所有的包
+pacman -Q package             在本地包数据库搜索(查询)指定软件包
+pacman -Qi package            在本地包数据库搜索(查询)指定软件包并列出相关信息
+pacman -Q | wc -l                  统计当前系统中的包数量
+pacman -Qdt                         找出孤立包
+pacman -Rs $(pacman -Qtdq) 删除孤立软件包（递归的,小心用)
+pacman -U   abc.pkg.tar.gz      安装下载的abs包，或新编译的本地abc包
+pacman-optimize && sync        提高数据库访问速度

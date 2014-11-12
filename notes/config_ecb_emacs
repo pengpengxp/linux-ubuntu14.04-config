@@ -1,0 +1,134 @@
+ emacs-ecb 2009-05-12 10:36:20
+
+分类：
+
+emacs-ecb
+
+===============================================================================
+from: http://blog.csdn.net/l0he1g/archive/2008/04/25/2328874.aspx
+
+Emacs做c/c++开发环境
+
+做为嵌入式软件开发者，我想许多人会和我一样，在选择开发工具时徘徊过。因为嵌入式软件的开发和PC上的软件开发很不一样。特别是 Windows软件开发时，可以有许许多多的集成开发环境可以选择。有时候甚至是不需要思考的选择。比如你要开发MFC程序，那么你的选择只有VC++。
+ 
+嵌入式开发还有一个特点，就是开发环境经常会发生改变。这个项目在windows下开发，下一个项目可能就转向Linux了。因此，我这里要选 择的是一个在Windows和Linux下使用方式保持一致的开发工具。因为你一旦熟悉了一种开发环境，你就可以高效的进行代码开发。
+摆在眼前的，有两个非常优秀的IDE：eclipse和emacs。这两者都是跨平台的。而且这两者在世界范围内有着十分广泛的使用者。我的选择是emacs。当然，并不是说eclipse不好。因为我不是很了解eclipse，也暂时没有时间去学。
+ 
+本文主要教你一步步搭建强大而方便的emacs开发环境，针对C/C++语言和Windows操作系统。Linux下搭建方法类似，并且更为方便，因为一般的Linux发行版都带有emacs。
+ 
+ 
+获得emacs
+ 
+ 
+emacs有两种主流版本，一个是Gnu emacs，一个是Xemacs。其中Gnu emacs使用者较多，我们一般说的emacs就是GNU emacs。以下说到的emacs就默认是Gnu emacs了。
+emacs的官方网站是：http://www.gnu.org/software/emacs/
+在这个网站上，你可以下载到各个平台的最新稳定版的emacs，包括windows和linux。在我写这段文字的时候，emacs最新稳定版 是21.4。然而，正在开发中的cvs版中有许多我们非常感兴趣的新特性。一个是我们期待已久的unicode的支持，一个是我们同样期待已久的GTK2 的支持。而且就我使用而言，最新的CVS版已经相当的稳定。那么我们是不是必须用CVS工具提取CVS代码然后自己编译生成emacs可执行程序呢？不 用！有一个叫做ntemacs的项目已经帮我们做了这个工作了。
+ntemacs的官方网站是：http://www.ntemacs.sf.net
+下载最新的ntemacs，将其解压到任意一个目录就可以使用了。运行emacs的脚本是 bin/runemacs.bat。你可以将这个脚本创建一个快捷方式到sendto文件 夹。
+还有一个可供选择的emacs的windows版本是winmacs。他的下载地址是http://sourceforge.net/projects/winmacs。这个版本有一个问题，你必须设置HOME系统变量，将其设置为c:\
+ 
+ 
+获得辅助插件
+ 
+ 
+纯粹的emacs已经足够强大，借助其cc-mode已经可以进行C/C++开发。但是我们前面说过，要进行高效的开发。那么，我们需要一些辅助的“插件”。
+ 
+cscope：这是一个可以使emacs实现类似source insight那种符号查找等功能的软件。它最常用的功能就是找到任何一个变量、函数、结构体等是在哪里被定义，被引用的。cscope的官方网站在http://cscope.sourceforge.net/。 这里可以下载到cscope的源码，源码中有一个叫做xcscope的目录，将其拷贝到你emacs的site-lisp目录下。xcscope是 lisp脚本，它是与平台无关的语言。然而，这个脚本依赖cscope可执行文件。但cscope是不能直接在windows下运行的。我在网上找了很 久，终于在一个俄罗斯网站上找到了cscope的windows编译。这个网站是：http://iamphet.nm.ru/cscope/index.html。下载后将cscope.exe解压到emacs的bin目录下即可。
+
+cedet+ecb：这两个“插件”无比强大，专门为emacs作为IDE而设计的。我现在只使用了其中很小一部分功能，就领略到了它带给我的高效。官方网站：http://ecb.sourceforge.net/ ； http://cedet.sourceforge.net/。下载这两个插件，和xcscope一样，复制到site-lisp目录。
+ 
+session : 这个插件可以让你的emacs显示最近编辑和最近访问的文件。官方网站是：http://sourceforge.net/projects/emacs-session
+ 
+doxymacs : 这是一个按照doxy风格生成注释的工具。使代码可以更方便的生成文档。官方网站是：http://sourceforge.net/projects/doxymacs
+ 
+ 
+配置emacs
+ 
+ 
+一切就绪后，就需要配置emacs了。在C盘根目录下建立一个.emacs文本文件，输入配置内容。以下是我的配置文件内容：
+(require 'xcscope) ;;加载xcscope
+(require 'cedet) ;;加载cedet
+(require 'ecb) ;;加载ecb
+(require 'session) ;;加载session
+(add-hook 'after-init-hook 'session-initialize) ;; 启动时初始化session
+(require 'doxymacs) ;; 启动doxymacs
+(add-hook 'c-mode-common-hook 'doxymacs-mode) ;; 启动doxymacs-mode
+(add-hook 'c++-mode-common-hook 'doxymacs-mode) ;; 启动doxymacs-mode
+(desktop-load-default) ;;读取默认desktop设置
+(desktop-read) ;;读取当前目录保存的desktop设置
+(set-face-background 'default "LightCyan3") ;;设置背景色为 浅青色3
+(set-face-font 'default "-outline-新宋体-normal-r-normal-normal-*-*-96-96-c-*-iso8859-1") ;;设置字体为新宋体 ( Only for windows )
+(global-set-key [f12] 'ecb-activate) ;;定义F12键为激活ecb
+(global-set-key [C-f12] 'ecb-deactivate) ;;定义Ctrl+F12为停止ecb
+(global-set-key [f11] 'delete-other-windows) ;;设置F11为删除其它窗口
+(global-set-key [(meta return)] 'semantic-ia-complete-symbol-menu) ;;设置Alt+Enter为自动补全菜单
+(global-set-key [C-\;] 'ecb-goto-window-edit-last) ;;切换到编辑窗口
+(global-set-key [C-\'] 'ecb-goto-window-methods) ;;切换到函数窗口
+(global-set-key [C-.] 'cscope-find-global-definition) ;;搜索定义
+(global-set-key [C-,] 'cscope-pop-mark) ;; 跳出转向
+(enable-visual-studio-bookmarks) ;; 启动VS书签子程序
+;;(setq semanticdb-project-roots (list "d:/work")) ;; 设置cemanticdb的扫描根目录
+(add-hook 'c-mode-common-hook ( lambda() ( c-set-style "k&r" ) ) ) ;;设置C语言默认格式
+(add-hook 'c++-mode-common-hook ( lambda() ( c-set-style "k&r" ) ) ) ;;设置C++语言默认格式
+===============================================================================
+from: http://www.cublog.cn/u/24932/showart_313283.html
+
+emacs ecb的鼠标响应设置方法
+
+
+在鼠标点击ecb窗口中的文件时没有响应，只有敲Enter键时才会响应，感觉很不方便，于是摸索了半天，
+终于搞定ecb的鼠标响应方式，按如下设置：
+
+打开emacs中的菜单 ECB->Preferences->Most important...,于是打开了配置文件.
+
+找到Ecb Primary Secondary Mouse Buttons:并点击Show Value，
+选择第三个选项：Primary:mouse-1,secondary:mouse-2
+
+保存选项为以后所用，现在用鼠标操作ecb是不是方便了。
+
+===============================================================================
+
+===============================================================================
+
+===============================================================================
+ecb是emacs code browser，要安装它，必须要安装cedet，而且版本必须要对上。
+
+下载cedet的源码，解压到任意目录，我的解压在~/.emacs.d/plugins/下，进入目录，执行：
+
+make EMACS=emacs
+
+编译源码，则它会自动编译安装。
+
+安装完毕之后，下载ecb，解压到~/.emacs.d/plugins/中，然后在.emacs文件添加下面的代码：
+
+(add-to-list \'load-path "~/.emacs.d/plugins/ecb-snap")
+(require \'ecb)
+(setq ecb-auto-activate t ecb-tip-of-the-day nil)
+(custom-set-variables
+  \'(ecb-primary-secondary-mouse-buttons (quote mouse-1--mouse-2)))
+(custom-set-faces)
+
+
+上面，ecb-snap是我放ecb的目录，第二行表示去掉每日提醒，第三行表示激活鼠标操作（默认用鼠标单击无效）。
+
+另外：如果不想每次启动都开ecb（因为太慢了），我们可以定制自己的快捷键。把
+
+(setq ecb-auto-activate t ecb-tip-of-the-day nil)变成
+
+(setq ecb-tip-of-the-day nil)
+
+然后添加下面的代码：
+
+(defun ecb-open-close()  
+    (interactive)  
+    (if ecb-minor-mode  
+      (ecb-deactivate)  
+      (ecb-activate)))    
+(global-set-key (kbd "C-;") \'ecb-open-close)
+
+
+我这里使用CTRL+;键来开启，这样开单个文件就非常快了，而且要开关ecb也非常快。
+
+上张图：
+
+\"\"

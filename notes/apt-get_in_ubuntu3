@@ -1,0 +1,65 @@
+
+如何在 Debian GNU/Linux 添加修改软件源
+
+    文档发表：世纪自由 | 更新时间：2009-08-29 01:27 CST | 阅读量：3660
+    -- 转载请注明出处 http://www.zzzke.cn/ 或超链接至本文 --
+
+    我们在 Debian GNU/Linux 中有时软件源的网络速度慢，在使用 apt 安装源中的软件时总是因源服务器负荷大而时间很长，所以想换个软件源或添加软件源又不知道怎么做，现在就给您讲一下 Debian GNU/Linux 中软件源的修改方法。步骤很简单，只要修改在 /etc/apt/sources.list 文件中的软件源地址就可以了，但要记得这个文件不是谁都能修改的，要有系统管理员权限才行。
+
+    首先要以 系统管理员 的身份登录系统，Debian GNU/Linux 中一般在 启动引导器 选项里以 单用户方式（一般以 single-user Mode 注明的项），选中此项启动系统再输入 系统管理员用户名（root）和密码，然后再输入桌面启动命令：
+
+    # startx 
+
+ 这样就可以在桌面模式下面更方便地修改。
+
+    进入 /etc/apt/ 目录中用文本编辑器打开 sources.list 文件，修改或添加已知的软件源地址再保存就可以了。
+
+ 
+
+    如果您觉得重新登录 root 帐号麻烦，那么您可以在您当前帐户以 sudo 方式提升您的权限来操作，具体方法如下：
+
+    打开终端，在终端里输入
+
+    $ sudo gedit /etc/apt/sources.list
+    Password:
+
+    命令的意思是以系统管理员的身份用系统己有的 gedit 编辑器打开路径为 /etc/apt/sources.list 的文件。输入您当前帐户密码，回车确认。之后系统就会按命令调用 gedit 编辑器打开指定的文件以待编辑（如果您的系统中没有 gedit 编辑器也可以改用其它的编辑器），您可以方便地添加或修改已知的软件源。
+
+    如果您的 Debian GNU/Linux 不能 sudo ，那么您的帐户还没有 sudo 权限，因为 Debian GNU/Linux 默认只有 root 有 sudo 权限，您要先设置您使用的当前帐户有 sudo 权限，设置方法请参考 让 Debian GNU/Linux 能使用 sudo 命令。
+
+    当然您也可以使用 su 方式直接以管理员身份在终端登录，方法如下：
+
+    $ su 
+    Password: 
+
+    在此输入 root 密码，在登录后，按以下操作：
+
+    ＃ gedit /etc/apt/sources.list 
+
+     之后的就会以 gedit 编辑器打开路径为 /etc/apt/sources.list 的文件，操作同上说明。
+
+ 
+源的添加格式
+
+    要在 sources.list 中添加源格式很重要，格式不正确将无法正常使用新添加的源
+
+    书写格式： deb <地址 - 1> <目录名 - 2> <组件名 - 3>
+
+    地  址   找到包含dists和pool这两个目录的地址，例： http://mirrors.geekbone.org/debian/
+    目录名   打开 dists 目录，里面包含的目录名字，记下来。比如dists/包含sarge、etch、woody、sid。
+    组件名   打开 pool 目录，看看里面包含哪些组件名字，比如main、contrib、non-free；
+
+例：
+
+deb ftp://ftp.linuxforum.net/debian/ sarge main contrib non-free
+deb http://ftp.isu.edu.tw/pub/Linux/Debian/debian/ sarge main contrib non-free
+deb http://debian.ustc.edu.cn/debian-non-US sarge/non-US main non-free contrib
+deb http://debian.ustc.edu.cn/debian-uo sid marillat rareware misc ustc firefly jrfonseca java
+
+    版本说明：
+    一般有三个版本：stable , testing , unstable
+    当前的stable是sarge ，unstable是sid ，testing是etch
+
+    stable — 稳定版本，广泛的用于架设产品化服务器，只包含安全更新。
+    testing — 测试版本，推荐工作站用户使用的发行版，包含有最近发布的软件，这些软件已经接受了少量测试。
+    unstable — 不稳定版本，供 Debian 开发者选用。

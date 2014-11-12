@@ -1,0 +1,18 @@
+clear lock
+remove mod1 = Alt_L
+remove mod4 = Super_R
+remove control = Control_L
+
+add control = Alt_L
+add control = Super_R
+add control = Menu
+add control = Caps_Lock
+add lock = Insert
+add mod1 = Control_L
+
+keycode 118 = Caps_Lock
+keycode 64 = Control_L
+keycode 134 = Control_L
+keycode 135 = Control_L
+keycode 66 = Control_L
+keycode 37 = Alt_L

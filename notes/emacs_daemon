@@ -1,0 +1,2 @@
+start the daemon:emacs --daemon
+kill daemon:emacsclient -e '(kill-emacs)'

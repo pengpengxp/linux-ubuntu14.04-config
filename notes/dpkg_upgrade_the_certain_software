@@ -1,0 +1,57 @@
+ubuntu阻止软件包升级（指定的软件包不升级）
+分类： unix/Linux 2011-04-27 22:04 475人阅读 评论(0) 收藏 举报
+ubuntu数据库php
+虽然说软件的更新，尤其是安全更新是很重要的，但是通常有些软件较大版本的升级总会伴随着软件功能的较大改变和很多兼容性问题，比如PHP等，也有一些在PPA源上较大的软件包下载会很慢，所以在日常的更新中阻止这些软件包的升级就很有必要了。
+
+
+软件包状态
+软件包有各种状态：“unknown”，“install”，“remove”，“purge”和“hold”。这些“希望”标记描述了用户打算如何操作这些软件包（既可以使用dselect的“Select”菜单，也可以直接调用dpkg）。
+
+它们的意思是：
+
+unknown – 用户并没描述他想对软件包进行什么操作。
+install – 用户希望对软件包进行安装或升级。
+remove – 用户希望删除软件包，但不想删除任何配置文件。
+purge – 用户希望完全删除软件包，包括配置文件。
+hold – 用户希望软件包保持现状，例如，用户希望保持当前的版本，当前的状态，当前的一切。
+
+
+阻止软件包升级
+有两种方法阻止软件包升级，使用dpkg，或者使用dselect。
+
+使用dpkg，首先导出软件包选择列表：
+
+
+
+dpkg --get-selections /* > selections.txt
+
+
+接着编辑文件selections.txt，修改想要恢复的软件所在的行，例如libc6，则将：
+
+libc6 install
+改为：
+
+libc6 hold
+保存文件，将它装入dpkg数据库：
+
+
+或者，如果知道要恢复的软件包名称，就可以不搜索软件包名称了，执行：
+
+sudo dpkg --set-selections < selections.txt
+
+
+
+这个命令将在每个软件包安装过程中保持该软件包不变。
+
+sudo echo libc6 hold | dpkg --set-selections
+
+
+
+这个命令即可恢复软件包libc6的升级。
+
+sudo echo libc6 install | sudo dpkg --set-selections
+
+
+使用dselect也可以达到同样的效果。进入[S]elect屏幕，找到想阻止其升级的软件包，按“=”键（或者“H”）。更改在你退出[S]elect屏幕后立即生效。
+
+以上这都是WIKI上的内容，基本上直接贴了

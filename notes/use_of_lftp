@@ -1,0 +1,44 @@
+linux下登陆FTP (2012-01-31 13:29:37)转载▼
+标签： linux ftp it	分类： linux
+一.登陆ftp
+命令：lftp （load ftp之意）
+例：NCBI的genome数据，登陆命令为lftp ftp://ftp.ncbi.nih.gov/genomes/
+如果设有用户名和密码，命令如下：
+lftp用户名:密码@ftp地址:传送端口（默认21）
+lftp用户名@ftp地址:传送端口（默认21），回车后输入密码
+登陆成功后会显示如下：
+cd ok, cwd=/genomes                                            
+lftp ftp.ncbi.nih.gov:/genomes>
+然后可以进行各种操作(ls, cd, find等等。此时若想浏览本地目录，用!ls)。
+二.下载文件
+要下载文件首先得设置用于存放下载文件的本地目录。
+命令：lcd 本地目录
+然后进入待下载文件的目录。根据下载文件类型的不同，命令也不同。
+单个文件
+命令：get file
+get -c file #可以进行断点续传
+批量文件
+命令： mget *.txt #批量下载目录下的txt文件
+mget -c *.txt #断点续传加上批量下载
+整个目录
+命令：mirror aaa/
+三.上传文件(还没尝试过)
+put file
+mput *.txt
+mirror –R aaa/
+四.退出ftp
+命令  bye #我每次都用bye，看起比较有爱也
+quit
+五.其他命令
+set ftp:charset gbk(or gb2312 or utf-8) #设置ftp端的编码格式
+set file:charset gbk(or gb2312 or utf-8) #设置本地编码格式。上述两条命令用于解决乱码。
+ctrl+z  #将当前进行的任务移交后台处理
+wait   #将后台处理任务调至前台查看
+jobs   #查看后台进行的任务列表
+kill all 或者 job_no  #删除所有任务 或 指定的任务
+queue get 123.txt #将命令加入任务列表
+queue #查看任务列表
+queue start #开始任务列表
+queue stop #停止任务列表
+
+还有许多高级命令，没用过，将来也不一定用，用上了再添加咯

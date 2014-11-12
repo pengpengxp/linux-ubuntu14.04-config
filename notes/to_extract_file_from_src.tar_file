@@ -1,0 +1,5 @@
+It need to add a user named mockbuild
+
+you can use the command as follow:
+
+useradd mockbuild

@@ -1,0 +1,216 @@
+安装gpgpu-sim
+ 
+LDD命令的原理与使用方法
+NVCC CUDA编译流程  
+
+2011-11-18 16:37:36|  分类： 术业有专攻 |字号 订阅
+
+一、CUDA编译流程简介
+
+Nvcc是一种编译器驱动，通过命令行选项可以在不同阶段启动不同的工具完成编译工作，其目的在于隐藏了复杂的CUDA编译细节，并且它不是一个特殊的CUDA编译驱动而是在模仿一般的通用编译驱动如gcc，它接受一定的传统编译选项如宏定义，库函数路径以及编译过程控制等。所有非CUDA编译步骤扔给通用的C编译器，在Windows下是MS的“cl”编译器，而在Linux下是gcc。CUDA程序编译的路径会因在编译选项时设置的不同CUDA运行模式而不同，如模拟环境的设置等。nvcc封装了四种内部编译工具，即在C:\CUDA\bin目录下的nvopencc(C:\CUDA\open64\bin)，ptxas，fatbin，cudafe。Nvcc的工作流程说明如下：
+
+首先是对输入的cu文件有一个预处理过程，这一过程包括的步骤有将该源文件里的宏以及相关引用文件扩展开，然后将预编译已经产生的与C有关的CUDA系统定义的宏扩展开，并合并分支编译的结果。CUDA源文件经过预处理过程后会生成具有.cup后缀名的经过预处理的源文件，经过预处理的源文件是再现程序bug的最好形式。通常，这个预处理过程是隐式完成的，如果想要显示执行，可以用命令nvcc -E x.cu -o x.cup或nvcc -E x.cu > x.cup来实现。???
+
+预处理后，首先将预处理的结果送给CUDA前端，即CUDAfe。通过CUDAfe分离源文件，然后调用不同的编译器分别编译。cudafe被称为CUDA frontend，会被调用两次，完成两个工作：一是将主机代码与设备代码分离，生成gpu文件，二是对gpu文件进行dead code analysis，传给nvopencc，未来的版本可能没有第二次调用。 Nvopencc生成ptx文件传给ptxas，最后将cubin或ptx传给fatbin组合成一个设备代码描述符。
+
+同时，在编译阶段CUDA源代码对C语言所扩展的部分将被转成regular ANSI C的源文件，也就可以由一般的C编译器进行更多的编译和连接。也即是设备代码被编译成ptx（parallel thread execution）代码和/或二进制代码，host代码则以C文件形式输出，在编译时可将设备代码描述符链接到所生成的host代码，将其中的cubin对象作为全局初始化数据数组包含进来，但此时，kernel执行配置也要被转换为CUDA运行启动代码，以加载和启动编译后的kernel。在调用CUDA驱动API时，CUDA运行时系统会查看这个描述符，根据当前的GPU load一块具有合适ISA的image，然后便可单独执行ptx代码或cubin对象，而忽略nvcc编译得到的host代码。
+
+另外，Nvcc的各个编译阶段以及行为是可以通过组合输入文件名和选项命令进行选择的。它是不区分输入文件类型的，如object, library or resource files，仅仅把当前要执行编译阶段需要的文件传递给linker。
+
+可以用-dryrun命令来列出nvcc编译的步骤的所有。命令列出的命令列表包括5种类型
+
+（1）标准变量的定义，如_HERE_和_SPACE_?；
+
+（2）执行nvcc.profile时对环境变量的赋值；
+
+（3）对VS安装的宏进行定义（从--compiler-bindir引申出来）；
+
+（4）执行vsvars32.bat获得的环境变量赋值；
+
+（5）nvcc生成?的命令。
+
+以上是我个人对CUDA编译过程的一个阐述，我想再结合下图就应该可以对CUDA的编译驱动nvcc有个整体的把握了吧！
+
+NVCC CUDA编译流程 - cazima - cazima 的博客
+
+注：摘自文档《The CUDA Compile Driver NVCC》，版本号2.3中的CUDA程序编译路径全景图。
+
+二、Nvcc启动与配置说明
+
+1、nvcc的启动条件
+
+在我们的工程文件编译选项的命令行下加入"C:\CUDA\bin\nvcc.exe"，表示启动nvcc，要成功启动nvcc首先必须保证所需绑定的一般的C/C++编译器如VS下的cl，在编译器搜索路径范围内，一般默认目录下，如：
+"C:\CUDA\bin\nvcc.exe" -ccbin "C:\Program Files\Microsoft Visual Studio 8\VC\bin"，又或是，"$(CUDA_BIN_PATH)\nvcc.exe" -ccbin "$(VCInstallDir)bin"。
+而Windows平台下编译选项--compiler-bindir是当编译器cl不在默认路径时用来重新设定路径，另外在Windows平台下，nvcc 需要能定位到脚本vsvars.bat（这个脚本在MS安装的时候生成并保存在MS安装目录下的某处，它必须先于cl编译器执行，因为它将指定cl编译器正确运行所需的环境参数），也是通过--compiler-bindir 来重新指定。
+CUDA提供了一个用于检查是否是启动nvcc编译的宏：__CUDACC__
+2、nvcc的profile文件
+
+在nvcc所在的目录里有一个Nvcc.profile，它的唯一目的是定义nvcc在CUDA中的目录结构，它对于nvcc使用者来说不应该作为一个配置文件，而是提供了指定CUDA Toolkit中的bin和lib等目录的参数变量如PATH, LD_LIBRARY_PATH等，打开这个文件可以看到如下的内容：
+
+TOP = $(_HERE_)/..
+
+LD_LIBRARY_PATH += $(TOP)/lib;$(TOP)/extools/lib;
+
+PATH += $(TOP)/extools/bin;$(TOP)/open64/bin;$(TOP)/bin;$(TOP)/lib;
+
+INCLUDES += "-I$(TOP)/include" "-I$(TOP)/include/cudart" $(_SPACE_)
+
+LIBRARIES =+ $(_SPACE_) "/LIBPATH:$(TOP)/lib" cudart.lib
+
+CUDAFE_FLAGS +=
+
+OPENCC_FLAGS +=
+
+PTXAS_FLAGS +=
+来简单介绍下里面的语法：
+
+# 是注释符
+name = <text> ：赋值
+name ?= <text> ：条件赋值
+name += <text> ：首部增加
+name =+ <text> ：尾部增加
+
+可通过以下任一种风格对所要赋值的环境变量字符串进行赋值：
+%name% :DOS style
+
+$(name) :‘make’ style
+
+其中，nvcc定义了一个指定该profile文件所在目录的宏 _HERE_，它会根据nvcc被调用的方式返回绝对或相对路径。
+同样，nvcc使用宏 _SPACE_来代表空格字符，使用如下:
+
+INCLUDES += -I../common $(_SPACE_)
+
+去掉宏_SPACE_就会造成粘合效应，如 ‘–I../common-Iapps’ 。还可以看到profile文件中使用+=时$(_SPACE_)放在后面，而使用=+时则放在了前面，就是因为这个原因。
+3、nvcc启动所需要使用的几个变量
+
+在第一个部分，已经说明了Nvcc在进行编译时的主要工作流程，以下几个变量就是nvcc自身控制各个编译阶段所需要使用的相关变量。
+
+（1）compiler-bindir
+用于指定主机编译器所在的目录，可以使用编译选项--compiler-bindir进行修改。
+
+（2）INCLUDES
+
+这个字符串扩展nvcc的命令选项–Xcompiler，它也定义一些附加的include目录，在实际的编译选项语法范围内，如Linux下的gcc 语法或Windows下的cl 语法。
+
+（3）LIBRARIES
+
+这个字符串扩展nvcc的命令选项–Xlinker，它也定义一些附加的库文件和库文件目录，在实际的编译选项语法范围内，如Linux下的gcc 语法或Windows下的cl 语法。
+
+（4）PTXAS_FLAGS
+
+这个字符串扩展nvcc的命令选项–Xptxas，它主要是给CUDA内部工具ptxas传递一些命令。
+
+（5）CUDAFE_FLAGS
+
+这个字符串扩展nvcc的命令选项-Xcudafe，它主要是给CUDA内部工具cudafe传递一些命令。
+
+（6）OPENCC_FLAGS
+
+这个字符串扩展nvcc的命令选项–Xopencc，它主要是给CUDA内部工具nvopencc传递一些命令。
+
+注意：CUDA提供的几个内部工具在C:\CUDA\bin目录下分别是ptxas，fatbin，cudafe，nvopencc(C:\CUDA\open64\bin)。另外在使用CUDA编程环境向导后可在VS2005中的项目-->属性-->CUDA-->backends中设置相关命令，如下图：
+
+NVCC CUDA编译流程 - cazima - cazima 的博客
+
+三、Nvcc的命令选项的分析说明
+
+Nvcc的选项命令形式大概有以下3类：boolean (flag-)选项，单值选项和列表(multivalued-)选项。
+
+下面是使用规则举例：
+
+-o file
+
+-o=file
+
+-Idir1,dir2 -I=dir3 -I dir4,dir5
+
+每一个选项命令都有两个名字，全称和简写，例如–I就是--include-path的简称，注本文后面的选项命令说明均只列出简称，详细见参考资料1。一般来说，全称多用于述，简称多用于实际使用。
+
+编译选项可按用途分为以下7大类：
+
+1、指定编译阶段的选项
+这类选项主要用来控制编译的阶段，用以制定哪些阶段的输入文件要被编译，如-ptx、-cuda、-gpu等等。最经常用到的是-c，用来生成object文件，这个过程结合了CUDA编译和C编译。
+
+2、File and path specifications指定相关文件的路径及名称的命令选项
+下面这几个用于文件和路径说明命令是我们最常见：
+
+-o ：指定输出文件的位置和名称。 如-o $(ConfigurationName)\$(InputName).obj $(InputFileName)表示将$(InputFileName)作为输入文件，$(ConfigurationName)\$(InputName).obj为输出路径及文件名
+
+-include：指定预处理和编译时预先需要包含的头文件。
+
+-l：指定链接时需要的库文件，另外这些库文件的搜索路径必须已经被命令选项'-L'指定。
+
+-D ：指定预处理和编译时需要的宏，如-D_DEBUG -D_CONSOLE
+
+-U ：取消一个宏定义
+
+-I：指定包含文件的搜索路径，如 -I"C:\CUDA\include" -I"C:\ProgramData\NVIDIA Corporation\NVIDIA GPU Computing SDK\C\common\inc" -I表示依赖的库的路径，所以如果有时候一些dll或lab文件不在默认路径下，在这里可以添加路径！或者"$(CUDA_BIN_PATH)\nvcc.exe" -ccbin "$(VCInstallDir)bin"
+
+-isystem：指定系统的包含引用文件的搜索路径
+
+-L：指定库文件的搜索路径.
+
+-odir：指定输出文件的目录，这选项也为代码生成步骤指定合适的输出目录做准备，与命令选项--generate-dependencies直接相关，如-odir "Debug"
+
+-ccbin：指定host编译器的所在路径，如-ccbin "$(VCInstallDir)bin"或者"C:\Program Files\Microsoft Visual Studio 8\VC\bin"
+
+3、调整编译器和链接器行为的选项
+-g：产生可调试代码，这是调试模式下是必需的
+
+-G：产生可调试的设备代码
+
+-O：产生优化代码，包括O0，O1，O2，O3，用于产生不同的指令集，现在一般采用O0（为优化，好处在于使host与device的生成代码相异度最小，不容易出差），这些优化的具体内容我还未找到详细说明，基本上也就是展开一些循环，函数，优化一些访存指令。但并不是自动优化最好，因为有时会得不到正确的结果，所以需要有深的认识才使用。
+
+-m: 指定平台结构32 vs 64位. 一般可不用，常见的如-m 32。
+
+4、内部编译工具的控制命令选项
+这个主要是为nvcc封装的五种内部编译工具传递一些行为说明的命令，可以通过基本命令-h，即显示工具的帮助命令了解更多。我暂时还没整理出来。另一个基本命令-V可以显示工具的版本信息。
+
+例如在命令行下键入nvcc – Xptxas –h就可以显示ptx工具的帮助信息。
+
+这里特别说明一个很实用的命令选项，-Xptxas –v：显示代码生成的统计结果，也就是会显示经过编译分析得到的device函数对寄存器和存储器的使用情况。如下例：
+
+nvcc -Xptxas –v acos.cu
+
+ptxas info : Compiling entry function 'acos_main'
+
+ptxas info : Used 4 registers, 60+56 bytes lmem, 44+40 bytes smem,
+
+20 bytes cmem[1], 12 bytes cmem[14]
+
+这里对上例进行一个简单的解释，smem表示共享存储器，这个地方它被分成了两个部分，第一个表示总共声明的共享存储器大小，后者表示系统在存储段中分配的数据总量：共享存储器中的device函数参数块和局部存储器中的线程索引信息。cmem表示常量存储器的使用情况，这里就是使用了一个20bytes的变量和一个长度为14的单位12byte的数组
+
+-Xopencc -LIST:source=on：包含在工具ptx中产生的源文件
+
+这些选项的配置可自行配置，也可以在CUDA开发环境向导里的属性->CUDA->backends进行配置。
+
+
+5、对编译驱动进行引导的命令选项
+这些选项主要用于对nvcc的行为提供指引，现阶段对我们比较有用的是keep选项。
+
+-dryrun: 不执行nvcc产生的编译命令而只是列出它们。????
+
+-v: 列出nvcc产生的编译命令，不影响其执行。
+
+-keep: 保留各步骤产生的中间文件.
+
+-save-temps: 同--keep.
+
+-noprof: 不使用nvcc.profile文件引导编译
+
+-clean: 可逆转nvcc的行为，当其被指定时，所有编译阶段都不执行，而且所有nvcc在其它时候产生的非临时文件都将被删除，keep用于调试，clean则用于去掉那些调试文件。
+
+-run-args: 与-R联用用于指定运行时的命令行参数。
+
+-idp: Windows平台下，所有的命令行参数相关的文件名在执行前都需要转成本地格式，这一选项当前的开发环境表示的绝对路径，如使用'-idp /cygwin/' 为 CygWin 构建环境。
+
+-ddp: Windows平台下，生成依赖文件(如选项-M)，所有的文件名 都需要转成'make' 使用实例可识别的，在Windows格式里有一些'make'实例对绝对路径中的冒号存在识别问题，这些依赖于'make' 被编译的环境，为一个CygWin make使用'-ddp /cygwin/'予以说明，或者就采用本地Windows格式而不进行说明。
+
+-dp: 指定 <prefix>作为input-drive-prefix和dependency-drive-prefix.
+
+6.编译目标GPU指令集的命令选项
+
+-arch: 指定nvcc编译目标GPU的型号，可以为“real” GPU，也可以为“virtual” PTX架构。这个选项指定了nvcc编译到PTX阶段的目标架构，而-code选项指定了nvcc最后阶段生成的运行时代码的目标架构。现阶段支持的架构类型有：virtual 架构 compute_10, compute_11, compute_12, compute_13和实现这些虚架构的real GPU sm_10, sm_11, sm_12, sm_13.
+
+-code: 指定nvcc生成目标代码的目标GPU，支持的架构类型与-arch一样，都可以是“real”或“virtual”。除非指定了--export-dir，nvcc在可执行代码中为-code选项指定的每个目标GPU生成一块编译好的可加载二进制代码副本。在运行时，如果没有找到可加载二进制代码，嵌入的ptx代码会由CUDA运行时系统根据动态地编译成“current” CPU。当使用了-code选项时，-arch选项指定的必须是“virtual”架构。如果没有指定-code选项，那么它的缺省值就是-arch选项的值。
+

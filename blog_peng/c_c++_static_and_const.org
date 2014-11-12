@@ -1,0 +1,103 @@
+# 还没有写完
+* 主要说明c和c++中的static和const关键字的区别联系。
+** c
+  c中static针对变量来说主要两个作用:
+
+  1:对于局部变量，static定义的变量作用域不变，即只能在该函数中访问。生
+  存期却不随函数调用的结束而结束。总结起来static类型的内部变量是一种只
+  能在某个特定函数中使用但一直占用存储空间的变量。另外，static类型的内
+  部变量会自动初始化为"0"，反之，普通内部变量不会进行初始化。
+
+  2：对于外部变量：作用域生存期都没有改变。static外部变量只能在本文件
+  中使用。不能通过extern到其他文件中使用。这样可以避免因为文件过多产生
+  重名。
+  
+  c中static针对函数来说就一个作用：因为函数默认都是“外部的”，所以
+  static类型的函数就只能在本文件中使用，也是为了避免重名。
+  
+  测试用程序如下：
+
+  #+begin_src c
+    /* file1 */
+    #include <stdio.h>
+    #include <stdlib.h>
+    #include <string.h>
+    static int d = 45;
+    static int a = 34;
+    int fun3();
+    int fun2();
+    int fun();
+    int main(int argc, char *argv[])
+    {
+         printf("file1\n");
+         fun();
+         printf("in main a = %d\n",a);
+         fun2();
+    
+         int b;
+         printf("b = %d\n",b);
+         static int c;
+         printf("static c = %d\n",c);
+    
+         printf("int main d = %d\n",d);
+    
+    #ifdef ERROR
+         fun3();
+    #endif
+    
+         return 0;
+    }
+    
+    /* file2 */
+    #include <stdio.h>
+    int a = 888;
+    int fun()
+    {
+         printf("function\n");
+         static int a = 3;
+         printf("in fun a = %d\n",a);
+         return 0;
+    }
+    
+    int fun2()
+    {
+         printf("in fun2 a = %d\n",a);
+         return 0;
+    }
+    
+    #ifdef ERROR
+    extern int d;
+    int fun3()
+    {
+         printf("in function d = %d\n",d);
+         return 0;
+    }
+    #endif
+    
+  #+end_src
+  
+  makefile如下：
+  
+  #+begin_src makefile
+    a.out:file2.o file1.c
+            cc -g file2.o file1.c
+    file2.o:file2.c
+            cc -g -c file2.c
+    clean:
+            rm -rfv a.out *.o
+  #+end_src
+** c++
+*** static
+   c++中static应该和c是兼容的。但是这个我还没有实际测试过。另外，c++中
+   static在类中使用的时候是另一种特殊的方式。类中的static变量或者函数
+   表示它是属于类型本身的，而不属于任何对象。例如统计某类型对象的个数
+   的时候就可以用到这样的static变量。
+
+*** const
+   c++中const其实有了一些static的功能。另外，const还有一些特殊的功能。
+
+   cosnt定义的外部变量本身是局部的。不能直接通过extern就在其他文件中使
+   用。但是可以在定义的时候使用extern const这样来定义。在其他文件中就
+   可以通过extern const来声明并使用该变量了。
+
+   在c++中，定义常量的话一般都用const，而在c中一般是用宏#define来实现。

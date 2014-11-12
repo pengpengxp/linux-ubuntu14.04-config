@@ -1,0 +1,176 @@
+http://whiteboard.ping.se/Android/Rooting
+
+
+
+Whiteboard Web 	
+Android »
+Root any Android device
+How to gain root access on an Android device
+
+Here I describe the generic way to gain root access on an Android device. This description applies to any Android device using a bootloader that is possible to unlock. Most vendors today ship their bootloaders locked with the option to unlocking them, most often voiding the warranty.
+
+This is the manual way gaining root access. Note that "rooting the phone" often implies installing utilities such as su, the SuperUser app etc. You may do this after using this tutorial, but I'm here only describing the process of getting the initial root access itself.
+
+If you got a well known and/or not brand new device, there probably already exists ready-made one-click tools rooting your device much easier than this. This tutorial is if you don't got such a tool, or for some reason don't want to use them - or if you simply are curious about the methods used.
+
+All tools used here assumes you are using a GNU/Linux environment such as Debian, Ubuntu or so.
+Steps
+
+    Unlock the bootloader
+    Obtain your boot image
+    Unpack the boot image
+    Unpack initramfs root file system
+    Enable insecure mode
+    Pack initramfs
+    Pack boot image
+    Fastboot device using own boot image
+    adb shell to the device 
+
+Unlock the Boot-loader
+
+This tutorial assumes you have a device with either an unlocked or unlockable bootloader. This is the most common today. The phone is shipped with the bootloader locked (i.e. tamper proof), but the manufacturer gives you the option to unlock it. This is usually at the cost of the the Digital Rights Manager data (DRM) and also often limits the warranty. This is quite understandable, since you can easily damage the unlocked device for example by overclocking it beyond its thermal capacity, melting the CPU, to mention a worst case scenario.
+
+With the bootloader unlocked, you are able to both boot the device, and/or flash the internal disk, using custom root file system images.
+
+Make sure your vendor allows you to unlock your device before continuing this tutorial. You may wait with the actual unlocking until you created your new boot image, though. If you can't find any information about the state of your bootloader, just try booting you device with the image you'll build here. Either it works, or your device politely refuses it.
+
+    More about vendor locking of the boot loader 
+
+Obtaining the boot image
+
+Now you'll need to get hold your original boot image. You can either extract this from the device itself, get it from your manufacturer or from some trusted source on the Internet providing original images. Often the original distribution is a zip archive (but not necessary with the .zip extension). Unzip it to get the boot.img file.
+Unpacking the boot image
+
+The boot image (boot.img) is composed of both the kernel and the initial root file system (initramfs). To split this, you'll need some utility. I've written such tool here below. There are several other, often script based, tools out there as well.
+
+    Tool to split the boot image file 
+
+Unpacking the root file system
+
+Now you need to unpack the root file system. It's a gziped cpio archive, and can be unpacked using standard GNU/Linux utilities. To preserve file ownership, perform this either as the root user, or run fakeroot.
+
+# mkdir rootfs
+# cd rootfs
+# gzip -cd ../initramfs.cpio.gz | cpio -i
+
+Now the file system is unpacked in the directory "rootfs".
+Set the Android to insecure
+
+Android got a security feature you can turn on or off. Usually this should be enabled for production environment and disabled for development devices. By turning security off, you can gain root access.
+
+    Edit /default.prop in the root file system and set the property "ro.secure=0". 
+
+Pack the root file system
+
+All done, now we only have to repack everything again. Pack the root file system.
+
+# cd rootfs
+# find . | cpio -o -H newc | gzip > ../insecure_ramdisk.cpio.gz
+# cd ..
+
+Compile the boot image
+
+Now we build the new insecure boot image. Use the same parameters unmkbootimg suggested to get base address and so correct. If unmkbootimg didn't print out any base address, it's because default is used, and you won't need to specify it to mkbootimg neither.
+
+$ mkbootimg --kernel kernel.gz --ramdisk insecure_initramfs.cpio.gz --base 0x20000000
+            --cmdline 'no_console_suspend=1' -o insecure_boot.img
+
+Please note that the kernel file may be called "kernel.gz", "zImage" or similar depending on what tools used extracting it from the original boot image.
+Boot the device in Insecure mode
+
+Now you've got a new boot image with security disabled. Boot, but avoid flashing if possible, the device using this image. To be able to do this, the device must be put in fastboot mode. This is usually one of the following.
+
+    Device powered off. Press and hold Volume-UP during power on.
+    Device powered off. Press and hold Volume-UP and insert USB cable connected to computer. 
+
+If this doesn't work, Google "fastboot" plus your device name.
+
+Once in fastboot, boot the phone using the fastboot command, supplied with the Android SDK.
+
+$ fastboot boot insecure_boot.img
+
+Now the phone will (hopefully) start and look as usual. The only difference is that security is turned off.
+Open a root shell on you device
+
+Now connecting to you device using ADB (also part of Android SDK), you'll get a root shell, instead of running as the "shell" user. This is thanks to disabled security.
+
+$ adb shell
+root@android:/ #
+
+You are now root! Do whatever you want, e.g. installing a su program in /system/bin etc. Remember to remount /system in read/write mode before you can write anything there.
+
+Because you did not flash your device with the insecure boot image, the next time you reboot it, security will be turned on again, for your protection. The modifications you've done on /system are of course still there.
+
+Since the root file system is restored from the boot image each boot, no changes done here will survive a reboot. Still, you can follow this tutorial making permanent changes at the root disk, flashing the boot image instead of only booting it.
+
+$ fastboot flash boot my_boot.img
+
+I don't recommend using ro.secure=0 as default, though, but there may be other changes you want to apply to the root disk.
+
+It didn't work?!
+
+Everything in this guide went well, but still, once "adb shell", you still didn't got root, but are stuck at the shell user with the $-prompt?
+
+Some devices seems not to honor the ro.secure property - but despair not, we still can fix this. We just have to install a root shell in the root file system instead. Back at your computer, cd to your rootfs directory from above and make sure your device is connected via the USB cable and up and running. Then issue the commands below to perform this.
+
+root@ubuntu:~/rootfs# adb pull /system/bin/sh sbin/rootsh
+root@ubuntu:~/rootfs# chmod a+x sbin
+root@ubuntu:~/rootfs# chown root sbin/rootsh 
+root@ubuntu:~/rootfs# chgrp 2000 sbin/rootsh 
+root@ubuntu:~/rootfs# chmod 4750 sbin/rootsh 
+
+Now go back and continue from "Pack the root file system" above to create a new boot image. Once the device is booted using this new image you can execute your root shell to gain root.
+
+root@ubuntu:~# adb shell
+shell@android:/$ /sbin/rootsh +p
+# 
+
+You are now root.
+
+If you'd like to continue installing the Superuser App, you can look at this post at XDA forum.
+Feedback? Questions? Suggestions?
+
+This tutorial too basic? Too complicated? Inaccuracies? Did not work as expected?
+
+Please feel free send me a mail!
+
+/By Mikael Q Kuisma
+	
+
+Home
+
+    GNU/Linux
+    Android
+    HackValue
+    Networking
+    Security
+    Propeller
+    Machine learning
+    SDR Radio
+    Whisper
+    InSwedish 
+
+Ping site
+
+    ASDIC 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Page last modified 2013-11-28 18:38Z 	
+
+^

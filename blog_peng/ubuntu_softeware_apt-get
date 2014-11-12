@@ -1,0 +1,11 @@
+配置ubuntu源：
+简单例子：
+deb http://ftp.sjtu.edu.cn/ubuntu precise main restricted
+deb http://ftp.sjtu.edu.cn/ubuntu precise universe
+deb http://ftp.sjtu.edu.cn/ubuntu precise multiverse 
+
+deb是必须加的，还可以有deb-src这是对应下载源码，一般用不到。
+http://ftp.sjtu.edu.cn/ubuntu是上交的，要保证这个目录下面有dists，有人说还要保证有pool，后面不确定。
+precise是你的版本号，这里就是12.04。用lsb_release -a可以查到，就是codename那一行，查到以后可以去官网查对应的东西：https://help.ubuntu.com/
+后面的main，restricted，universe，multiverse详细解释官网上有，大概说一下就是默认装main，restricted。其中main是一定支持的，universe里面基本上有所有的free-software的快照，multiverse的话就是一些non-free这些的软件，使用他们没有支持的，后果自负。
+剩下的一些东西man sources.list里面很详细

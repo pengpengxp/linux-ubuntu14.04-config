@@ -1,0 +1,7 @@
+start-kbd-macro
+end-kdb-macro
+
+上面这两个可以用f3和f4分别来做。
+
+name-last-kbd-macro
+insert-kbd-macro:可以在init file中加入一行，这样以后就一直可以使用这个宏了

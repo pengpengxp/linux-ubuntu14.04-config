@@ -1,0 +1,285 @@
+unrar e file <path you want to put the extracted file>
+我使用过的Linux命令之unrar - 解压rar文件
+
+博客分类： Linux命令
+LinuxCC++C#RedHat 
+我使用过的Linux命令之unrar - 解压rar文件
+本文链接：http://codingstandards.iteye.com/blog/792239    （转载请注明出处）
+
+用途说明
+
+　　现在常用的压缩文件格式是rar格式，使用频率甚至超过了zip格式，WinRAR可以压缩和解压rar文件。根据Google趋势的统计，winrar与winzip的全球平均访问量是1.00比0.43（点此看趋势记录 ），而中国范围的访问量更是1.00比0.14（点此看趋势记录 ）。而Linux一般情况下是不能解压rar文件的，有一种变通的方法，就是先用WinRAR将rar格式的压缩包转换成zip包，然后上传至Linux使用unzip解压。如果安装了rarlinux，就使得在Linux下直接解压rar文件成为可能，要注意的是该软件的某个版本可能并不适用于所有Linux版本。可以到WinRAR官方网站去下载rarlinux，当前版本是3.9.3。本文后面也提供了三个版本的rarlinux，一个是3.0，一个是3.6.0，一个是3.9.3。经过我的测试，3.6.0版本可以用于RHEL3.X版本，但3.9.3不行，只能用于更高版本的Linux，而3.0版本可以用于红帽子7.3。而根据rarlinux安装包中的technote.txt中所说“THE ARCHIVE FORMAT DESCRIBED BELOW IS ONLY VALID FOR VERSIONS SINCE 1.50”，其实只要rarlinux版本高于1.50就可解压绝大部分rar文件。因此，如果要在Linux下使用rar，可以试一下本文后面附上的3.0版。
+常用参数
+
+rarlinux的安装很简单，只需要解压就可以了。为了使用起来方便，可以将解压后的目录添加到PATH中，方便使用。
+首先将rarlinux-3.0.tar.gz上传到Linux的某个目录。
+[root@localhost setup]# ls -l rarlinux-3.0.tar.gz 
+-rw-r--r--    1 root     root       502784 10月 19 09:45 rarlinux-3.0.tar.gz
+[root@localhost setup]# tar -C /opt -zxf rarlinux-3.0.tar.gz
+[root@localhost setup]# PATH=/opt/rar:$PATH
+使用-?参数可以查看帮助信息，x参数用于解压文件， t参数用于测试是否损坏，l参数用于列出文件。
+unrar -?                   <== 获取帮助
+unrar x <rar-file>    <== 解压文件
+unrar t <rar-file>    <== 测试文件
+unrar l <rar-file>     <== 列出文件
+下面是完整的使用方式，太复杂了，上面的几种用法基本上就够了。 
+[root@localhost setup]# unrar -? 
+
+UNRAR 3.00 freeware      Copyright (c) 1993-2002 Eugene Roshal
+
+Usage:     unrar <command> -<switch 1> -<switch N> <archive> <files...>
+<@listfiles...> <path_to_extract\>
+
+<Commands>
+e             Extract files to current directory
+l[t]          List archive [technical] 
+p             Print file to stdout
+t             Test archive files 
+v[t]          Verbosely list archive [technical] 
+x             Extract files with full path 
+
+<Switches>
+-             Stop switches scanning
+ad            Append archive name to destination path
+ap<path>      Set path inside archive
+av-           Disable authenticity verification check
+c-            Disable comments show
+cfg-          Disable read configuration
+cl            Convert names to lower case
+cu            Convert names to upper case
+ep            Exclude paths from names
+f             Freshen files
+idp           Disable percentage display
+ierr          Send all messages to stderr
+inul          Disable all messages
+kb            Keep broken extracted files
+o+            Overwrite existing files
+o-            Do not overwrite existing files
+ow            Save or restore file owner and group
+p[password]   Set password
+p-            Do not query password
+r             Recurse subdirectories
+ta<date>      Process files modified after <date> in YYYYMMDDHHMMSS format
+tb<date>      Process files modified before <date> in YYYYMMDDHHMMSS format
+tn<time>      Process files newer than <time>
+to<time>      Process files older than <time>
+u             Update files
+v             Create volumes with size autodetection or list all volumes
+ver[n]        File version control
+vp            Pause before each volume
+x<file>       Exclude specified file
+x@            Read file names to exclude from stdin
+x@<list>      Exclude files in specified list file
+y             Assume Yes on all queries
+[root@localhost setup]#
+使用示例
+
+示例一 使用unrar检查完整性、列出文件和解压文件
+假定你已经安装前面所述的安装方式操作过了。首先把一个rar文件上传到某个目录。比如把add2cvs.rar上传到/root/test/目录中。
+[root@localhost test]# ls -l 
+total 1
+-rw-r--r--    1 root     root          944 10月 19 11:20 add2cvs.rar
+[root@localhost test]# unrar t add2cvs.rar 
+
+UNRAR 3.00 freeware      Copyright (c) 1993-2002 Eugene Roshal
+
+
+Testing archive add2cvs.rar
+
+Testing     add2cvs2.sh                                               OK 
+Testing     add2cvs.sh                                                OK 
+Testing     add2cvs0.sh                                               OK 
+Testing     add2cvs1.sh                                               OK 
+All OK
+[root@localhost test]# unrar l add2cvs.rar 
+
+UNRAR 3.00 freeware      Copyright (c) 1993-2002 Eugene Roshal
+
+Archive add2cvs.rar
+
+Name             Size   Packed Ratio  Date   Time     Attr      CRC   Meth Ver
+-------------------------------------------------------------------------------
+add2cvs2.sh       302      192  63% 22-10-10 11:32   .....A   C7EA31AB m3b 2.9
+add2cvs.sh        314      204  64% 22-10-10 11:30   .....A   4F875213 m3b 2.9
+add2cvs0.sh       236      158  66% 22-10-10 11:32   .....A   0441BC49 m3b 2.9
+add2cvs1.sh       281      184  65% 22-10-10 11:32   .....A   13C47824 m3b 2.9
+-------------------------------------------------------------------------------
+4             1133      738  65%
+
+[root@localhost test]# unrar x add2cvs.rar 
+
+UNRAR 3.00 freeware      Copyright (c) 1993-2002 Eugene Roshal
+
+
+Extracting from add2cvs.rar
+
+Extracting  add2cvs2.sh                                               OK 
+Extracting  add2cvs.sh                                                OK 
+Extracting  add2cvs0.sh                                               OK 
+Extracting  add2cvs1.sh                                               OK 
+All OK
+[root@localhost test]# ls -l 
+total 5
+-rw-r--r--    1 root     root          236 10月 22  2010 add2cvs0.sh
+-rw-r--r--    1 root     root          281 10月 22  2010 add2cvs1.sh
+-rw-r--r--    1 root     root          302 10月 22  2010 add2cvs2.sh
+-rw-r--r--    1 root     root          944 10月 19 11:20 add2cvs.rar
+-rw-r--r--    1 root     root          314 10月 22  2010 add2cvs.sh
+[root@localhost test]#
+示例二 rarlinux版本3.9.3在RHEL5.5下的安装情况
+rarlinux版本3.9.3的rar_static可以用于RHEL 5.5，但rar和unrar缺少相关的so文件，因为libc版本要求高。
+[root@rhel55 rar]# lsb_release -a 
+LSB Version:    :core-3.1-ia32:core-3.1-noarch:graphics-3.1-ia32:graphics-3.1-noarch
+Distributor ID: RedHatEnterpriseServer
+Description:    Red Hat Enterprise Linux Server release 5.5 (Tikanga)
+Release:        5.5
+Codename:       Tikanga
+[root@rhel55 tools]# ls -l rarlinux.tar.gz 
+-rw-r--r-- 1 root root 833828 10-23 15:52 rarlinux.tar.gz
+[root@rhel55 tools]# tar zxf rarlinux.tar.gz 
+[root@rhel55 tools]# cd rar 
+[root@rhel55 rar]# ls 
+default.sfx  makefile   rar           rar_static  readme.txt    unrar
+license.txt  order.htm  rarfiles.lst  rar.txt     technote.txt  whatsnew.txt
+[root@rhel55 rar]# ./rar 
+./rar: /lib/libc.so.6: version `GLIBC_2.7' not found (required by ./rar)
+[root@rhel55 rar]# ./unrar 
+./unrar: /lib/libc.so.6: version `GLIBC_2.7' not found (required by ./unrar)
+[root@rhel55 rar]# ./rar_static 
+
+RAR 3.93   Copyright (c) 1993-2010 Alexander Roshal   15 Mar 2010
+Shareware version         Type RAR -? for help
+
+Usage:     rar <command> -<switch 1> -<switch N> <archive> <files...>
+<@listfiles...> <path_to_extract\>
+
+省略输出 
+[root@rhel55 rar]#
+示例三 rarlinux版本3.9.3在RHEL3.4下的安装情况
+rarlinux版本3.9.3在RHEL3.4下出现段错误，根本没法用。
+[root@web186 setup]# lsb_release -a 
+LSB Version:    1.3
+Distributor ID: RedHatEnterpriseAS
+Description:    Red Hat Enterprise Linux AS release 3 (Taroon Update 4)
+Release:        3
+Codename:       TaroonUpdate4
+[root@web186 setup]# ls rarlinux.tar.gz -l 
+-rw-r--r--    1 root     root       833828 10月 23 15:59 rarlinux.tar.gz
+[root@web186 setup]# tar zxf rarlinux.tar.gz 
+[root@web186 setup]# cd rar 
+[root@web186 rar]# ls 
+default.sfx  makefile   rar           rar_static  readme.txt    unrar
+license.txt  order.htm  rarfiles.lst  rar.txt     technote.txt  whatsnew.txt
+[root@web186 rar]# ./rar 
+./rar: /lib/tls/libc.so.6: version `GLIBC_2.4' not found (required by ./rar)
+./rar: /lib/tls/libc.so.6: version `GLIBC_2.7' not found (required by ./rar)
+./rar: /lib/tls/libc.so.6: version `GLIBC_2.3.4' not found (required by ./rar)
+[root@web186 rar]# ./unrar 
+./unrar: /lib/tls/libc.so.6: version `GLIBC_2.4' not found (required by ./unrar)
+./unrar: /lib/tls/libc.so.6: version `GLIBC_2.7' not found (required by ./unrar)
+./unrar: /lib/tls/libc.so.6: version `GLIBC_2.3.4' not found (required by ./unrar)
+[root@web186 rar]# ./rar_static 
+FATAL: kernel too old
+段错误 (core dumped)
+[root@web186 rar]#
+博主建议：如果您使用的rarlinux版本报如上的错误信息，请下载本文附件 rarlinux-3.0.tar.gz 尝试一下。
+示例四 rarlinux版本3.6.0在RHEL3.4下的安装情况
+rarlinux版本3.6.0在RHEL3.4下可以正常使用。
+[root@web186 setup]# lsb_release -a 
+LSB Version:    1.3
+Distributor ID: RedHatEnterpriseAS
+Description:    Red Hat Enterprise Linux AS release 3 (Taroon Update 4)
+Release:        3
+Codename:       TaroonUpdate4
+[root@web186 setup]# ls rarlinux-3.6.0.tar.gz -l 
+-rw-r--r--    1 root     root       752997 10月 23 16:04 rarlinux-3.6.0.tar.gz
+[root@web186 setup]# tar zxf rarlinux-3.6.0.tar.gz 
+[root@web186 setup]# cd rar 
+[root@web186 rar]# ls 
+default.sfx  license.txt  order.htm  rarfiles.lst  rar.txt     technote.txt  whatsnew.txt
+file_id.diz  Makefile     rar        rar_static    readme.txt  unrar
+[root@web186 rar]# ./rar 
+
+RAR 3.60   Copyright (c) 1993-2006 Alexander Roshal   5 Aug 2006
+Shareware version         Type RAR -? for help
+
+省略输出 
+[root@web186 rar]# 
+[root@web186 rar]# ./unrar 
+
+UNRAR 3.60 freeware      Copyright (c) 1993-2006 Alexander Roshal
+
+省略输出 
+[root@web186 rar]#
+
+示例五 rarlinux版本3.6.0在RH7.3下的安装情况
+rarlinux版本3.6.0的rar_static可以使用，但rar和unrar因为libstdc++版本要求高不能使用。
+[root@localhost setup]# cat /etc/redhat-release 
+Red Hat Linux release 7.3 (Valhalla)
+[root@localhost setup]# ls -l rarlinux-3.6.0.tar.gz 
+-rw-r--r--    1 root     root       752997 10月 19 08:32 rarlinux-3.6.0.tar.gz
+[root@localhost setup]# tar zxf rarlinux-3.6.0.tar.gz 
+[root@localhost setup]# cd rar        
+[root@localhost rar]# ls 
+default.sfx  license.txt  order.htm  rarfiles.lst  rar.txt     technote.txt  whatsnew.txt
+file_id.diz  Makefile     rar        rar_static    readme.txt  unrar
+[root@localhost rar]# ./rar 
+./rar: error while loading shared libraries: libstdc++.so.6: cannot open shared object file: No such file or directory
+[root@localhost rar]# ./unrar 
+./unrar: error while loading shared libraries: libstdc++.so.6: cannot open shared object file: No such file or directory
+[root@localhost rar]# ./rar_static 
+
+RAR 3.60   Copyright (c) 1993-2006 Alexander Roshal   5 Aug 2006
+Shareware version         Type RAR -? for help
+
+Usage:     rar <command> -<switch 1> -<switch N> <archive> <files...>
+<@listfiles...> <path_to_extract\>
+
+省略输出 
+[root@localhost rar]#
+
+示例六 rarlinux版本3.0在RH7.3下的安装情况
+rarlinux版本3.0可以用于红帽子7.3。
+[root@localhost setup]# ls -l rarlinux-3.0.tar.gz 
+-rw-r--r--    1 root     root       502784 10月 19 09:45 rarlinux-3.0.tar.gz
+[root@localhost setup]# tar zxf rarlinux-3.0.tar.gz 
+[root@localhost setup]# cd rar 
+[root@localhost rar]# ls 
+default.sfx  license.txt  order.txt  rar_faq.txt   rar_site.txt  readme.txt    rereg.txt     unrar
+file_id.diz  Makefile     rar        rarfiles.lst  rar.txt       register.txt  technote.txt  whatsnew.txt
+[root@localhost rar]# ./rar 
+
+RAR 3.00    Copyright (c) 1993-2002 Eugene Roshal    14 May 2002
+Shareware version         Type RAR -? for help
+
+省略输出 
+[root@localhost rar]#
+
+补充记录：怎样安装rarlinux？（2011.10.31）
+将安装文件压缩包rarlinux-x.y.tar.gz解压之后，进入rar目录，执行make命令。执行文件将会安装到 /usr/local/bin 下。
+
+[root@liunx0918 tmp]# cd rar 
+[root@liunx0918 rar]# ls 
+default.sfx  license.txt  order.txt  rar_faq.txt   rar_site.txt  readme.txt    rereg.txt     unrar
+file_id.diz  Makefile     rar        rarfiles.lst  rar.txt       register.txt  technote.txt  whatsnew.txt
+[root@liunx0918 rar]# cat Makefile 
+###################################################################
+# Installing RAR executables, configuration files and SFX modules #
+# to appropriate directories                                      #
+###################################################################
+
+PREFIX=/usr/local
+
+install:
+cp rar unrar $(PREFIX)/bin
+cp rarfiles.lst /etc
+cp default.sfx $(PREFIX)/lib
+[root@liunx0918 rar]# make 
+cp rar unrar /usr/local/bin
+cp rarfiles.lst /etc
+cp default.sfx /usr/local/lib
+[root@liunx0918 rar]#
+
+问题思考
+
+1. 怎样使用unrar将文件解压到指定目录?

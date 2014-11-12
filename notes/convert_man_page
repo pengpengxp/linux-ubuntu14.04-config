@@ -1,0 +1,9 @@
+;;to pdf
+man -t man | ps2pdf -  > man.pdf
+
+;;to html
+man2html -title ‘manpage_title’ < ascii_output_file > html_file
+
+;;to txt
+man man | col -b > man.txt
+

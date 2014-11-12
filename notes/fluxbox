@@ -1,0 +1,389 @@
+UbuntuHelp:Fluxbox/zh
+	文章出处:	
+
+https://help.ubuntu.com/community/Fluxbox
+	翻译人员:	
+
+雕啸长空
+	点击翻译:	
+
+English  • 中文
+	 
+
+
+目录
+[隐藏]
+
+    1 Fluxbox简介
+    2 为什么使用Fluxbox
+    3 1.安装Fluxbox---STEP
+    4 2.使用Fluxbox
+        4.1 打开菜单选择你想要运行的程序
+        4.2 桌面间的切换
+        4.3 窗体标签
+    5 第三步：系统设置与个性化定制
+        5.1 配置菜单
+        5.2 自动生成菜单
+        5.3 快捷键设置
+        5.4 设置桌面背景
+        5.5 样式
+        5.6 The ~/.fluxbox/startup File
+            5.6.1 设置背景
+            5.6.2 fluxbox启动时加载程序
+            5.6.3 Dockapps以及Slit
+            5.6.4 Gnome Support
+            5.6.5 启动Fluxbox
+            5.6.6 Further Resources
+
+[编辑] Fluxbox简介
+
+Fluxbox是一个基于GNU/Linux的轻量级图形操作界面，它虽然没有GNOME和KDE那样精美，但由于它的运行对系统资源和配置要求极低，所以它被安装到很多较旧的或是对性能要求较高的机器上，其菜单和相关配置被保存于用户根目录下的.fluxbox目录里，这样使得它的配置极为便利。
+
+Fluxbox是类Unix系统里一个极为轻量极的图形界面，它的运行速度相当快。它基于Blackbox并与之相兼容，这两者的窗体控件，色调等都极为相似。Fluxbox对KDE、Xfce、Gnome的程序支持也很不错。并且，它不需要借用其他的窗口管理器。
+
+Fluxbox默认的界面极为简洁，只有一个工具栏，并通过右键来调用系统菜单，同样它也支持自定义快捷键。
+
+Fluxbox有一个很出色的窗体标签功能，你可以通过鼠标中键拖拽将几个不同的窗体组合到一个窗口上，（＃旁白：最终的效果使得每个窗口就和firefox里的tab子窗体一样），利用这个功能就可以把一大堆的程序窗口整理得井井有条，哪怕你把所有的窗体都放在同一个workspace里面.
+
+Fluxbox另一个很不错的功能就是支持dock程序，这种程序运行时会像桌面图标一样在桌面上显示（比时一些时钟，天气，日历，系统监视程序），由于Fluxbox至力于打造一个快速和高定制性的图形系统，所以它只提供了一些最基础的图标和主题。
+
+Fluxbox界面朴素简单的风同样也体现在它的系统设置上。它的系统菜单，快捷键和其他的一些基本设置都是以文本文件的形式来保存的。Fluxbox的外观主题100％兼容blackbox，并且其主题的色彩，透明度，窗体边框及其他一些可视组件都可以个性化定制，最新发布的几个版本还实现了边框的圆滑效果和背景图支持；与blackbox相比，Fluxbox增加了一些特性，比如窗体标签（这是从PWM一些特性上吸收并改进过来的）和可定制的窗体标题栏。
+[编辑] 为什么使用Fluxbox
+
+正如前文所说，Fluxbox在低配置的电脑上运行得非常流畅，所以如果你的电脑年份已久，那Fluxbox也许是你一个很好的选择。正因为fluxbox有着速度快性能好的优点，还有人发行了以它为图形管理界面的专门linux发行版，比如 DamnSmallLinux
+
+fluxbox界面的简洁并不影响它操作的快速和使用的便捷性。相反，它的很多特性可以极高的提高你使用计算机的效率，比如它的窗体标签功能，可以让你更有效的利用有限的桌面面积，而它灵活的定制性让你可以按自已的操作习惯定制最适合自己的操作环境，包括它的桌面，快捷键，系统菜单，外观等，都可以按用户的需要随心所欲地进行设置。
+[编辑] 1.安装Fluxbox---STEP
+
+(注意：接下来的安装指南假设你的电脑正在运行ubuntu的基本系统，并已安装了GDM。（希望安装ubuntu基本系统并以fluxbox作为图形界面的用户请参考wiki里面的另一篇文章Installation/LowMemorySystems，该文讲述了如何安装ubuntu基本系统)
+
+安装Fluxbox极为容易，Fluxbox已经包含在universe源里面，所以安装前需启用universe源，你可以选择在新立得里安装，也可以选择在终端里通过命令来安装Fluxbox---sudo apt-get install fluxbox;
+
+安装完成之后，按下CTRL+ALT+BACKSPACE启动GDM，这里sessions里应该有Fluxbox的选项了，但是，我不推荐在这个时候就重启GDM。
+
+为什么呢？由于某些原因，Fluxbox安装后并不会自动建立配置文件。
+
+    这个问题在Fluxbox0.9.14版已经修复了，但建议你还是自已确认一下. 
+
+在使用Fluxbox之前，我们要先进行一些配置修改。
+
+执行以下命令
+
+$ sudo nano /usr/share/xsessions/fluxbox.desktop
+
+When you see the following text:
+
+找到下面这段内容
+
+exec=fluxbox
+
+replace that line with
+
+将它修改为：
+
+exec=startfluxbox
+
+完成以上修改之后，就可以重启并使用Fluxbox了
+
+在某些电脑上，Fluxbox可能会启动得很慢，在~/.fluxbox/startup里面加上下面这行就可以解决这个问题.
+
+export LC_ALL=C
+
+[编辑] 2.使用Fluxbox
+
+如果你以前有使用过GNOME/KDE/XFCE，很容易就会发现Fluxbox的操作与前面三者有所不同
+[编辑] 打开菜单选择你想要运行的程序
+
+和GNOME，KDE，XFCE不同的是，Fluxbox并没有一个类似“开始”的按键来调用系统菜单，当你要打开系统菜单时，只需在桌面上点击鼠标右键，并选择你想运行的程序即可.
+[编辑] 桌面间的切换
+
+在Fluxbox桌面上任何一处（鼠标不能位于程序的窗体上），通过转动鼠标中键就可以实现在各个桌面之间的切换.
+[编辑] 窗体标签
+
+窗体标签功能是充分利用你的屏幕空间和管理较多数量程序窗体的有效途径。这是fluxbox独有的一个功能，很多人将它作为办公平台也正是被它的这一功能所征服的。用鼠标的中键点住某一个窗体的标题栏，然后拖到另一个窗体的标题栏上并放开鼠标中键，这两个窗体就组合在一起了。这时你只要通过左键在组合窗体的标题栏上点击就可以实现里面组合子窗体的切换了。
+
+如果你习惯于通过终端启动程序，就会发现这一特性有多棒了，将终端和通过这个终端启动的窗体组合在一起，你可以随机进行窗体切换来观察程序的后台运行状态。
+[编辑] 第三步：系统设置与个性化定制
+
+本节由ChrisPeterman题写
+
+刚刚安装好的fluxbox是非常简洁的，你的桌面上只有一个工具栏，上面有工作台，窗体列表栏，系统图标，一个时钟外加一个很酷的右键主菜单。所以你肯定需要往里面加一些你自己所需要的东西；相信你肯定听过fluxbox灵活的定制性并对它垂涎已久吧？很好，接下来我们就开始品尝这道佳肴。不过在这之前你得把你的“餐具”准备好－至少得有一定的命令操作基础，因为接下去我们要用终端来干很多事情；再加上一个用得比较顺手的文本编辑工具，因为fluxbox的配置全都是通过修改它的配置文本文件（基本上保存在~/.fluxbox目录下面，也就是你当前用户的根目录下的一个名为fluxbox的目录里面，它是隐藏的）。而且在下面的操作中，除非我特别说明，否则都不用加上sudo，因为大部份的操作都是在你的地盘（你的根目录）下面操作的。
+[编辑] 配置菜单
+
+我们首先来搞定它的菜单配置文件（~/.fluxbox/menu）,这个文件决定了你右键菜单里的一切。这个文件可能是隐藏的，如果你在Nautilus文件管理器里浏览文件，请选择－＞查看－＞显示隐藏文件。这个文件里的语法结构极为简单，如果你是在正常安装的ubuntu/kubuntu/xubuntu下安装的fluxbox（也就是说你的系统原来就有一个窗体管理器了），你会发现你原有的一些程序已由系统自动建立好一份菜单配置文件了，你也许在menu文件中会看到下面这些字符：
+
+[begin] (fluxbox)
+[include] (/etc/X11/fluxbox/fluxbox-menu)
+[end]
+
+至少它里面会有上面三行中的第一行（begin）和最后一行(end),这两行标志着一个菜单项的开始和结束。你所有的菜单都是往这两行之间插进去的。include那一行是对已配置好菜单文件的引用，被引用的那个菜单文件是由debain菜单管理程序建立的，这个文件在你安装fluxbox时会自动被menu文件引用（前提是你安装fluxbox之前安装了菜单管理程序）。举个例子，我先在我的本本上安装了一个基本系统（没有安装图形界面），然后在这个系统的基础上安装fluxbox，menu文件就不能实现自动引用那个菜单配置文件；而在我的台式机上，我原来的系统上已经安装了gnome和xfce，然后再安装fluxbox，那个菜单配置文件就会被自动引用了。当然这一点你不用太在意，因为我们本来就是要定制自已所需要的菜单。
+
+
+菜单项和指向对应程序的基本语法结构是这样的：
+
+[exec] (Name you want to show up in the menu) {command} <path to icon>
+－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－
+[exec] (菜单名) ｛命令｝ <图标>
+
+[exec]:申明这是一个可执行的程序；(菜单名)：你希望它在菜单列表中示显的名称；{命令}：你通过终端启动该程序的命令，尽量写出完整的路径
+
+<图标>：该菜单项对应显示的图标，需要指明详细的路径，是可选项。注意：这四项必须在同一行上。
+
+如果碰到不知道详细路径怎么办呢，很简单，用下面的which命令
+
+kyral@NebulaPeace:~$ which gaim
+/usr/bin/gaim
+
+这个方法对很多程序都有效（接近99.99999%吧...）
+
+刚才我们只是在主菜单里面建立了一个菜单项，子菜单又该如何建立呢？很简单：
+
+[submenu]  (Name of submenu) {}
+stuff like execs and other submenus
+[end]
+－－－－－－－－－－－－－－－－－－－－－－
+[submenu]  (子菜单名) {}
+[exec] (菜单名) ｛命令｝ <图标>
+[exec] (菜单名) ｛命令｝ <图标>
+......
+[end]
+
+（偷点懒，上面这段不译了，看图应该更好懂吧）
+
+
+以上就是fluxbox菜单配置的基本过程了， Fluxbox在安装时一般会自动生成一份较为完整的菜单列表，所以当你用文本编辑器打开menu文件时如果发现里面有一大堆东西也不用惊讶，而且你还可以在菜单里引用多个菜单。
+
+这是我的本本上的菜单配置
+
+[begin] (Fluxbox) {}
+[exec] (Gaim) {/usr/bin/gaim}
+[exec] (Firefox) {/usr/bin/firefox}
+[exec] (Irssi) { x-terminal-emulator -T "irssi-text" -e /usr/bin/irssi-text}
+[exec] (Bash) { x-terminal-emulator -T "Bash" -e /bin/bash --login}
+[exec] (BMP) {/usr/bin/beep-media-player}
+[exec] (VLC) {/usr/bin/vlc}
+[exec] (F-Spot) {/usr/bin/f-spot}
+[exec] (Acrobat Reader) {/usr/bin/acroread}
+[submenu] (Apps) {}
+[submenu] (Editors) {}
+[exec] (Emacs) {/usr/bin/emacs21}
+[exec] (Nano) { x-terminal-emulator -T "Nano" -e /bin/nano}
+[end]
+[submenu] (Net) {}
+[exec] (Telnet) { x-terminal-emulator -T "Telnet" -e /usr/bin/telnet}
+[exec] (w3m) { x-terminal-emulator -T "w3m" -e /usr/bin/w3m /usr/share/doc/w3m/MANUAL.html}
+[end]
+[submenu] (Programming) {}
+[exec] (Python) { x-terminal-emulator -T "Python (v2.4)" -e /usr/bin/python2.4}
+[end]
+[submenu] (Shells) {}
+[exec] (Dash) { x-terminal-emulator -T "Dash" -e /bin/dash -i}
+[exec] (Sh) { x-terminal-emulator -T "Sh" -e /bin/sh --login}
+[end]
+[submenu] (System) {}
+[exec] (gkrellm) { /usr/bin/gkrellm }
+[submenu] (Admin) {}
+[exec] (alsaconf) { x-terminal-emulator -T "alsaconf" -e /usr/sbin/su-to-root -p root -c /usr/sbin/alsaconf}
+[exec] (pppconfig) { x-terminal-emulator -T "pppconfig" -e /usr/sbin/su-to-root -p root -c /usr/sbin/pppconfig}
+[end]
+[exec] (aptitude) { x-terminal-emulator -T "aptitude" -e /usr/bin/aptitude}
+[exec] (DSL/PPPoE configuration tool) { x-terminal-emulator -T "DSL/PPPoE configuration tool" -e /usr/sbin/pppoeconf}
+[exec] (GDM flexiserver) {gdmflexiserver}
+[exec] (GDM flexiserver in Xnest) {gdmflexiserver -n}
+[exec] (GDM Photo Setup) {gdmphotosetup}
+[exec] (GDM Setup) {gksu gdmsetup}
+[exec] (pstree) { x-terminal-emulator -T "pstree" -e /usr/bin/pstree.x11}
+[exec] (reportbug) { x-terminal-emulator -T "reportbug" -e /usr/bin/reportbug --exit-prompt}
+[exec] (Run as different user) {/usr/bin/gksuexec}
+[exec] (Top) { x-terminal-emulator -T "Top" -e /usr/bin/top}
+[exec] (X-Terminal as root) {/usr/bin/gksu -u root /usr/bin/x-terminal-emulator}
+[end]
+[end]
+[submenu] (Help) {}
+[exec] (Info) { x-terminal-emulator -T "Info" -e info}
+[end]
+[submenu] (WindowManagers) {}
+[restart] (FluxBox) {/usr/bin/fluxbox}
+[end]
+[config] (Configuration) {}
+[submenu] (Styles) {}
+[stylesdir] (/usr/share/fluxbox/styles) {}
+[stylesdir] (~/.fluxbox/styles) {}
+[end]
+[workspaces] (Workspaces) {}
+[reconfig] (Reconfigure) {}
+[restart] (Restart) {}
+[exit] (Exit) {}
+[end]
+
+这是我的台式机上的菜单配置
+
+[begin] (fluxbox)
+[exec] (Evolution) {/usr/bin/evolution}
+[exec] (GAIM) {/usr/bin/gaim}
+[exec] (Bash) { x-terminal-emulator -T "Bash" -e /bin/bash --login}
+[exec] (Epiphany) {/usr/bin/epiphany}
+[exec] (BMP) {/usr/bin/beep-media-player}
+[exec] (Xine) {/usr/bin/xine}
+[include] (/etc/X11/fluxbox/fluxbox-menu)
+[end]
+
+你很容易就可以看出两个配置的不同之处，我的台式机在安装fluxbox之前已经安装了debain菜单管理程序，如果你想查阅更多关于fluxbox示例，请点击这里浏览fluxbox官方文档 [1]
+[编辑] 自动生成菜单
+
+如果你想让系统自动进行菜单的配置，可以进行如下操作
+
+首先，解压需要的文件，并将它复制到/usr/bin
+
+# cd /usr/share/doc/fluxbox
+# gzip -d fluxbox-generate_menu.gz
+# cp fluxbox-generate_menu /usr/bin
+
+修改文件属性，让它变成可执行文件：
+
+# chmod a+x /usr/bin/fluxbox-generate_menu
+
+接下来就是自动生成菜单了，用你的某一个系统帐号运行以下命令：（！这段译得可能有问题）
+
+$ cd /home/username
+$ fluxbox-generate_menu
+
+这样就会生成~/.fluxbox/menuconfig文件，你可以在这个配置文件的基础上进行修改，比如加入gnome或是kde支持，或是更改默认的浏览器，终等
+
+最后还需要修改init文件中的“菜单配置文件”路径，将'session.menuFile'改为指向刚才生成的那个文件
+
+$ nano -w /home/username/.fluxbox/init
+
+session.menuFile:       /home/username/.fluxbox/menu
+
+重新登录，就可以开始使用你的新菜单了。
+[编辑] 快捷键设置
+
+快捷键操作是极为便利的，只需按组合键就可以完成一些操作，何必再大费周章的去用鼠标点来点去呢？fluxbox控制快捷键的配置文件为~/.fluxbox/keys
+
+Fluxbox自动设置了一些快捷键，比如你所熟悉的ALT+TAB（窗口切换）和ALT＋F1至F12（workspace切换，前提是你得启动了这么多的workspace，fluxbox默认设置数量为4个）。对于很多人来说，这个系统自动设置的快捷键用起来可能并不怎么快捷（不习惯），没得说，改之！很简单，看下面的语法
+
+<key combo> :ACTION
+<组合键>:命令
+
+这里有几点需要先解释一下.一个是键名：Alt对应的名称是Mod1, CTRL对应的是Control, win键对应的是Mod4.其他键名则和你在键盘上看到的一样了.如果你相更保险一些，可以安装一个名为xev的软件来查询各个按键对应的名称：在终端启动它，然后按你想测试的按键,系统将会给出类似下框中的提示信息：
+
+KeyPress event, serial 30, synthetic NO, window 0x1800001,
+root 0x3e, subw 0x0, time 3967824504, (728,435), root:(799,525),
+state 0x0, keycode 50 (keysym 0xffe1, Shift_L), same_screen YES,
+XLookupString gives 0 bytes:
+XmbLookupString gives 0 bytes:
+XFilterEvent returns: False
+
+这些提示信息中大部份是我们所不关心的，我们需要的部份在第三行，也就是keycode <something> (keysym <something>, Shift_L)的那部门，它最后的部份(Shift_L)就是这个按键的名称了，直接使用这个名称即可（要注意的是，fluxbox中对 Alt,CTRL,WIN几个键的命令优先级最高，所以碰到这几个键时还是：Alt对应Mod1, CTRL对应Control, win对应Mod4）
+
+这样我们就很容易得到键盘上各个按键对应的名称了，组合键的定义格式很简单，将各个键名写进去就OK了，比如Alt+F1定义为Mod1 F1,":"后面则是这个组合键对应的操作内容了，至于各个组合键对应什么操作就完全取决于个人喜好了.
+Action（动作） 													     Description（说明）
+Close 														     Closes out the current window（关闭当前活动窗口）
+Minimize 													     Minimizes the current window（最小化当前活动窗口）
+MaximizeWindow 													     Maximizes the window(最大化当前活动窗口)
+ShowDesktop 													     Minimize all windows（显示桌面，最小化所有窗口）
+Restart 													     Restart Fluxbox（重启fluxbox）
+Quit 														     Quit Fluxbox and return to the login screen(退出fluxbox,重返登录界面)
+ExecCommand 													     Run the specified command. Either give the command or the absolute path to the program (think what you did for the menu file)（执行指定程序，可以用对应的程序名或是该程序完整的路径）
+
+
+下面是我自已设置的快捷键列表：
+
+Mod1 Tab :NextWindow
+Mod1 Shift Tab :PrevWindow
+Mod1 F1 :Workspace 1
+Mod1 F2 :ExecCommand fbrun ;not the default for fluxbox, but this behaves like KDE/Gnome
+Mod1 F3 :Workspace 3
+Mod1 F4 :Workspace 4
+Mod1 F5 :Workspace 5
+Mod1 F6 :Workspace 6
+Mod1 F7 :Workspace 7
+Mod1 F8 :Workspace 8
+Mod1 F9 :Workspace 9
+Mod1 F10 :Workspace 10
+Mod1 F11 :Workspace 11
+Mod1 F12 :Workspace 12
+Mod4 F1 :ExecCommand /usr/bin/evolution
+Mod4 F5 :ExecCommand x-terminal-emulator -T "Bash" -e /bin/bash --login
+Mod4 F2 :ExecCommand /usr/bin/epiphany
+Mod4 F3 :ExecCommand /usr/bin/xine
+Mod4 F4 :ExecCommand /usr/bin/best --no-tray
+
+[编辑] 设置桌面背景
+
+到目前为止，我们已经轻松搞定了菜单和快捷键了，你可能对那单调的桌面背景产生视觉疲劳了吧？很简单，换它没商量！
+
+fbsetbg -f /path/to/image_file
+
+See? :D
+
+执行上面的代码后，有没有发现你的桌面有什么变化？
+
+小技巧： "fbsetbg -l"会将你的桌面背景设回你上次使用的背景，可以将这段代码添加到~/.fluxbox/init 文件中这个位置: session.screen0.rootCommand: fbsetbg -l
+
+注：fbsetbh只一个别的工具(Esetroot && feh 等)的套装包，如果你安装了这些工具，fbsetbg当会自动择优使用。要查看fbsetbg调用了哪一个，可以执行:fbsetbg -i
+
+Feh命令可以于feh包中找到：feh
+
+Esetroot由ETerm自带，同样可以于eterm包中找到它：eterm
+[编辑] 样式
+
+你能够把桌面背景设置得很漂亮，但有想过主题么？嗯，现有好坏消息各一。好消息是Fluxbox默认为我们准备了大量的主题(称为Styles)。坏消息是这样主题只能影响窗口界面，而不是“内部”。这意味着，如果你在运行一个GTK程序，这些程序将使用浅灰色的主题。尽管样式本身是不错的，但它们确实可能会打乱一个界面。所以，在你试着去改变它们之前，先得明白安装和使用它们。
+
+改变样式是极简单的啦。到样式子菜单，然后单击它。即使被警告，有些主题样式还会以自身的设置去改写你的桌面背景，所以你得自己再改回来。如要安装一新主题样式怎么办呢？嗯，第一步显然是得知道到哪儿能找到它们。
+
+这儿有一些网页可供参考：
+
+    Freshmeat
+    Boxwhore 
+
+一旦找到一个你喜欢的，将之下载到目录~/.fluxbox，然后解压。以下其中之一必将发生。此包打得规范，只将它的子文件放入~/.fluxbox/styles里面；另一种情况是，它会放到~/.fluxbox目录的其它地方。前者执行的话，你的设置就完成了，这个样式已在样式菜单中了。至于后种情况，你得找到它的style目录，并将里面的文件移动到~/.fluxbox/styles目录中。绝大多数情况(99.999%)下，它会自建目录，样式目录就在里面(我们将它解压到~/.fluxbox目录，是因为那儿没几个目录，倘一个新样式被建立，会是一目了然的)。
+
+Now thats all well and good, but I mentioned being able to apply GTK Themes. Yes you can. Install GTK Theme Switch with gtk-theme-switch and run it with switch2 . A little dialog will pop up with a dropdown of all the GTK Themes installed. Just select and apply. Keep in mind that the Style will still be in control of the Window Decorations (Titlebar, window borders, etc), so if the GTK Theme normally sets those, it won't, but the rest of it will work. A good source of GTK Themes is GNOME-Look. Stay away from the Metacity themes though. Those flat out won't work. Also if you need to install a new GTK theme, just download the tarball to ~/.themes and extract it.
+[编辑] The ~/.fluxbox/startup File
+
+你已听说过文件 ~/.fluxbox/startup，现在来学习一下如何使用它。
+
+优秀的脚本都带有快速的介绍，并将所有设置注释掉。此文件也不例外。
+[编辑] 设置背景
+
+设置背景图片，只须将文件中fbsetbg语句注释符去掉，并将图片路径赋给fbsetbg即可。然后一并注释掉设置纯黑背景的语句。
+[编辑] fluxbox启动时加载程序
+
+在 ~/.fluxbox/startup 最下面，你可以看到这一段：
+
+# Applications you want to run with fluxbox.
+# MAKE SURE THAT APPS THAT KEEP RUNNING HAVE AN ''&'' AT THE END.
+
+这儿可以将所有你想随fluxbox自启动的程序添加进去。值得注意的是，XScreensaver（控制screensaver和screen的锁定）在默认设置中，并未随Fluxbox自启动，所以你可以这样添加它： xscreensaver & 。后面的符号（&）意为将它置为后台运行。其它程序也大概如此，比如Beagle daemon： beagled & 。还有另的程序（GAIM, GKrellm），对Fluxbox的很好补充，随你添加。
+[编辑] Dockapps以及Slit
+
+Dockapps是个小的"dockable"程序，它位于一个小的"Dock"（Fluxbox中称为"the slit"，在你的屏幕的一角）中。它们可能是些不可变形的（时钟，日历，系统信息），功能性的（音量调节，磁盘挂载工具），方便的（程序控制），甚或可供娱乐的（minigames，fortune cookie display, etc.）小程序。大量的dockapps起初虽然都由WindowMaker和AfterStep窗体管理程序发展而来，但也能与Fluxbox很好的兼容。有一些较好的，可以在Ubuntu的源里找到（如你愿意，可以执行 sudo apt-cache search dockapp 查看），更多可安装你需要的编译安装。
+
+Fluxbox启动里加载dockapps，如同加载其它程序一样，即在 ~/.fluxbox/startup 文件中加入启动它们的命令，后跟符号&。
+
+一些受欢迎的dockapps可在Universe repo.中通过apt-get或者Synaptic安装：
+
+wmxmms: used to control XMMS (play, pause, next, previous, volume, position)
+wmcpuload: displays the CPU load in percentage
+wmmemload: displays how much memory is used
+wmweather, wmweather+: displays the weather
+wmclockmon: displays the date and time
+docker: a dock
+wmmount: mount/unmount/open volumes such as cdrom drives and harddisks
+wmmatrix: shows the matrix screensaver just for fun
+wmtop: shows the current running processes that use most resources at the moment
+
+[编辑] Gnome Support
+
+很多人在Fluxbox中使用Nautilus, Gnome主题，或者Gnome面板。为了很平滑地使用这些功能，请将下面的一段脚本加到你的启动文件中：
+
+GSDPID='pidof gnome-settings-daemon'
+if [  "x$GSDPID" == "x" ]; then
+gnome-settings-daemon &
+fi
+
+[编辑] 启动Fluxbox
+
+最后是Fluxbox的启动命令。注意这里我们没有使用符号&：/usr/bin/fluxbox 

@@ -1,0 +1,27 @@
+#!/bin/bash
+
+
+# while [ 1 ]
+# do
+#     echo "full screen,yes or not?"
+#     read TEMP
+#     echo $TEMP
+#     case $TEMP in
+# 	[yY]es|[yY])
+# 	    echo yes
+# 	    rdesktop -f -u Administrator 172.23.22.245
+# 	    exit 0
+# 	;;
+# 	[nN]o|[nN])
+# 	    echo no
+# 	    rdesktop -u Administrator 172.23.22.245
+# 	    exit 0
+# 	    ;;
+# 	*)
+# 	    echo default
+# 	    ;;
+#     esac
+# done
+rdesktop -f -u Administrator 172.23.22.245 -p ckf
+
+exit 0

@@ -1,0 +1,18 @@
+Archlinux 2012.7.15安装
+2012-07-23 13:05:00     我来说两句       收藏     我要投稿
+Archlinux 2012.7.15安装
+Archlinux 2012.7.15昨天刚刚发布，抢鲜安装一下，因为使用pacstrap替代了原理的安装菜单，安装过程并不是很顺利。
+用最新的ISO盘启动机器，自动使用root进入系统，原来是使用/arch/setup命令直接进入安装菜单，通过菜单导航的方式来安装，现在的方式是使用脚本系统来安装。
+用分区工具划定分区，使用parted或者fdisk吧，我用GPT分区表所以就用parted了。简单点，直接分区并格式化，两个分区一个7G的/，一个1G的swap。
+
+将/dev/sda1挂载到/mnt下  www.2cto.com  
+执行pacstrap /mnt base{,-devel}下载并安装基本系统
+执行mkfstab -p /mnt >> /mnt/etc/fstab生成系统挂载文件
+
+执行pacstrap /mnt grub-efi-x86_64，我是使用的efi方式来安装的grub，当然也可以安装grub-bios，要看自己的机器具体的配置情况了。
+执行arch-chroot /mnt，chroot到mnt下
+安装grub到/dev/sda执行grub-install /dev/sda
+
+执行grub-mkconfig生成配置文件grub.cfg
+需要说明的是最新的系统安装完全基于网络了，pacstrap是对pacman的一个封装而已，而arch-chroot是chroot的封装。
+作者 cnsword

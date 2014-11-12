@@ -1,0 +1,46 @@
+rtorrent命令行使用说明和安装
+2011-12-23 14:07 2710人阅读 评论(0) 收藏 举报
+目录(?)[+]
+
+ 
+ 搜索一下网络上关于 rtorrent 的中文说明似乎没有找到，根据原文大致的把命令行操作翻译一下：
+ 添加和删除 torrents
+ 回退键	用 URL 或者文件路径添加，采用 tab 键查看目录内容并自动完成，支持通配符，例如: ~/torrent/*
+ 回车键	和回退键一样，但是添加的 torrent 保持非激活( inactive )状态 (用 ^s 激活)
+ ^o	对选择的 torrent 设置新的下载目录，仅仅对还没有被激活过的 torrent
+ ^s	开始下载，先运行 hash ，除非已经做过
+ ^d	停止激活的下载，或者删除一个停止的下载
+ ^r	初始化 torrent 的 hash 检查
+ 注意： ^s 和 ^q 在 shell 里面经常用来控制屏幕的暂停，这会和 rTorrent 发生冲突，用 stty -a 来检查是否已经被使用，删除的办法是：
+ stty stop undef
+ stty start undef
+ before running rTorrent (or reattaching to screen) to leave them undefined. You could also replace undef with some other code — ^p, say. ^d also usually sends end-of-file but ncurses passes this through to rTorrent. stty eof undef if you are worried.
+ To fix this, you may also toggle the flow control in screen with ^a ^f until screen displays “-flow” in the bottom left corner.
+ 修改带宽
+ a/s/d	增加上传带宽 1/5/50 KB.
+ z/x/c	降低上传带宽 1/5/50 KB.
+ A/S/D	增加下载带宽 1/5/50 KB.
+ Z/X/C	降低下载带宽 1/5/50 KB.
+ Common Error Messages
+ Could not parse bencoded data
+ This message is caused by bad communication with the tracker, often caused by invalid client authentication (passkey, IP address, etc.)
+ Could not create download, the input is not a valid torrent
+ This message is caused by a corrupted or otherwise non-valid .torrent file. You should redownload the .torrent file or possibly find a new source for it.
+ 浏览
+ Global Keys
+ ^q	关闭 rTorrent，再按一次，强行关闭
+ 上下箭头	选择 torrent
+ 左键	回到前一个屏幕
+ 主屏幕视图操作
+ 向右键	切换到下载视图
+ ^r	检查 hash
+ +/-	修改优先度
+ l	查看日志，空格退出
+ 1	显示所有下载
+ 2	显示所有下载，按文件名排序
+ 3	显示开始的下载
+ 4	显示停止的下载
+ 5	显示完成的下载
+ 6	显示未完成的下载
+ 7	显示正在 hash 的下载
+ 8	显示正在做种的下载

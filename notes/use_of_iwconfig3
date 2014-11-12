@@ -1,0 +1,105 @@
+无线网卡配置
+本文介绍在Linux 命令行界面中手动配置无线网卡的方法。目前流行的多数发行版都支持用图形界面的network- manager方便地进行配置，而无需使用本文所介绍的原始方法。
+
+下面介绍使用iwconfig和ifconfig等命令在命令行状态下配置无线网络。前题是无线网卡驱动已经正确安装，并被系统正确识别。
+
+
+大体思路
+工作的大体思路如下：
+
+用iwconfig开启无线网卡的电源，并查找区域内的无线网络
+连接到相应的无线网络
+通过ifconfig启用无线网卡，并获取IP（如果使用DHCP的话）
+
+注意： 
+假设无线被识别为wlan0，如果您的网卡没有被识别为wlan0，可以在操作时做相应的修改。
+
+具体过程
+1. 打开无线网卡电源
+
+iwconfig wlan0 txpower on
+
+
+无线网络的信号灯应该亮了。
+
+
+2. 列出区域内的无线网络
+
+iwlist wlan0 scan
+
+
+3. 假设要连接到网络MyHome（即essid为MyHome的网络），那么输入命令
+
+iwconfig wlan0 essid "MyHome" 
+
+
+如果网络是加密的，密码是0123456789，那么就输入命令
+
+iwconfig wlan0 essid "MyHome" key 0123-4567-89
+
+
+4. 如果正常的话，输入
+
+iwconfig wlan0
+
+
+就可以看到连接正常的各项参数了。
+
+
+
+
+
+
+
+5. 启用无线网卡
+
+ifconfig wlan0 up
+
+
+6. 如果是用DHCP获取IP的，那么用dhclient 或dhcpcd获取ip
+
+dhclient wlan0
+
+
+或
+
+dhcpcd wlan0
+
+
+7. 现在无线网卡应该可以正常使用了。
+
+
+
+PS:
+
+如果现在还不能联网。那么点击网络图标。选择链接到隐藏的无线网络。输入找到的网络的名字。
+
+
+
+图形化的网络管理程序是System->Preferences->Network Connections。打开程序后，点击无线网络项目，点击add增加一个新的无线网络。  给出任意的Connection Name。SSID中输入无限网络的名字。wireless security中选择一种合适的加密类型。key中输入无限网络的密码。 
+
+其他字段都不修改。 执行后，应该能够链接无限网络。  可以使用iwconfig wlan0命令查看是否正确连接无线网络。
+
+
+
+
+
+未正确链接无线网络的输出：
+
+iwconfig wlan0
+wlan0     IEEE 802.11abg  ESSID:off/any  
+Mode:Managed  Access Point: Not-Associated   Tx-Power=0 dBm   
+Retry  long limit:7   RTS thr:off   Fragment thr:off
+Power Management:off
+
+正确链接无线网络后的输出：
+
+iwconfig wlan0
+wlan0     IEEE 802.11abg  ESSID:"LilyHomeRout"  
+Mode:Managed  Frequency:2.437 GHz  Access Point: 00:23:CD:22:1A:A8   
+Bit Rate=54 Mb/s   Tx-Power=0 dBm   
+Retry  long limit:7   RTS thr:off   Fragment thr:off
+Power Management:off
+Link Quality=65/70  Signal level=-45 dBm  
+Rx invalid nwid:0  Rx invalid crypt:0  Rx invalid frag:0
+Tx excessive retries:0  Invalid misc:0   Missed beacon:0

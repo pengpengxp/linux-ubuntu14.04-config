@@ -1,0 +1,224 @@
+Location: http://dawndiy.com/archives/153/                                                                                           
+DawnDIY
+
+  * 
+  * 
+
+  * Home
+  * Archives
+  * RSS
+  * [                    ]
+
+Ubuntu 下搭建 Android 开发环境(图文)
+
+随着智能手机、平板电脑等越来越普及，现在的移动平台开发越来越火，IOS、Android等等，以前一直没有开发过移动平台的应用，然而网上的N多教
+程全是Windows平台的，而我却坚持这Linux桌面，那么这么新鲜、这么火、这么有前景的开发，我也先起个头，把环境搭建起来先。
+
+1.安装JDK
+
+请看这里 > 《Linux 下安装配置 JDK7》
+
+2.安装Eclipse
+
+现在Eclipse已经出4.2版本，并且官方也已经将4.x版作为默认的下载版本了，大家可以自己选择，下面给出4.x和3.7.x的下载链接：
+
+Eclipse Juno (4.2)：
+Windows    32-bit    64-bit
+Mac    32-bit    64-bit
+Linux    32-bit    64-bit
+
+Eclipse Indigo (3.7)：
+Windows    32-bit    64-bit
+Mac    32-bit    64-bit
+Linux    32-bit    64-bit
+
+下载后解压到本地直接都可以使用了（在配置好JDK的前提下）。
+
+3.下载安装 Android SDK
+
+先下载好最新的 Android SDK Package。这里我给出下载地址：
+
+Platform
+
+Package
+
+Size
+
+MD5 Checksum
+
+Windows
+
+android-sdk_r20.0.1-windows.zip
+
+90370975 bytes
+
+5774f536892036f87d3bf6502862cea5
+
+installer_r20.0.1-windows.exe (Recommended)
+
+70486979 bytes
+
+a8df28a29c7b8598e4c50f363692256d
+
+Mac OS X (intel)
+
+android-sdk_r20.0.1-macosx.zip
+
+58217336 bytes
+
+cc132d04bc551b23b0c507cf5943df57
+
+Linux (i386)
+
+android-sdk_r20.0.1-linux.tgz
+
+82607616 bytes
+
+cd7176831087f53e46123dd91551be32
+
+官网下载地址：
+
+下载好后当然是解压了，解压到您的工作目录，这个目录就是今后使用SDK的目录：
+
+tar zvxf android-sdk_r20.0.1-linux.tgz
+
+解压找到 tools 目录下的 android 后如图：
+
+[qtV6C] 
+
+ 
+
+这个就是 Android SDK Manager，你可以通过这个来配置、管理和下载最新的SDK。
+
+首先我们先通过 Android SDK Manager 来添加平台和包，打开 Android SDK Manager 后勾选你需要的工具和包，这里 Android SDK Manager 会默认
+为您勾选它所推荐的包，您只需要点击下载安装就可以了。如图：
+
+[kZRDG] 
+
+4.配置 Android SDK 开发调试环境
+
+在这里我们是要配置开发调试环境，以便我们在控制台能够很好的使用 SDK 。如果你只是希望使用 Eclipse 来做 Android 开发的话，这里也可以省
+略。不过我还是觉得控制台挺好的，虽然一片片的看着头晕，呵呵。
+
+首先配置环境变量，和配置 JDK 一样。运行一下代码来配置环境变量：
+
+gedit ~/.bashrc
+
+在文件的最末端添加下面内容：
+
+# Android SDK
+export ANDROID_SDK=/home/dawndiy/workspace/android/android-sdk-linux
+export PATH=$ANDROID_SDK/platform-tools:$ANDROID_SDK/tools:$PATH
+
+当然， “ANDROID_SDK=” 后面的内容当然是你自己的 SDK 所在的目录啦，千万别照搬啊，上面的可是我电脑上的。修改好了以后记得保存，最后运行
+一下：
+
+source ~/.bashrc
+
+ 
+
+————更新————-
+
+==这里是后来添加上的==
+
+在之后的使用中我发现在控制台使用  adb 命令正常，但是有的时候需要 root 权限的时候我们再使用 sudo adb 的时候居然会提示找不到 adb 命令
+。后来我找到了解决方法，这里说明一下：
+
+cd /usr/bin
+rm -rf adb
+sudo ln -s /home/dawndiy/workspace/android/android-sdk-linux/platform-tools/adb
+
+这样就可以解决在 sudo 下也可以使用 adb 了，如果 fastboot 也有这样的情况，一样解决！
+
+—————————–
+
+ 
+
+5.安装 ADT(Android Development Tools) 插件
+
+打开 Eclipse，选择 Help > Install New Software….
+
+点击 Add，在 Name 输入 “ADT Plugin” 作为名字，在 Location 输入 “https://dl-ssl.google.com/android/eclipse/”(不要引号)，如图：
+
+[jPRY9] 
+
+添加好插件地址后，在 Work with 中选择刚才添加的插件地址，然后等待一会儿下面就会出现需要安装的插件。选择需要安装的插件后点击安装即可
+。如图：
+
+[7Moeo] 
+
+接下来就是等待下载安装，安装后了以后重启Eclipse即安装完成。
+
+6.配置 ADT 插件
+
+这里可能重启Eclipse后就会弹出ADT的配置对话框，如果没有弹出的话下面会介绍。
+
+弹出的对话框如图，只需要把前面安装好的 Android SDK 的目录填入 Location 中就可以了。
+
+[tssKQ] 
+
+然后弹出一个问你是否愿意想Google反馈使用信息的对话框，Yes or No 随便，然后 Finish。
+
+如果没有弹出ADT配置对话框，那么我们如下操作来配置。
+
+打开 Eclipse ，选择 Window > Preferences… 来打开选项面板。
+
+在左侧选择 Android ，在右侧面板中找到 SDK Location 点击 Browse… 来选择你前面安装的SDK目录，最后点击 Apply 即可。如图：
+
+[9zpfS] 
+
+这样您的ADT就基本配置完成了。最后为了保证您的插件是最新的，可以选择 Help > Check for Updates 让Eclipse自动检测需要更新的组件来更新。
+
+7.新建 AVD(android vitural device)
+
+开发的时候当然需要一台设备来做测试，Android SDK 的工具中提供了 Android 虚拟设备的功能，能够在本地虚拟一台 Android 设备。在正式开发之
+前，我们需要配置新建一个 AVD ，当然你可以使用前面安装好的 Android SDK Manager 来新建，这里我们也可以直接在已经配置好了的Eclipse里面
+进行添加。
+
+选择 Windows > AVD Manager 点击 New 来新建一台 AVD ，然后在里面配备相应的参数，如图：
+
+[3ypIG] 
+
+点击 Create AVD 完成。
+
+你可以在新建完成后在 AVD Manager 里面运行您刚才新建的虚拟设备，附上几幅图：
+
+[xpi9z] 
+
+[Hp9T3] 
+
+8.新建 Android 项目
+
+打开 Eclipse ， File > New > Other… 选择 Android Application Project 后，就会出现向导对话框，然后更具向导填好相关信息，最后就可以生
+成一个 Android 项目，如图：
+
+[ndSpv] 
+
+填写应用名、项目名、包名等信息，还有选择构建的SDK版本。
+
+[wZGpZ] 
+
+设置应用的图标：
+
+[HjUCR] 
+
+[2CK0b] 
+
+完成新建 Android 项目：
+
+[ISKJf] 
+
+项目建立好后，默认给出的是一个示例，我们直接运行一下看能否运行，点击工具栏的绿色运行按钮或者键盘 Ctrl F11 。运行效果如下：
+
+[fl8sA] 
+
+这样，我们的环境就配置完成了！
+
+9.总结
+
+一直都想去尝试开发一款自己的Android程序，但是一直都没有去学，趁今天下午有时间，参考了官方的文档，自己摸索的搭建了一下开发环境，算一
+个开头。接下来就慢慢的学习吧～ Over………………….
+
+Comments
+Copyright © 2013 DawnDIY . Powered by Octopress | Theme fabric by Pankaj Kumar
+

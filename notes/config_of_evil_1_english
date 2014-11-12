@@ -1,0 +1,404 @@
+
+Stack Exchange
+sign up log in careers 2.0
+
+Stack Overflow
+
+    Questions
+    Tags
+    Tour
+    Users
+
+    Ask Question
+
+Tell me more ×
+Stack Overflow is a question and answer site for professional and enthusiast programmers. It's 100% free, no registration required.
+Emacs: Evil Mode best practice?
+up vote 39 down vote favorite
+26
+	
+
+I've been using Vim as my primary editor for years and tried Emacs several times during. Then I discovered Evil and decided that it meets my demand for speedy movement well enough that I can finally move on to Emacs.
+
+So, to all you Evil users, how do you integrate it with normal Emacs functions? Have you encounter any conflicts between this mode and others? What's your sharing-worthy experiences/tips on this topic?
+emacs editor emacs23 evil-mode
+share|improve this question
+	
+edited Jan 9 '12 at 7:42
+Martin DeMello
+4,15121839
+	
+asked Dec 13 '11 at 1:15
+Daniel Duan
+650717
+	
+5 Answers
+active oldest votes
+up vote 23 down vote accepted
+	
+
+I used a highly customized vim, and now use an even more customized emacs. I think youll find every instance of keymapping in my keymapping config file https://github.com/mbriggs/.emacs.d/blob/master/my-keymaps.el
+
+Keep in mind, I am rebinding stuff that real emacs users would consider heresy, so YMMV if you ever want to learn "real" emacs (I really don't).
+
+one thing I would recommend to any ex vimmer is this
+
+;;; esc quits
+
+(define-key evil-normal-state-map [escape] 'keyboard-quit)
+(define-key evil-visual-state-map [escape] 'keyboard-quit)
+(define-key minibuffer-local-map [escape] 'minibuffer-keyboard-quit)
+(define-key minibuffer-local-ns-map [escape] 'minibuffer-keyboard-quit)
+(define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
+(define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
+(define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
+
+so that esc actually quits pretty much anything (like pending prompts in the minibuffer)
+share|improve this answer
+	
+edited Sep 1 at 18:08
+
+	
+answered Apr 15 '12 at 21:43
+Matt Briggs
+18.3k33583
+	
+	
+The definition for minibuffer-keyboard-quit can be found here: github.com/davvil/.emacs.d/blob/master/init.el – Adam Aug 31 at 19:31
+	
+@Adam sorry about that >.> I have a lot of stuff installed, sometimes I use a function that i think is built in, but is actually coming from somewhere else – Matt Briggs Sep 1 at 18:08
+up vote 17 down vote
+	
+
+I also used to be a Viper/Vimpulse user, with a huge amount of configuration. Then I found Evil-mode.
+
+    What's your sharing-worthy experiences/tips on this topic?
+
+This is my whole evil-mode configuration, and it works great for me:
+
+(require 'evil)
+(evil-mode 1)
+
+;; Remap org-mode meta keys for convenience
+(mapcar (lambda (state)
+    (evil-declare-key state org-mode-map
+      (kbd "M-l") 'org-metaright
+      (kbd "M-h") 'org-metaleft
+      (kbd "M-k") 'org-metaup
+      (kbd "M-j") 'org-metadown
+      (kbd "M-L") 'org-shiftmetaright
+      (kbd "M-H") 'org-shiftmetaleft
+      (kbd "M-K") 'org-shiftmetaup
+      (kbd "M-J") 'org-shiftmetadown))
+  '(normal insert))
+
+    Have you encounter any conflicts between this mode and others?
+
+No, in contrast to Viper/Vimpulse which was causing trouble in several modes.
+share|improve this answer
+	
+edited Jul 10 '12 at 17:50
+
+	
+answered Dec 21 '11 at 13:05
+Kenny Meyer
+1,86921030
+	
+	
+I'm getting this error: progn: Symbol's value as variable is void: state Where is state defined? – justingordon Mar 24 '12 at 6:49
+	
+You can try evil-emacs-state – Kenny Meyer Mar 24 '12 at 18:14
+2 	 
+	
+Can you clarify where you put that? – justingordon Mar 25 '12 at 2:32
+	
+justingordon, just put it in your .emacs after (require 'evil) – jplindstrom Jul 10 '12 at 14:17
+	
+This is fantastic, I looked for exactly this. Upvotes galore! – jplindstrom Jul 10 '12 at 14:18
+up vote 12 down vote
+	
+
+I started to use Evil a month ago; before it, I tried to use viper/vimpulse without much of success. To be honest, vimpulse is quite nice, but using it with various modes was a bit troublesome (e.g. compilation mode where vimpulse went always crazy) leaving emacs in some mode between vi-emacs-something.
+
+When I switched to Evil, I finally started to explore full Emacs power, and believe me, I didn't regret. Evil works nicely in all modes I used (mostly editing, compilation, scratch and eshell) and even reading info/man/help is working without any problems.
+
+Except that, I only found buffer switching odd as I used to do :b<0-9> instead :b-TAB-then-complete-name or :bn. Note however that Evil developers tries (in some cases) to reduce duplicate functionalities, so instead :! (to exec shell command), you should use native M-!.
+
+If you find urge to add/redefine some custom ex commands, just open evil-maps.el and edit it (try that in vim!).
+
+Evil is still young but promising project and I'm waiting the day when will replace viper in official Emacs distribution.
+share|improve this answer
+	
+answered Dec 13 '11 at 16:16
+dennis
+1662
+	
+2 	 
+	
+Is this supposed to imply that it's not possible to add/redefine commands in vim? – John Tyree Mar 23 at 4:20
+up vote 7 down vote
+	
+
+As someone who came from emacs, tried vim, and realized there were a huge number of things to gain, I did a lot of experimenting when I first started using evil. While the following are controversial, I wanted to keep the emacs keys that are used more universally in terminal, firefox, cocoa, etc..., but didn't want to lose the vim editing capabilities. I ended up deciding to rebind the following keys in my .emacs:
+
+(define-key evil-normal-state-map "\C-e" 'evil-end-of-line)
+(define-key evil-insert-state-map "\C-e" 'end-of-line)
+(define-key evil-visual-state-map "\C-e" 'evil-end-of-line)
+(define-key evil-normal-state-map "\C-f" 'evil-forward-char)
+(define-key evil-insert-state-map "\C-f" 'evil-forward-char)
+(define-key evil-insert-state-map "\C-f" 'evil-forward-char)
+(define-key evil-normal-state-map "\C-b" 'evil-backward-char)
+(define-key evil-insert-state-map "\C-b" 'evil-backward-char)
+(define-key evil-visual-state-map "\C-b" 'evil-backward-char)
+(define-key evil-normal-state-map "\C-d" 'evil-delete-char)
+(define-key evil-insert-state-map "\C-d" 'evil-delete-char)
+(define-key evil-visual-state-map "\C-d" 'evil-delete-char)
+(define-key evil-normal-state-map "\C-n" 'evil-next-line)
+(define-key evil-insert-state-map "\C-n" 'evil-next-line)
+(define-key evil-visual-state-map "\C-n" 'evil-next-line)
+(define-key evil-normal-state-map "\C-p" 'evil-previous-line)
+(define-key evil-insert-state-map "\C-p" 'evil-previous-line)
+(define-key evil-visual-state-map "\C-p" 'evil-previous-line)
+(define-key evil-normal-state-map "\C-w" 'evil-delete)
+(define-key evil-insert-state-map "\C-w" 'evil-delete)
+(define-key evil-visual-state-map "\C-w" 'evil-delete)
+(define-key evil-normal-state-map "\C-y" 'yank)
+(define-key evil-insert-state-map "\C-y" 'yank)
+(define-key evil-visual-state-map "\C-y" 'yank)
+(define-key evil-normal-state-map "\C-k" 'kill-line)
+(define-key evil-insert-state-map "\C-k" 'kill-line)
+(define-key evil-visual-state-map "\C-k" 'kill-line)
+(define-key evil-normal-state-map "Q" 'call-last-kbd-macro)
+(define-key evil-visual-state-map "Q" 'call-last-kbd-macro)
+(define-key evil-normal-state-map (kbd "TAB") 'evil-undefine)
+
+(defun evil-undefine ()
+ (interactive)
+ (let (evil-mode-map-alist)
+   (call-interactively (key-binding (this-command-keys)))))
+
+Unfortunately, these overlap with the vim "move one screen up or down" operations. However, I have become comfortable using the following instead:
+
+(define-key evil-normal-state-map (kbd "DEL") (lambda ()
+                    (interactive)
+                    (previous-line 10)
+                    (evil-scroll-line-up 10)
+                    ))
+
+(define-key evil-normal-state-map (kbd "=") (lambda ()
+                      (interactive)
+                      (next-line 10)
+                      (evil-scroll-line-down 10)
+                      ))
+
+Also, if you are coming from vim and want a quick path from insert to normal mode using "jk" (or any other 2 stroke combination), I ended up settling on:
+
+(define-key evil-insert-state-map "j" #'cofi/maybe-exit)
+(evil-define-command cofi/maybe-exit ()
+  :repeat change
+  (interactive)
+  (let ((modified (buffer-modified-p)))
+    (let ((evt (read-event (format "Insert %c to exit insert state" ?k) nil 0.3)))
+      (cond
+       ((null evt) (insert "j"))
+       ((and (integerp evt) (char-equal evt ?k))
+        ;(condition-case nil (evil-forward-char) (error nil) )
+        (set-buffer-modified-p modified)
+        (push 'escape unread-command-events))
+       (t (insert "j") (setq unread-command-events (append unread-command-events
+                                                           (list evt))))
+       ))))
+
+Also, if you are coming from vim and you think the copy-to-clipboard in emacs is no good, you're probably right. However, you may find the following useful after running sudo apt-get install xsel:
+
+(defun yank-to-x-clipboard ()
+  (interactive)
+  (if (region-active-p)
+      (progn
+        (shell-command-on-region (region-beginning) (region-end) "xsel -i -b")
+        (message "Yanked region to clipboard!")
+        (deactivate-mark))
+    (message "No region active; can't yank to clipboard!")))
+
+(evil-define-command xsel-paste-function()
+    (insert (shell-command-to-string "xsel -o -b"))
+    )
+
+(global-set-key [f8] 'yank-to-x-clipboard)
+(global-set-key [f9] 'xsel-paste-function)
+
+Obviously, you will have to decide for yourself whether any of these controversial changes are worth it, but perhaps these basic changes will inspire you.
+
+For some other really cool function implementations, such as delete and paste, delete without copying to clipboard, efficient 4x / 16x movement, use of counts for paste register specification, tab settings that actually work for c/c++, and more, you can check out the full .emacs, init.el, my-keymaps.el, and my-functions.el versons on my git at https://github.com/Russell91/basics
+share|improve this answer
+	
+edited 2 days ago
+
+	
+answered Apr 25 at 22:48
+user2237635
+16015
+	
+	
+all this is great, I added some in wikemacs: wikemacs.org/index.php/Evil#Configuration – Ehvince Aug 8 at 9:16
+up vote 0 down vote
+	
+
+I like to save the buffer when I exit the insert-mode: (edited: do not ask to save when there is no associated file for this buffer, like when in a scratch or a magit buffer)
+
+(defun my-save ()
+  (if (buffer-file-name)
+    (evil-save))
+)
+
+   (add-hook 'evil-insert-state-exit-hook 'my-save)
+
+for more possibilities: see http://wikemacs.org/index.php/Evil
+
+Comments welcome for improvements !
+share|improve this answer
+	
+edited Aug 30 at 15:52
+
+	
+answered Aug 20 at 15:28
+Ehvince
+24016
+	
+Your Answer
+
+ 
+Sign up or login
+
+Sign up using Google
+
+Sign up using Facebook
+
+Sign up using Stack Exchange
+Post as a guest
+Name
+Email
+
+By posting your answer, you agree to the privacy policy and terms of service.
+Not the answer you're looking for? Browse other questions tagged emacs editor emacs23 evil-mode or ask your own question.
+
+tagged
+emacs × 8748
+editor × 3080
+emacs23 × 222
+evil-mode × 31
+
+asked
+	
+
+1 year ago
+
+viewed
+	
+
+9045 times
+
+active
+	
+
+2 days ago
+
+    Mobile Developer
+    Glow Shanghai, China
+    Mid-Level ColdFusion Web Developer
+    NDG Communications La Plata, MD
+    Senior Software Developer C/C++ - News
+    Bloomberg New York, NY
+
+Related
+1
+completion-at-point in evil mode error
+1
+how to make EMACS evil-mode display line numbers
+3
+emacs evil-mode key map
+13
+How to map “jj” to Esc in emacs Evil mode
+2
+Installing Emacs Evil Mode for Windows
+1
+Emacs show-paren-mode + Evil
+0
+How can I enable shift-select-mode in Emacs evil-mode non insert state
+1
+emacs evil-mode simple bindings for command mode
+0
+Emacs Evil mode: how to create a new text object to select words with any non-space characters?
+0
+Change :ls to bring up ibuffer in Emacs evil-mode
+question feed
+about help badges blog chat data legal privacy policy jobs advertising info mobile contact us feedback
+Technology 	Life / Arts 	Culture / Recreation 	Science 	Other
+
+    Stack Overflow
+    Server Fault
+    Super User
+    Web Applications
+    Ask Ubuntu
+    Webmasters
+    Game Development
+    TeX - LaTeX
+
+	
+
+    Programmers
+    Unix & Linux
+    Ask Different (Apple)
+    WordPress Answers
+    Geographic Information Systems
+    Electrical Engineering
+    Android Enthusiasts
+    IT Security
+
+	
+
+    Database Administrators
+    Drupal Answers
+    SharePoint
+    User Experience
+    Mathematica
+    more (13)
+
+	
+
+    Photography
+    Science Fiction & Fantasy
+    Seasoned Advice (cooking)
+    Home Improvement
+    more (13)
+
+	
+
+    English Language & Usage
+    Skeptics
+    Mi Yodeya (Judaism)
+    Travel
+    Christianity
+    Arqade (gaming)
+    Bicycles
+    Role-playing Games
+    more (21)
+
+	
+
+    Mathematics
+    Cross Validated (stats)
+    Theoretical Computer Science
+    Physics
+    MathOverflow
+    more (7)
+
+	
+
+    Stack Apps
+    Meta Stack Overflow
+    Area 51
+    Stack Overflow Careers
+
+site design / logo © 2013 stack exchange inc; user contributions licensed under cc-wiki with attribution required
+rev 2013.9.23.1029

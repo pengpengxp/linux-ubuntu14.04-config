@@ -1,0 +1,33 @@
+sudo apt-get 下载的软件默认放在哪？怎么指定下载文件的位置呢？
+通过apt-get命令下载的软件包，放在
+/var/cache/apt/archives 目录下
+下载文件位置可以在
+/etc/apt/source.list文件中指定
+通过apt-get autoclean 命令就可以删除存放在该地的软件包
+
+
+
+apt命令与原理
+2009-06-08 17:40:54
+标签：休闲 apt 职场
+apt-cache search package 搜索包
+apt-cache show package 获取包的相关信息，如说明、大小、版本等
+sudo apt-get install package 安装包
+sudo apt-get install package - - reinstall 重新安装包
+sudo apt-get -f install 修复安装"-f = --fix-missing"
+sudo apt-get remove package 删除包
+sudo apt-get remove package - - purge 删除包，包括删除配置文件等
+sudo apt-get update 更新源
+sudo apt-get upgrade 更新已安装的包
+sudo apt-get dist-upgrade 升级系统
+sudo apt-get dselect-upgrade 使用 dselect 升级
+apt-cache depends package 了解使用依赖
+apt-cache rdepends package 是查看该包被哪些包依赖
+sudo apt-get build-dep package 安装相关的编译环境
+apt-get source package 下载该包的源代码
+sudo apt-get clean && sudo apt-get autoclean 清理无用的包
+sudo apt-get check 检查是否有损坏的依赖
+
+ 除了提供软件包的文件之外，还必须生成两个软件包的汇总文件：Packages.gz和Contents.gz。前者是服务器上软件包及其依赖关系的清单，并且用gzip压缩过了。apt-get update使用这个清单来确定能够获得哪些补充的软件包。后者建立原始文件到包含它们的软件包的映射关系，apt-get本身实际上并不会用到这个文件。apt-utils这个软件包中包含的apt-ftparchive命令会自动替您生成这两个汇总文件。
+     一旦已经创建好了汇总文件，剩下来的工作就很容易了。在客户机上的/etc/apt/sources.list文件中像下面这样的一行会把apt-get连到您的本地服务器上。
+         在每台客户机上运行apt-get update，然后照常使用apt-get。

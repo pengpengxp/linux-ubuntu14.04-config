@@ -1,0 +1,23 @@
+程老师：
+  我在写作业的时候遇到这样一个问题：
+class B1
+{
+public:
+       B1(int i){cout<<…………}
+};
+class B2
+{
+public:
+       B2(int i){cout<<…………}
+};
+class Derived:public B1,public B2
+{
+public:
+         B1 k(2);                                                       *************
+         Derived(int i,int j):B1(j),B2(j){………………}
+}
+问题出现在*****那一句。我原本是想在派生类中定义一个基类对象。如果我定义的基类的构造函数没有参数时，这句话是对的。如果我定义了有参数的构造函数，就像现在这样，编译就出错：
+xie.h:42:10: 错误： expected identifier before numeric constant
+xie.h:42:10: 错误： expected ‘,’ or ‘...’ before numeric constant
+
+我查了一下，有人说是编译器把这句话当成了函数B1的函数声明了。我感觉有一定道理。不知道是不是？如果是，那么这种情况我怎么在派生类中定义基类对象呢？

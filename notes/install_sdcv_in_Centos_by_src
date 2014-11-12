@@ -1,0 +1,20 @@
+修改两个地方【因为我的是64位系统】
+1. /src/lib/lib.cpp 第513行做如下修改
+- sdcv-0.4.2/src/lib/lib.cpp
++++ sdcv-0.4.2.amd64/src/lib/lib.cpp
+@@ -513,7 +513,7 @@
+{
+fseek(idxfile, wordoffset[page_idx], SEEK_SET);
+guint32 page_size=wordoffset[page_idx+1]-wordoffset[page_idx];
+- fread(wordentry_buf, std::min(sizeof(wordentry_buf), page_size), 1, idxfile); //TODO: check returned values, deal with word entry that strlen>255.
++ fread(wordentry_buf, std::min(sizeof(wordentry_buf), (size_t)page_size), 1, idxfile); //TODO: check returned values, deal with word entry that strlen>255.
+return wordentry_buf;
+
+
+2. 修改 src/utils.hpp 第4行下面添加
+#include <cstdio> // Modified by K.T., to active fgetc
+#include <cstdlib> // Modified by K.T., to active exit_fealue
+
+
+----
+问题解决

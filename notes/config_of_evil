@@ -1,0 +1,73 @@
+ Emacs，咱就推荐一个插件：Evil（件如其名，够邪恶）
+[已注销]
+来自: [已注销] 2012-12-01 23:45:36
+
+私以为，这个是高效编辑的必备插件~
+
+想不想把Vim的强力编辑功能拉到Emacs里面来，vi-mode？弱毙了！
+文本对象 gg G dd yy 3dd p P o O m ' '' "" .... 都来吧，Emacs欢迎你~
+
+个人以为，这个插件主要有两个用途：
+1，强化Emacs的编辑能力（你当然可以自己写函数，有现成的不更好么），同时你也不会感觉到Vim的影子！关键的关键是C-o啊！
+设置如下：
+(add-to-list 'load-path "~/.emacs.d/lisp/evil")
+(require 'evil)
+(evil-mode 1) ;以上的是设置启动emacs载入evil
+
+(setq evil-default-state 'emacs)
+;这个是打开文件后默认进入emacs模式
+;我还要在emacs和vim模式里面切换：C-z，换来换去啊
+
+(define-key evil-emacs-state-map (kbd "C-o") 'evil-execute-in-normal-state)
+; C-o按键调用vim功能（就是临时进入normal模式，然后自动回来）
+; 比如，你要到第一行，可以使用emacs的 M-<，也可以使用evil的C-o gg
+; 其中C-o是进入vim模式 gg是去第一行，命令之后自动还原emacs模式！
+; "Fuck you!" 如何删除""里面的内容呢？Emacs的话，默认文本对象能力不强
+; 有了evil的拓展 C-o di" 轻轻松松搞定~
+; 比如C-o 3dd C-o dib C-o yy C-o p C-o f * 舒服啊~发挥想象力吧
+
+; 下面4行是设置使用C-d作为ESC按键，这个自己看吧
+(define-key evil-insert-state-map (kbd "C-d") 'evil-change-to-previous-state)
+(define-key evil-normal-state-map (kbd "C-d") 'evil-force-normal-state)
+(define-key evil-replace-state-map (kbd "C-d") 'evil-normal-state)
+(define-key evil-visual-state-map (kbd "C-d") 'evil-exit-visual-state)
+
+; 以下设置时使用t作为多剪贴板的起始按键，比如 tay(不是 "ay哦) tap(就是"ap啦)~
+(define-key evil-normal-state-map "t" 'evil-use-register)
+
+; 注意，如果有什么bug的话，把这个函数也添加了
+; evil作者给的代码，不知道有没有添加到插件里面去
+(defun evil-execute-in-normal-state ()
+"Execute the next command in Normal state. C-o o works in insert-mode"
+(interactive)
+(evil-delay '(not (memq this-command
+'(evil-execute-in-normal-state
+evil-use-register
+digit-argument
+negative-argument
+universal-argument
+universal-argument-minus
+universal-argument-more
+universal-argument-other-key)))
+`(progn
+(if (evil-insert-state-p)
+(let ((prev-state (cdr-safe (assoc 'normal evil-previous-state-alist))))
+(evil-change-state prev-state)
+(setq evil-previous-state 'normal))
+(evil-change-to-previous-state))
+(setq evil-move-cursor-back ',evil-move-cursor-back))
+'post-command-hook)
+(setq evil-move-cursor-back nil)
+(evil-normal-state)
+(evil-echo "Switched to Normal state for the next command ..."))
+
+2，高仿Vim，这真的是Emacs么？
+基本配置：
+(add-to-list 'load-path "~/.emacs.d/lisp/evil")
+(require 'evil)
+(evil-mode 1) ;启动emacs载入evil，同时默认进入Vim模式
+？？？什么，要在Vim里面使用emacs的功能！OK，使用 \ 作为leader就OK了
+我还要在emacs和vim模式里面切换：C-z
+
+我就是要在Emacs里面使用Vim，
+哈哈哈哈~2B欢乐多~2B欢乐多哈~

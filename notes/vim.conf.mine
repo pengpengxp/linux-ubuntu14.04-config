@@ -1,0 +1,4 @@
+set autoindent
+set nu
+set incsearch
+set hlsearch

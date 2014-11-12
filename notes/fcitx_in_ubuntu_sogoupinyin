@@ -1,0 +1,89 @@
+!!!!!但是在配置debian的源的时候必须要是testing的才可以。不然会有依赖这些很麻烦的东西
+
+
+
+
+
+
+
+http://7071976.blog.51cto.com/7061976/1243471
+ubuntu 搜狗安装搜狗输入法(fcitx)亲测有用
+2013-07-09 00:19:28
+标签：ubuntu sogoupinyin 搜狗输入法
+原创作品，允许转载，转载时请务必以超链接形式标明文章 原始出处 、作者信息和本声明。否则将追究法律责任。http://7071976.blog.51cto.com/7061976/1243471
+
+安装搜狗拼音输入法网上很多方法，总结了一下，下面的方法绝对可以，
+
+第一步：
+
+Ubuntu 默认是安装了ibus.所以删除它
+
+sudo apt-get remove ibus
+
+对于已经安装老版本的fcitx,删掉再装.
+
+sudo apt-get remove fcitx*
+
+删除依赖库
+
+sudo apt-get autoremove
+
+检测是否删除fcitx
+
+dpkg --get-selections | grep fcitx
+
+第二布：
+
+添加fcitx的ppa：
+
+sudo add-apt-repository ppa:fcitx-team/nightly
+
+然后刷新软件源：
+
+sudo apt-get update
+
+第三步：
+
+然后直接安装搜狗输入法
+
+sudo apt-get install fcitx-sogoupinyin
+第四步：
+
+然后依次安装下列包（下17个应该是必须的）sudo apt-get install ****
+
+fcitx
+fcitx-bin
+fcitx-config-common
+fcitx-config-gtk
+fcitx-data
+fcitx-frontend-gtk2
+fcitx-frontend-gtk3
+fcitx-frontend-qt4
+fcitx-googlepinyin
+fcitx-libs
+fcitx-module-dbus
+fcitx-module-x11
+fcitx-modules
+fcitx-pinyin
+fcitx-table
+fcitx-table-wubi
+fcitx-ui-classic
+
+第五步:
+
+然后设置为fcitx为默认输入法
+
+im-switch -s fcitx -z default
+sudo im-switch -s fcitx -z default
+
+第六步:
+
+注销或重启就生效
+
+在右上角的输入法设置中
+
+"输入法" ==> 搜狗拼音
+
+或输入法的“配置”中设置
+
+这个输入法的翻页不是安pagedown或pageup,而是加号键跟减号键(其实不加shift）

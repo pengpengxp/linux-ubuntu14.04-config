@@ -1,0 +1,14 @@
+I've added these two lines:
+deb http://ppa.launchpad.net/fcitx-team/nightly/ubuntu quantal main
+deb-src http://ppa.launchpad.net/fcitx-team/nightly/ubuntu quantal main
+to the file of /etc/apt/sources.list and execute the command of
+sudo apt-get update
+in the terminal, then an error occurs:
+W: GPG error: http://ppa.launchpad.net quantal Release: The following signatures couldn't be verified because the public key is not available: NO_PUBKEY 6ADC9FEC7E5FA1EE
+
+To solve the problem, do the following step:
+execute this command:
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 6ADC9FEC7E5FA1EE
+in the terminal, then update sources again.
+
+Yeah, no error occurs! Have fun!

@@ -1,0 +1,891 @@
+Location: http://www.debian.org/releases/lenny/i386/release-notes/ch-upgrading.zh_CN.html                                            
+                                                     第 4 章 从以前的发行版升级                                                     
+上一页                                                                                                                        下一页
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+第 4 章 从以前的发行版升级
+
+目录
+
+4.1. 升级前的准备
+   
+    4.1.1. 备份数据和配置文件
+    4.1.2. 提前告知用户
+    4.1.3. 准备恢复
+    4.1.4. 为升级准备安全环境
+    4.1.5. 为 LILO 准备 initramfs
+   
+4.2. 检查系统状态
+   
+    4.2.1. 复审包管理器中的未决操作
+    4.2.2. 禁用 APT pinning 操作
+    4.2.3. 检查包状态
+    4.2.4. proposed-updates 区
+    4.2.5. 非官方源和 backports
+   
+4.3. 手工删除软件包的标记
+4.4. 为 APT 准备源
+   
+    4.4.1. 添加互联网 APT 源
+    4.4.2. 添加本地镜像 APT 源
+    4.4.3. 从 CD-ROM 或 DVD 添加 APT 源
+   
+4.5. 升级软件包
+   
+    4.5.1. 记录会话
+    4.5.2. 更新包列表
+    4.5.3. 确保您有足够的空间升级
+    4.5.4. 先升级 apt 和/或 aptitude
+    4.5.5. 使用 aptitudes 记录的 apt 自动安装的软件包列表
+    4.5.6. 最小系统升级
+    4.5.7. 升级系统的其它部分
+    4.5.8. 升级期间可能遇到的问题
+   
+4.6. 升级内核与相关包
+   
+    4.6.1. 安装内核元数据包
+    4.6.2. 设备枚举的顺序
+    4.6.3. 引导期间的问题
+   
+4.7. 在重启之前要做的事情
+   
+    4.7.1. 重新运行 lilo
+   
+4.8. 系统引导时在显示 Waiting for root file system 后挂起
+   
+    4.8.1. 如何在升级前避免此问题
+    4.8.2. 如何在升级后解决此问题
+   
+4.9. 为下个发行版做准备
+4.10. 过时的包
+   
+    4.10.1. 哑包
+   
+4.1. 升级前的准备
+
+我们建议您在升级前阅读第 5 章 lenny 中需要注意的问题中的信息。它描述了与升级过程有间接联系的潜在问题，但在升级前了解这些信息对您来说
+还是很重要的。
+
+4.1.1. 备份数据和配置文件
+
+在升级系统前，强烈建议您进行一次完整的备份，或者至少备份您不愿意丢失的数据和配置信息。升级工具和流程是非常可靠的，但升级过程中的硬件
+错误会对您的系统造成严重损害。
+
+您需要备份的内容包括 /etc, /var/lib/dpkg, /var/lib/aptitude/pkgstates 下的文件以及 dpkg --get-selections "*" 命令的输出(命令行中的引
+号必须要有)。
+
+升级过程本身不会修改 /home 下的任何内容。但某些程序(比如部分 Mozilla 套件，以及 GNOME 和 KDE 桌面环境)会在新版本的程序第一次启动时用
+新的默认值来覆盖现有的用户设置。做为一种预防措施，您也许想备份用户目录下的隐藏文件和目录(“dotfiles”)。该备份有助于您恢复或者重建原有
+设置。另外，您可能还需要把该事项通知给用户。
+
+任何软件包安装操作都必须以超级用户权限执行，您可以以 root 身份登录，或使用 su 或者 sudo 来获取必要的访问权限。
+
+升级需要几个前提条件，您应当在实际升级前检查它们。
+
+4.1.1.1. 确保您在使用合适的内核
+
+lenny 的 glibc 版本在所有架构将无法与旧于 2.6.8 内核工作，而且有些架构还有更高的要求。我们强烈建议您在升级过程开始前，升级到 etch
+2.6.18 或 2.6.24 内核或者最低 2.6.18 版本的自定义内核并测试。
+
+4.1.2. 提前告知用户
+
+提前通知所有用户您正在计划的任何升级将是明智的决定，但是通过 ssh 连接访问您系统的用户可能在升级过程中不会注意到什么东西，而且应该可
+以继续正常工作。
+
+如果您希望采取更多的预防措施，请在升级前备份或者卸载 /home 分区。
+
+当升级到 lenny 时您可能需要进行内核升级，所以通常需要重启。一般说来，这将在升级完成后进行。
+
+4.1.3. 准备恢复
+
+由于 etch 和 lenny 的内核在驱动、硬件探测与命名以及设备文件的命名和排序等方面有着诸多变化，在更新后您可能会在重启系统时遇到很大的问
+题。本章和发行注记的下一章记录了很多已知的潜在问题。
+
+由于这个原因，当您的系统重启失败(或对于远程管理系统来说，无法从网络唤醒)时，请确保您能够将其恢复。
+
+如果您通过 ssh 远程连接进行升级，则强烈建议您采取必要的预防措施以便通过远程串行终端来访问该服务器。因为在升级内核并重启后，某些设备
+可能会被改名(如在第 4.6.2 节 “设备枚举的顺序”中所描述的情况)，而您将不得不通过本地控制台修复系统配置。还有，如果系统在升级过程中意外
+重启您可能需要使用本地控制台进行修复。
+
+很明显首先应尝试的就是以您原来的内核重启。然而，由于本文档其它地方所描述的各种各样的问题，并不保证可以成功重启。
+
+如果重启失败了，您需要采取替代方案来启动您的系统以便访问和修复它。其中一种选择是使用特制的急救盘或者 Linux live CD。以这些介质引导后
+，您应该可以挂载您的根文件系统并 chroot 到它里面来检查并修复问题。
+
+我们推荐的另一种选择是使用 lenny Debian 安装程序的拯救模式。使用安装程序的优点是，您可以从众多安装方式中选择最适合您情况的一种。更多
+信息请查询安装手册第 8 章的“修复损坏的系统”一节以及 Debian 安装程序常见问题。
+
+4.1.3.1. initrd 引导时使用调试环境
+
+initramfs-tools 在其生成的 initrd 中包含一个调试 shell^[2] 。如果 initrd 无法挂载您的根文件系统，您将会进入此调试 shell，里面可以使
+用基本的命令以帮助跟踪问题甚至有可能解决之。
+
+需要检查的几个基本项目：/dev 下是否存在正确的设备文件；加载了什么模块(cat /proc/modules)；dmesg 的输出中有关驱动加载的错误信息。
+dmesg 的输出还会显示哪个设备文件被指定给哪个磁盘；您还应该检查 echo $ROOT 的输出，以确保根文件系统在预想的设备上。
+
+如果您确实修复了问题，输入 exit 会退出调试 shell，并从先前失败的地方继续启动进程。当然您还需要修复更深层次的问题，并重新生成 initrd
+，以使下次引导不再失败。
+
+4.1.4. 为升级准备安全环境
+
+发行版升级应该从本机的文本模式虚拟控制台(或者直连串行终端)，或者通过 ssh 远程连接进行。
+
+为了在远程升级时获得额外的可靠性保障，我们建议您在由 screen 程序生成的虚拟控制台中执行升级过程。它能进行可靠的重新连接并确保，即使远
+程连接失败，升级过程也不会被打断。
+
+[重要]   重要                                                                                                                       
+         您不应该在您要升级的机器上使用 telnet、rlogin、rsh 之类的东西，或者从 xdm、gdm、kdm 之类管理的 X 会话中升级。因为那些服务中
+         的任意一个在升级中都有可能被中止，进而导致出现一个不可访问的，只升级了一半的系统。                                         
+
+4.1.5. 为 LILO 准备 initramfs
+
+使用 LILO 启动管理器的用户应该注意，initramfs-tools 目前的默认设置生成的 initramfs 对于 LILO 来说太大而无法加载。这些用户要么把启动
+管理器换成 grub，要么就编辑 /etc/initramfs-tools/initramfs.conf 文件，更改这行
+
+MODULES=most
+
+为
+
+MODULES=dep
+
+但是请注意，这么做会引起 initramfs-tools 仅安装那些它运行于特定硬件上的模块至 initramfs。如果您想生成一个引导介质，让它可以在更多的
+硬件上运作，而不是只在与您拥有同样硬件的机器上运作时，您应该保留设置为
+
+MODULES=most
+
+并确保不使用 LILO。
+
+4.2. 检查系统状态
+
+此章所述的升级过程是为了从“纯粹的” etch 升级而安排的，即系统中没有第三方的软件。为使升级过程最可靠，您可能会希望在升级前，从系统中移
+除第三方的软件包。
+
+此过程也假定您的系统已经更新至 etch 的最新发行点。如果您还未做或是不确定，请按照第 A.1 节 “升级您的 etch 系统”中的说明做。
+
+4.2.1. 复审包管理器中的未决操作
+
+在某些情况下，使用 apt-get 代替 aptitude 安装软件包时，可能会让 aptitude 认为包“未被使用”，并安排它被移除。一般来说，在正式升级前您
+应该确保系统是最新且“干净的”。
+
+有鉴于此，您应该复查包管理器 aptitude 中是否有未决操作。如果包管理器中有软件包被安排为移除或更新，那么这可能对升级过程有负面影响。注
+意，要更正这一错误只可能是，您的 sources.list 仍然指向 etch 而非 stable 或是 lenny。参看第 A.2 节 “检查您的 sources list”。
+
+要执行复查的话，您必须以“图形模式”运行 aptitude 并按下 g (“Go”)。如果显示有任何未决操作，您都应该复查它们，然后要么修复，要么执行建
+议的操作。如果没有建议的操作，会有一条信息 “没有软件包需要安装、删除或者升级”出现。
+
+4.2.2. 禁用 APT pinning 操作
+
+如果已经设置 APT 从一个非 stable(如 testing)版安装特定软件包，您可能必须改变 APT pinning 设置(保存在 /etc/apt/preferences 中)以允许
+升级至新的 stable 版中的包。更多有关 APT pinning 的信息可以在 apt_preferences(5) 中找到。
+
+4.2.3. 检查包状态
+
+不管用什么方法升级，我们都建议您先检查所有软件包的状态，并验证所有包都处于可升级状态。以下命令会显示任何半安装或是配置失败的包，还有
+那些有任何错误状态的包。
+
+# dpkg --audit
+
+您也可以用 dselect、aptitude 来审查系统中的所有包的状态，也可以用如下的命令来审查
+
+# dpkg -l | pager
+
+或是
+
+# dpkg --get-selections "*" > ~/curr-pkgs.txt
+
+在升级前移除所有的 hold 状态是很有必要的。如果有任何对升级而言有重大影响的包处于 hold 状态，升级会失败。
+
+注意 aptitude 使用一种与 apt-get 及 dselect 不同的方法来注册 hold 状态的包。您可以用以下命令来确认 aptitude 中处于 hold 状态的包。
+
+# aptitude search "~ahold" | grep "^.h"
+
+如果您想检查 apt-get 中哪些包设置了 hold 状态，可以用
+
+# dpkg --get-selections | grep hold
+
+如果您在本地更改并重新编译了一个包，且并未重命名，或是在版本号中放入新的纪元号，您就必须将它设为 hold 状态，以防止它被升级。
+
+aptitude 中的 “hold” 状态的包能用以下命令更改：
+
+# aptitude hold package_name
+
+用 unhold 代替 hold 即可清除 “hold” 状态。
+
+如果有任何需要修复的东西，您最好确保 sources.list 仍然指向 etch ，就像第 A.2 节 “检查您的 sources list”中所说的那样。
+
+4.2.4. proposed-updates 区
+
+如果您已经把 proposed-updates 区加入您的 /etc/apt/sources.list 文件，那么您应当在升级前移除它，这样可以降低冲突发生的概率。
+
+4.2.5. 非官方源和 backports
+
+如果有任何非 Debian 的软件包安装在您的系统中，您应该意识到它们可能会在升级期间因为依赖性冲突而被移除。如果这些包是通过在 /etc/apt/
+source.list 中添加一个额外的软件源而安装的，您应该检查那个软件源是否也提供 lenny 下编译好的包，并同时像您的 Debian 软件源那样更改相
+应的源。
+
+某些用户可能有非官方的 backported “较新的” 包版本存在于他们安装的 Debian etch 系统中。升级期间那样的包是最可能引起问题的，因为它们可
+能会导致文件冲突^[3]。第 4.5.8 节 “升级期间可能遇到的问题”已经有一些关于如何处理将会出现的文件冲突的信息了。
+
+4.2.5.1. 使用 backports.org 包
+
+backports.org 是一个由 Debian GNU/Linux 开发者提供的半官方的仓库，它基于 “testing” 仓库重新编译，来为 stable 版提供新的软件包。
+
+backports.org 仓库含有从 “testing” 来的包，使用一个比之略小的版本号，这样可以方便地从 etch 升级到 lenny。回溯至 lenny 仍然可用。另外
+，部分向后移植 (backports) 来自于不稳定版 (unstable) (包括安全升级及以下特殊程序: Firefox, kernel, OpenOffice.org, X.org)。
+
+If you do not use one of these exceptions, you can safely upgrade to lenny. If you use one of these exceptions, set the Pin-Priority
+(see apt_preferences(5)) temporarily to 1001 for all packages from lenny, and you should be able to do a safe dist-upgrade too.
+
+4.3. 手工删除软件包的标记
+
+要防止 aptitude 移除某些因依赖关系而安装的包，您需要手工删除这些包上的 auto 标记。对于桌面安装来说，包括 OpenOffice 和 Vim：
+
+# aptitude unmarkauto openoffice.org vim
+
+如果您已经用内核元数据包安装了 2.6 内核镜像，那还要包括它：
+
+# aptitude unmarkauto $(dpkg-query -W 'linux-image-2.6.*' | cut -f1)
+
+[注意]   注意                                                   
+         您可以复查那些在 aptitude 中被标记为 auto 的包，执行： 
+                                                                
+         # aptitude search '~i~M'                               
+
+4.4. 为 APT 准备源
+
+在开始升级前，您必须在软件包源列表 /etc/apt/sources.list 中设定 apt 的配置文件。
+
+apt 会查找所有通过任意 “deb” 行找到的包，并安装带最高版本号的包，给予该文件第一行以优先权(所以，如果有多个镜像地址，您最好先命名本地
+硬盘，然后是 CD-ROM，最后是 HTTP/FTP 镜像)。
+
+[提示]   提示                                                                                                                       
+         您可能需要为 DVD 和 CD-ROM 关闭 GPG 密钥检查。如果 /etc/apt/apt.conf.d/00trustcdrom 中还没有以下内容，则把下列内容添加至 / 
+         etc/apt/apt.conf。                                                                                                         
+                                                                                                                                    
+         APT::Authentication::TrustCDROM "true";                                                                                    
+                                                                                                                                    
+         然而，这无法用于 DVD/CD-ROM 映像文件。                                                                                     
+
+一个发行版通常既能通过它的代号(如：etch, lenny)引用，也可以用它的状态名引用(如：oldstable, stable, testing, unstable)。引用发行版的
+代号的好处在于，您绝对不会被新的发行版问题困扰且被带至此处。当然，这也意味着您不得不自己关注新版的发行。如果转而使用状态名，一旦有新
+版发行，您将只会看到一堆可用的软件包的更新。
+
+4.4.1. 添加互联网 APT 源
+
+默认配置用于从主 Debian 网络服务器上安装，但您可能希望修改 /etc/apt/sources.list 以使用其它的镜像，离您最近的网络镜像是一种更好的选
+择。
+
+Debian HTTP 或 FTP 镜像地址能在 http://www.debian.org/distrib/ftplist 找到(参看“ Debian 镜像列表”一节)。HTTP 镜像通常比 FTP 镜像快。
+
+例如，假设离您最近的 Debian 镜像是 http://mirrors.kernel.org。当用网络浏览器或是 FTP 程序检查那个镜像时，您会注意到主目录被组织成了
+如下情况：
+
+http://mirrors.kernel.org/debian/dists/lenny/main/binary-i386/...
+http://mirrors.kernel.org/debian/dists/lenny/contrib/binary-i386/...
+
+要让 apt 使用这个镜像，您将此行添加至 sources.list 文件：
+
+deb http://mirrors.kernel.org/debian lenny main contrib
+
+注意明显加上去的‘dists’，这个发行版名字后的参数用于将路径扩展成多个目录。
+
+添加新源后，在 sources.list 中通过在以前存在的 “deb” 行前加上一个井号(#)来禁用它们。
+
+4.4.2. 添加本地镜像 APT 源
+
+您可能希望通过修改 /etc/apt/sources.list 来使用一个本地磁盘上的镜像(也许是通过 NFS 挂载的)，来代替 HTTP 或 FTP 软件源镜像。
+
+例如，假设您的镜像位于 /var/ftp/devian/ 下，并且有如下的主目录：
+
+/var/ftp/debian/dists/lenny/main/binary-i386/...
+/var/ftp/debian/dists/lenny/contrib/binary-i386/...
+
+要让 apt 使用它，需要把这一行添加至 sources.list 文件：
+
+deb file:/var/ftp/debian lenny main contrib
+
+注意明显加上去的‘dists’，这个发行版名字后的参数用于将路径扩展成多个目录。
+
+添加新源后，在 sources.list 中通过在以前存在的 “deb” 行前加上一个井号(#)来禁用它们。
+
+4.4.3. 从 CD-ROM 或 DVD 添加 APT 源
+
+如果您只想用 CD 安装，在 /etc/apt/sources.list 中的 “deb” 行前放上井号(#)注释掉它们。
+
+确保在 /etc/fstab 中有一行允许您挂载 CD-ROM 于 /cdrom 挂载点(apt-cdrom 必须指定挂载点为 /cdrom )。例如，假设 /dev/hdc 就是您的
+CD-ROM，/etc/fstab 中应该带有一行：
+
+/dev/hdc /cdrom auto defaults,noauto,ro 0 0
+
+注意在第四段 defaults,noauto,ro 之间必须无空格。
+
+要验证设置是否有效，插入一片 CD，尝试运行
+
+# mount /cdrom    # 挂载 CD 至挂载点
+# ls -alF /cdrom  # 显示 CD 的根目录
+# umount /cdrom   # 卸载 CD
+
+下一步，运行：
+
+# apt-cdrom add
+
+每片您所拥有的 Debian 二进制 CD-ROM 都要这么做，以便将每片 CD 的数据添加至 APT 的数据库。
+
+4.5. 升级软件包
+
+推荐的从以前 Debian GNU/Linux 发行版升级的方法是使用包管理器 aptitude。此程序会对安装包采取比直接运行 apt-get 更保守的选择。
+
+不要忘记挂载所有必需的分区（尤其是根分区和 /usr 分区）为可读写状态，用以下命令：
+
+# mount -o remount,rw /mountpoint
+
+下一步您应该详细检查 APT 源记录 (/etc/apt/source.list) 要么指向 “lenny” 又或指向 “stable”。不应该有任何指向 etch 的源记录。
+
+[注意]   注意                                                                 
+         CD-ROM 的源通常会指向 “unstable”。尽管这令人困惑，但您不应该改变它。 
+
+4.5.1. 记录会话
+
+强烈推荐您使用 /usr/bin/script 程序来记录升级会话中的交互信息。这样如果有问题了，您就有一份问题报告。而且需要的话，您也可以在错误报
+告中提供额外信息。要开始记录，输入：
+
+# script -t 2>~/upgrade-lenny.time -a ~/upgrade-lenny.script
+
+或是类似命令。不要将输出文件放在临时目录下，如 /tmp 或 /var/tmp (这些目录下的文件可能会在升级或重启时被删除)
+
+输出文件也可让您复查屏幕上滚动过去的信息。只要切换至虚拟终端 2 (使用 Alt+F2)，在登入后，用 less -R ~root/upgrade-lenny.script 查看文
+件。
+
+在完成升级后，您可以在提示符下输入 exit 停止 script。
+
+如果已经对 script 使用了 -t 选项，您就可以用 scriptplay 程序来回放整个过程：
+
+# scriptreplay ~/upgrade-lenny.time ~/upgrade-lenny.script
+
+4.5.2. 更新包列表
+
+首先，需要获取新发行版的可用包列表。执行：
+
+# aptitude update
+
+首次执行此命令，会更新新源并打印出一些有关源可用性的警告信息。这些警告没关系，而且在您下一次执行时就没有了。
+
+4.5.3. 确保您有足够的空间升级
+
+在升级系统前必须确保在进行如第 4.5.7 节 “升级系统的其它部分”中所述的完全系统升级时，您有足够的磁盘空间。首先，安装过程所需的任何从网
+上下载的包都被保存在 /var/cache/apt/archives (下载期间还会放在 partial/ 子目录下)，因此您必须确保在文件系统分区 /var/ 下有足够的空间
+存放临时下载包，这些包将会安装在系统中。下载之后，您可能在其它文件系统分区中需要更多的空间来同时安装升级包(可能会包含更大的二进制程
+序或更多数据)和升级中带入的新包。如果系统中没有足够的空间，您可能以一个未完成的升级结束，而这可能难以恢复。
+
+aptitude 和 apt 都会显示给您安装所需磁盘空间的详细信息。在执行升级操作前，您可以运行以下命令来看到这个估计值：
+
+# aptitude -y -s -f --with-recommends dist-upgrade
+[ ... ]
+XXX 个已升级，XXX 个刚装上，XXX 个待删除以及 XXX 个未升级。
+需要获取 xx.xMB/yyyMB。解开后，将占用 AAAMB。
+会下载/安装/删除包。
+
+[注意]   注意                                                                                                                       
+         由于下一节将要谈到的问题，在即将开始更新前执行这条命令可能会给出一个错误。如果那样的话，您需要等至已经如第 4.5.6 节 “最小系
+         统升级”所述的那样做过最小系统升级并且升级过内核，这样您才可以运行这条命令来预估所需的磁盘空间。                            
+
+如果没有足够空间来升级，确保您预先释放了空间。可以这样：
+
+  * 删除以前安装时下载的包 (位于 /var/cache/apt/archives)。用 apt-get clean 或 aptitude clean 来清理包缓存，这会删除所有以前下载过的
+    包文件。
+   
+  * 删除被遗忘的包。如果您安装过 popularity-contest，可以用 popcon-largest-unused 来列出系统中占用大量空间而又不用的那些包。您也可以
+    用 deborphan 或是 debfoster 来找出过时的包(参看第 4.10 节 “过时的包”)。另一种可选方案是，您以“图形模式”运行 aptitude 在“过时的且
+    由本机创建的包”下找到过时的包。
+   
+  * 删除占用太多空间且目前不需要的包(您总是可以在升级后重装它们的)。您可以用 dpigs (可在 debian-goodies 包中找到)或是用 wajig (运行
+    wajig size) 列出占用大量空间的包。
+   
+    You can list packages that take up most of the disk space with aptitude. Start aptitude into “visual mode”, select Views → New
+    Flat Package List (this menu entry is available only after etch version), press l and enter ~i, press S and enter ~installsize,
+    then it will give you nice list to work with. Doing this after upgrading aptitude should give you access to this new feature.
+   
+  * 如果不需要的话可以从系统中移除翻译和本地化文件。您可以安装并配置 localepurge 软件包，这样只有一小部分选择的本地化设置被保留在系
+    统中。这将减少 /usr/share/locale 所使用的磁盘空间。
+   
+  * 将 /var/log/ 下的系统日志临时放到其它系统，或是永久删除。
+   
+  * 使用临时目录 /var/cache/apt/archives：您可以使用来自另一个系统的临时缓存目录(USB 存储设备，临时硬盘，使用中的文件系统……)
+   
+    [注意]   注意                                               
+             不要使用 NFS，这是因为网络连接可能在升级期间断开。 
+   
+    例如，假设您将 USB 盘挂在 /media/usbkey 下：
+   
+     1. 删除以前安装时下载的包：
+       
+        # apt-get clean
+        
+     2. 将 /var/cache/apt/archives 目录复制到 USB 磁盘：
+       
+        # cp -ax /var/cache/apt/archives /media/usbkey/
+        
+     3. 将临时缓存目录挂载至当前目录：
+       
+        # mount --bind /media/usbkey/archives /var/cache/apt/archives
+        
+     4. 升级后，还原 /var/cache/apt/archives 目录：
+       
+        # umount /media/usbkey/archives
+        
+     5. 删除留下的 /media/usbkey/archives。
+       
+    您可以在挂载于系统中的任何文件系统上创建临时缓存目录。
+   
+注意为了安全地移除软件包，建议您换回 etch 的 sources.list，就像第 A.2 节 “检查您的 sources list”中描述的那样。
+
+4.5.4. 先升级 apt 和/或 aptitude
+
+Several bug reports have shown that the versions of the aptitude and apt packages in etch are often unable to handle the upgrade to
+lenny. In lenny, apt is better at dealing with complex chains of packages requiring immediate configuration and aptitude is smarter
+at searching for solutions to satisfy the dependencies. These two features are heavily involved during the dist-upgrade to lenny, so
+it is necessary to upgrade these two packages before upgrading anything else.
+
+The following command will upgrade both aptitude and apt:
+
+# aptitude install aptitude apt dpkg
+
+This step will also automatically upgrade libc6 and locales. At this point, some running services will be restarted, including xdm, 
+gdm and kdm. As a consequence, local X11 sessions might be disconnected.
+
+[注意]   Upgrading with apt                                                                                                         
+         Please note that using apt-get is not recommended for the upgrade from etch to lenny. If you do not have aptitude installed
+         you are recommended to install it first.                                                                                   
+                                                                                                                                    
+         If you want to perform the upgrade with apt or if the upgrade with aptitude failed and you want to try the upgrade with apt
+         ' dependency chain resolution algorithm, you should run:                                                                   
+                                                                                                                                    
+         # apt-get install apt                                                                                                      
+                                                                                                                                    
+         Note that you will have to adapt other aptitude commands to use apt-get instead.                                           
+
+4.5.5. 使用 aptitudes 记录的 apt 自动安装的软件包列表
+
+aptitude 维护了一个自动安装的包列表(就像另一个包的依赖一样)。在 lenny 中，apt 现在也有这个功能了。
+
+首次运行 lenny 版本的 aptitude 时，它会先自动读入安装包的列表，然后再转换成 lenny apt 可用的版本。如果您安装了 aptitude，您至少应该
+先发出一条 aptitude 指令以便转换。一种方法是搜索一个不存在的包：
+
+# aptitude search "?false"
+
+4.5.6. 最小系统升级
+
+由于在 etch 和 lenny 间有某些必需包存在冲突，因此直接运行 aptitude dist-upgrade 通常会删除大量您想要保留的包。因此我们推荐一种两步升
+级过程，首先做一次最小升级来解决这些冲突，然后做一次完整的 dist-upgrade 升级。
+
+首先，运行：
+
+# aptitude safe-upgrade
+
+这会升级那些不需要删除或安装其它任何包的软件。
+
+下一步会相当依赖您安装过的包。发行注记会给出所用方法的通用建议，但如有疑问，推荐您在继续操作前检查每种方法建议的需要删除的包。
+
+某些通用包要被删除，包括 base-config，hotplug，xlibs，netkit-inetd，python2.3，xfree86-common 和 xserver-common。要了解更多在 lenny
+中废弃包的信息，参看第 4.10 节 “过时的包”。
+
+4.5.7. 升级系统的其它部分
+
+现在，您要准备继续升级重要部分。执行：
+
+# aptitude dist-upgrade
+
+这将对系统进行一次全面的升级，比如：安装所有包的最新可用版本，解决不同发行版的包之间所有潜在的依赖性变动。如有必要，它会安装一些新包
+(通常是新库，或是重命名的包)，并删除任何有冲突的过时包。
+
+当从一套 CD-ROM (或 DVD)升级时，您会在升级期间的某几个地方被要求插入指定的 CD 盘片。您可能不得不多次插入相同的盘片，这是因为互相依赖
+的包已经被分散到整个 CD 套件中去了。
+
+如果不改变被指定在当前状态(显示为 “held back”) 的另一个包，当前安装包的新版本就无法升级。这个问题可以通过使用 aptitude 选择这些包来
+安装或是用 aptitude -f install package 来解决。
+
+4.5.8. 升级期间可能遇到的问题
+
+如果使用 aptitude, apt-get 或 dpkg 操作时出现错误
+
+E: Dynamic MMap ran out of room
+
+默认的缓存区空间不足。您可以通过删除或注释掉 /etc/apt/sources.list 中不需要的行，或通过增加缓存大小来解决这个问题。缓存大小能通过在
+/etc/apt/apt.conf 中设置 APT::Cache-Limit 来增加。下面的命令会为它设置一个足够升级值：
+
+# echo 'APT::Cache-Limit "12500000";' >> /etc/apt/apt.conf
+
+这里假设您还未在那个文件中对该变量进行过设置。
+
+有时有必要在 APT 中开启 APT::Force-LoopBreak 选项使之能够临时移除一个重要的包，这是为了满足冲突或是预依赖循环。 aptitude 会警告您这
+一点并退出升级。您可以通过在 aptitude 命令行上指定 -o APT::Force-LoopBreak=1 选项来解决这个问题。
+
+有可能系统的依赖关系太乱了以至于需要手工干预。通常这意味着使用 aptitude 或是
+
+# dpkg --remove package_name
+
+来消除某些引起问题的包，或是
+
+# aptitude -f install
+# dpkg --configure --pending
+
+在极端情况下，您可能不得不像以下命令一样强制重新安装某个包
+
+# dpkg --install /path/to/package_name.deb
+
+如果您从“纯粹的” etch 系统升级就不会出现文件冲突，但如果您装有非官方的 backport 包就可能出现冲突。文件冲突会导致类似以下这样的错误：
+
+Unpacking <package-foo> (from <package-foo-file>) ...
+dpkg: error processing <package-foo> (--install):
+ trying to overwrite `<some-file-name>',
+ which is also in package <package-bar>
+dpkg-deb: subprocess paste killed by signal (Broken pipe)
+ Errors were encountered while processing:
+ <package-foo>
+
+您可以尝试用错误信息中的最后一行提示，强制删除包来解决文件冲突：
+
+# dpkg -r --force-depends package_name
+
+在修复这些问题后，您应该可以通过重复前述的 aptitude 命令来继续升级。
+
+升级期间，您会被问到有关配置或是重新配置几个包的问题。如果您被问到是否任何存在于 /etc/init.d 或 /etc/terminfo 目录，或是 /etc/
+manpath.config 目录下的文件应该被包维护者的版本所替换时，通常有必要回答‘yes’来确保系统一致性。由于它们会被以 .dpkg-old 为后缀的文件
+名保存，所以您总是可以恢复成老版本的配置文件。
+
+如果您不确定该做什么，那就记下包或文件的名称，并稍后排出它们的顺序。您可以通过在 script 命令记录的输出文件中搜索来查看升级期间显示在
+屏幕上的信息。
+
+4.6. 升级内核与相关包
+
+这一节解释了如何升级您的内核，以及明确有关此次升级的潜在问题。您可以安装由 Debian 提供的 linux-image-* 包，或者从源码编译一个自定义
+的内核。
+
+注意本节的很多信息基于假设，即您会使用一个模块化的 Debian 内核，以及initramfs-tools 和 udev。如果您选择使用一个不需要 initrd 的自定
+义内核，或是您使用了一种不同的 initrd 生成器，对您来说某些信息可能会不一样。
+
+4.6.1. 安装内核元数据包
+
+当您从 etch 全面升级至 lenny 时，强烈推荐您安装新的 linux-image-2.6-* 元数据包。此包可能由 dist-upgrade 自动安装了。您可以验证此步，
+执行：
+
+# dpkg -l "linux-image*" | grep ^ii
+
+如果您没有看到任何输出，那么您需要手工安装一个新的 linux-image 包。要查看可用的 linux-image-2.6 的元数据包列表，执行：
+
+# apt-cache search linux-image-2.6- | grep -v transition
+
+如果您不确定要选哪个包，那就运行 uname -r 并查找带有类似名称的包。例如，如果您看到‘2.6.18-6-686’，那推荐您安装 linux-image-2.6-686。
+(注意不再有 k7 版本；如果您当前正在用 k7 内核，您应该安装 686 内核代替。)您也可以使用 apt-cache 来查看每个包的详细描述，以帮助您选择
+最好用的那个。例如：
+
+# apt-cache show linux-image-2.6-686
+
+然后您应该使用 aptitude install 来安装。一旦安装了这个新内核，您应该在下一次可行时重启机器以获取新内核所提供的特性。
+
+对于爱冒险的人，这里有个简单方法来编译您的自定义 Debian GNU/Linux 内核。安装 kernel-package 工具，然后阅读 /usr/share/doc/
+kernel-package 下的文档。
+
+如果有可能，把内核包的升级从主 dist-upgrade 中独立出来是有利的，这能减少出现一个临时不可引导的系统的机会。注意，这只能在最小升级(参
+看第 4.5.6 节 “最小系统升级”)结束后才能做。
+
+4.6.2. 设备枚举的顺序
+
+lenny 带来一个比上一发行版更健全的硬件探测机制。但是，这会引起系统中所探测到的设备顺序变化，即影响设备名的分配顺序。例如，如果您有两
+张驱动不同的网卡，eth0 和 eth1 设备名可能被互换了。请注意，新机制意味着假设您在运行着的 lenny 系统中互换以太网适配器，新的适配器也会
+获得一个新的接口名。
+
+对于网络设备，您可以通过使用 udev 机制避免此重排，更明确点，通过在 /etc/udev/rules.d/70-persistent-net.rules 中指定^[4]。另一种方法
+，您可以在引导时用 ifrename 工具将物理设备绑定至指定的名字。参看 ifrename(8) 和 iftab(5) 获取更多信息。两个可选方法 (udev 和 
+ifrename) 不应该同时使用。
+
+对于存储设备，通过使用 initramfs-tools 并配置它按当前的顺序载入存储设备，这样您就可以避免这个顺序重排。要这么做的话，通过查看 lsmod
+命令的输出来明确您系统中载入的存储模块的顺序。lsmod 以它们载入的反序显示，即列表中的第一个模块是最后一个被载入的。注意这只对内核以固
+定顺序枚举出的设备有效(像 PCI 设备)。
+
+但是，在首次引导后删除并重新载入模块会影响这个顺序。还有，您的内核可能有些静态链接的驱动，而且这些模块名称不会出现在 lsmod 的输出中
+。您可能会解读这些驱动名并从 /var/log/kern.log 或是 dmesg 的输出中载入引导顺序。
+
+将这些模块名按它们引导时载入的顺序添加至 /etc/initramfs-tools/modules。某些模块名可能在 etch 和 lenny 有所变动。例如，sym53c8xx_2 已
+经变成了 sym53c8xx。
+
+然后您需要运行 update-initramfs -u -k all 重新生成 initramfs 镜像。
+
+一旦您正运行一个 lenny 内核和 udev，您可以重新配置系统以通过一个不依赖于驱动载入顺序的别名来访问磁盘。这些别名存在于 /dev/disk/ 目录
+结构下。
+
+4.6.3. 引导期间的问题
+
+如果用 initramfs-tools 创建的 initrd 引导系统，在某些情况下由 udev 创建的设备文件可能对于启动脚本的执行来讲太慢了点。
+
+这通常表现为引导失败，由于根文件系统无法挂载，您会进入调试环境。但当您回头检查时，所需的所有设备都存在于 /dev 下。只要根文件系统存在
+于 USB 磁盘或是 RAID上，尤其是使用了 LILO 时，就会出现这种问题。
+
+解决此问题的方法就是用引导参数 rootdelay=9。这个超时值(秒)可能需要调整一下。
+
+4.7. 在重启之前要做的事情
+
+当 aptitude dist-upgrade 完成时，“正式的”升级就算结束了。但在下一次重启之前，还有一些其它的事情需要关注一下。
+
+4.7.1. 重新运行 lilo
+
+如果您正在用 lilo 作为您的启动管理器(这是某些 etch 安装的默认引导器)，强烈建议您在升级后重新运行 lilo：
+
+# /sbin/lilo
+
+注意，即使您不升级系统内核也需要这一步，这是由于包的升级 lilo 的 second stage 会改变。
+
+还有，检查 /etc/kernel-img.conf 中的内容并确保其中有 do_bootloader = Yes 这一行。这样，在内核升级后，启动管理器总会重新运行一下。
+
+如果您在运行 lilo 时遇到任何问题，请检查 / 下至 vmlinuz 和 initrd 的符号链接，以及 /etc/lilo.conf 中内容不一致的地方。
+
+如果您在重启前或是在您未手工重启系统就偶然重启前，忘记重新运行 lilo 的话，您的系统可能会无法引导。当系统引导时您将只会看到 LI 而不是
+lilo 提示符^[5]。有关如何从此处恢复的信息请参看第 4.1.3 节 “准备恢复”。
+
+4.8. 系统引导时在显示 Waiting for root file system 后挂起
+
+从 /dev/hda 变成 /dev/sda 的补救方法
+
+某些用户已经报告，升级可能引起内核无法在重启后找到系统根分区。
+
+在那种情况下，系统引导会挂起并出现以下信息：
+
+Waiting for root file system ...
+
+且几秒钟后会只出现一个 busybox 提示符。
+
+当内核升级使用新一代的 IDE 驱动程序时，就会出现这个问题。老的 IDE 磁盘的命名规则是 hda, hdb, hdc, hdd。新的规则将分别命名为 sda,
+sdb, sdc, sdd。当升级时未生成一个新的 /boot/grub/menu.lst 文件来产生新的命名规则时，就会出现这个问题。引导时，Grub 会传递给内核一个
+无法找到的系统根分区。
+
+如果您在升级后已经遇到此问题，转至第 4.8.2 节 “如何在升级后解决此问题”。要在升级前避免此问题，就提前看一下。
+
+4.8.1. 如何在升级前避免此问题
+
+通过给根文件系统使用一个不会在引导时改变的标识符，您可以完全避免这个问题。要做到这点有两种可用的方案──给文件系统加标签，或是用文件系
+统的通用唯一标识符(UUID)。Debian 从‘etch’发行版起就已经支持这些方法了。
+
+两种方法各有优缺点。文件系统标签可读性好，但如果您的系统中有另一个同名的文件系统时，就会带来问题。UUID 可读性较差，但极不可能出现两
+个互相冲突的 UUID。
+
+以下范例中，我们假设根文件系统位于 /dev/hda6，同时再假设您的系统装有运行正常的 udev 和 ext2 或是 ext3 文件系统。
+
+要使用文件系统标签：
+
+ 1. 通过执行命令 e2label /dev/hda6 rootfilesys 来标记文件系统（名称必须小于 16 个字符）。
+   
+ 2. 编辑 /boot/grub/menu.lst 并更改以下这行：
+   
+    # kopt=root=/dev/hda6 ro
+    
+    为
+   
+    # kopt=root=LABEL=rootfilesys ro
+    
+    [注意]   注意                         
+             不要删除行首的 #，那个要的。 
+   
+ 3. 通过运行 update-grub 更新 menu.lst 中的 kernel 行。
+   
+ 4. 编辑 /etc/fstab 并改变挂载 / 分区的那行，如：
+   
+    /dev/hda6     /     ext3  defaults,errors=remount-ro 0 1
+    
+    为
+   
+    LABEL=rootfilesys     /     ext3  defaults,errors=remount-ro 0 1
+    
+    在这里改变的是第一栏，您不必修改此行的其它栏目。
+   
+要使用 UUID：
+
+ 1. Find out the universally unique identifier of your filesystem by issuing: ls -l /dev/disk/by-uuid | grep hda6. You can also use 
+    vol_id --uuid /dev/hda6 (in etch) or blkid /dev/hda6 (if already upgraded to lenny).
+   
+    您应该得到类似于以下内容的一行：
+   
+    lrwxrwxrwx 1 root root 24 2008-09-25 08:16 d0dfcc8a-417a-41e3-ad2e-9736317f2d8a -> ../../hda6
+    
+    UUID 是指向 /dev/hda6 的符号链接的名字，如 d0dfcc8a-417a-41e3-ad2e-9736317f2d8a。
+   
+    [注意]   注意                                   
+             您文件系统的 UUID 可能是不同的字符串。 
+   
+ 2. 编辑 /boot/grub/menu.lst 并更改以下这行：
+   
+    # kopt=root=/dev/hda6 ro
+    
+    为
+   
+    # kopt=root=UUID=d0dfcc8a-417a-41e3-ad2e-9736317f2d8 ro
+    
+    [注意]   注意                         
+             不要删除行首的 #，那个要的。 
+   
+ 3. 通过运行 update-grub 更新 menu.lst 中的 kernel 行。
+   
+ 4. 编辑 /etc/fstab 并改变挂载 / 分区的那行，如：
+   
+    /dev/hda6     /     ext3  defaults,errors=remount-ro 0 1
+    
+    为
+   
+    UUID=d0dfcc8a-417a-41e3-ad2e-9736317f2d8  /  ext3  defaults,errors=remount-ro 0 1
+    
+    在这里改变的是第一栏，您不必修改此行的其它栏目。
+   
+4.8.2. 如何在升级后解决此问题
+
+4.8.2.1. 方案一
+
+当 Grub 显示菜单界面让您选择您想启动的菜单项时，可以做这步操作。如果没出现那样的菜单，尝试在内核引导显示它之前，按下 Esc 键。如果您
+还是无法进入此菜单，尝试第 4.8.2.2 节 “方案二”或是第 4.8.2.3 节 “方案三”。
+
+ 1. 在 Grub 菜单中，高亮您想启动的菜单项。按下 e 键来编辑有关此条目的选项。您将会看到一些东西，类似于：
+   
+    root (hd0,0)
+    kernel /vmlinuz-2.6.26-1-686 root=/dev/hda6 ro
+    initrd /initrd.img-2.6.26-1-686
+    
+ 2. 高亮此行
+   
+    kernel /vmlinuz-2.6.26-1-686 root=/dev/hda6 ro
+    
+    按下 e 键并用 sdX 代替 hdX (X 可以是字符 a, b, c 或 d，这依赖于您的系统）。在我的例子中这一行变为：
+   
+    kernel /vmlinuz-2.6.26-1-686 root=/dev/sda6 ro
+    
+    然后按下 Enter 来保存修改。如果还有其它带 hdX 字样的行，则一并修改。不要改变类似于 root (hd0,0) 这样的条目。一旦做好所有的修改，
+    按下 b 键。然后您的系统现在应该能正常启动。
+   
+ 3. 现在您的系统已经启动了，您需要永久修复这个问题。转至第 4.8.1 节 “如何在升级前避免此问题”并使用两个方法中的一个。
+   
+4.8.2.2. 方案二
+
+从 debian 安装介质(CD/DVD)引导，选择 rescue 来启动急救模式。选择您的语言、地区、键盘映射，无论是否成功都让它配置您的网络。过一会儿，
+您应该被要求选择一个您想让它作为根文件系统使用的分区。推荐的选择看起来类似：
+
+/dev/ide/host0/bus0/target0/lun0/part1
+/dev/ide/host0/bus0/target0/lun0/part2
+/dev/ide/host0/bus0/target0/lun0/part5
+/dev/ide/host0/bus0/target0/lun0/part6
+
+如果您知道哪个分区是您的根文件系统，就选择正确的那个。如果您不知道，只好试一下第一个。如果它报告说是无效的根文件系统分区，就试下一个
+，依次类推。一个接一个地尝试不会损伤您的分区，而且如果您仅在磁盘上装有一个系统，您应该很容易就找出正确的根文件系统分区。如果您在磁盘
+上装有多个系统，最好能准确地知道哪个是正确的分区。
+
+一旦您已选中一个分区，有几个选项可以选择。选择在所选分区中启动 shell 环境的选项。如果启动失败，那就试另一个分区。
+
+现在您应该拥有挂载于 /target 的根文件系统 shell 环境的 root 用户访问权。您需要访问硬盘中 /boot、/sbin 和 /usr 目录中的内容，它们现在
+应该位于 /target/boot, /target/sbin 和 /target/usr 目录下。如果这些目录需要从其它分区挂载，那就先挂载它们。(如果您不知道挂载哪个分区
+，请参考 /etc/fstab)。
+
+转至第 4.8.1 节 “如何在升级前避免此问题”并使用两个方法中的一个来永久修复这个问题。然后输入 exit 退出急救 shell 环境，并选择 reboot
+正常重启系统(别忘了拿走可引导介质)。
+
+4.8.2.3. 方案三
+
+ 1. 从您最喜欢的 LiveCD 发行版启动，比如 Debian Live, Knoppix, Ubuntu Live。
+   
+ 2. 挂载 /boot 目录所在的分区。如果您不知道是哪个，利用 dmesg 的输出来找出是否您的磁盘是 hda, hdb, hdc, hdd 或是 sda, sdb, sdc, sdd
+    。一旦您知道是哪个磁盘，例如是 sdb，执行命令 fdisk -l /dev/sdb 来查看分区表并找出正确的分区。
+   
+ 3. 假设，您已经在 /mnt 下挂载了正确的分区，而且此分区含有 /boot 目录及其内容，那就编辑 /mnt/boot/grub/menu.lst 文件。
+   
+    找到类似于以下的这一段：
+   
+    ## ## End Default Options ##
+    
+    title           Debian GNU/Linux, kernel 2.6.26-1-686
+    root            (hd0,0)
+    kernel          /vmlinuz-2.6.26-1-686 root=/dev/hda6 ro
+    initrd          /initrd.img-2.6.26-1-686
+    
+    title           Debian GNU/Linux, kernel 2.6.26-1-686 (single-user mode)
+    root            (hd0,0)
+    kernel          /vmlinuz-2.6.26-1-686 root=/dev/hda6 ro single
+    initrd          /initrd.img-2.6.26-1-686
+    
+    ### END DEBIAN AUTOMAGIC KERNELS LIST
+    
+    并将 hda，hdb，hdc，hdd 替换为 sda，sdb，sdc，sdd。不要修改类似于这样的行：
+   
+    root            (hd0,0)
+    
+ 4. 重启系统，弹出 LiveCD，您的系统应该能正确的启动了。
+   
+ 5. 当系统引导时，使用第 4.8.1 节 “如何在升级前避免此问题”中所建议的两种处理方法中的一个来永久修复这个问题。
+   
+4.9. 为下个发行版做准备
+
+升级完成后，您可以为下个发行版做点事。
+
+  * 如果新的内核镜像元数据包被当作旧镜像的依赖包而安装，那新镜像将被标记为自动安装，这应该被更正一下：
+   
+    # aptitude unmarkauto $(dpkg-query -W 'linux-image-2.6-*' | cut -f1)
+    
+  * 像第 4.10 节 “过时的包”中描述的那样移除过时的和未使用的包。您应该核查这些包所用的配置文件，并考虑完全删除这些软件包以移除它们的
+    配置文件。
+   
+4.10. 过时的包
+
+在带来几千个新软件包的同时，lenny 也清除了曾经存在于 etch 中超过两千个的旧软件包。lenny 不提供这些过时包的升级。当然，在您需要的地方
+没什么可以阻止您继续使用这些过时的包，Debian 计划通常会在 lenny 发行版后的一年间不断的提供安全更新^[6]，且通常不会同时提供其它支持。
+推荐用可用的替代品代替它们。
+
+为什么包会从发行版中移除？这有很多原因，如：它们不再被上游作者维护了；没有 Debian 开发者对维护这个包感兴趣；这些包提供的功能被不同的
+软件（或新版本）替代了；或者由于它们自身的问题，因而被认为不适用于 lenny。最后一种情况下，这些包有可能仍然位于 “unstable” 版之下。
+
+检测在已更新的系统中哪些包是“过时”的现在容易得很，因为包管理的前台程序会标记它们的。如果您使用的是 aptitude，您将在“过时的和本机创建
+的包”条目中看到这些包。dselect 提供类似的条目，但它显示的列表有所不同。
+
+还有，如果您曾经用 aptitude 手工在 etch 中安装过包，aptitude 会保存那些您手工安装的记录。如果有某个包被移除并导致出现无依赖性，即不
+再需要那些包，aptitude 会将那些包标记为过时的包。还有 aptitude，不同于 deborphan，不将您手工安装而非那些通过依赖性自动安装的软件包标
+记为过时的包。
+
+您可以用其它的工具来找出过时的包，例如 deborphan，debfoster 或 cruft。推荐使用 deborphan，尽管它(默认情况下)只报告过时的库，即“libs”
+或是“oldlibs”部分中的未被其它包依赖的软件包。不要盲目的移除那些工具要用到的包，尤其是当您正在使用激进的非默认的选项，它们容易引起严
+重错误。极度推荐在您移除它们之前，手工核查那些建议移除的包(例如：它们的内容、大小以及描述信息)。
+
+Debian 错误跟踪系统通常会提供额外信息，这些都是有关这个包为什么要被移除的信息。您应该既查看此包自身的归档错误报告，同时也要看一下 
+ftp.debian.org pseudo-package 中的归档错误报告。
+
+The list of obsolete packages includes:
+
+  * apache (1.x)，由 apache2 代替
+   
+  * bind (8), successor is bind9
+   
+  * php4，由 php5 代替
+   
+  * postgresql-7.4，由 postgresql-8.1 代替
+   
+  * exim (3), successor is exim4
+   
+4.10.1. 哑包
+
+来自 etch 的某些包在 lenny 中已经被分为好几个包，通常这是为了改善系统的可维护性。在此情况下，为了能平滑升级，lenny 通常提供“哑”包(即
+空包)，它与 etch 中的旧包名称相同，但有依赖性，促使它们安装新包。这些“哑”包在升级成功后就会被认为是过时的包，且能够被安全地移除。
+
+绝大多数(并非所有)哑包的描述信息会显示它们的用途。但哑包的描述信息并不统一，因此您可能会发现带上 --guess 选项的 deborphan 命令对于找
+出您系统中的哑包是很有用的。注意，某些哑包在升级后是不打算被系统移除的，相反它们被用于长期跟踪某程序的当前可用版本这样的目的。
+
+----------
+
+^[2] 此功能可以通过在您的启动参数中添加参数 panic=0 来禁用。
+
+^[3] Debian 的包管理系统正常情况下不允许一个软件包移除或是替换另一个软件包所拥有的文件，除非已经被设定为替换那个包。
+
+^[4] 脚本 /etc/udev/rules.d/75-persistent-net-generator.rules 自动生成的规则让网卡拥有固定的名字。删除此符号链接可以关闭 udev 对 NIC
+设备的固定命名。
+
+^[5] 想知道更多有关 lilo 启动错误代码的信息，请参看 The Linux Bootdisk HOWTO。
+
+^[6] 只要在那段时间内没有另外的发行版释出。在任意给定时间内，一般仅提供两个 stable 发行版的安全更新。
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+上一页                                                                                                                        下一页
+第 3 章 安装系统                                               起始页                                 第 5 章 lenny 中需要注意的问题
+

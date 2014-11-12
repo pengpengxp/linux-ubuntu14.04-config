@@ -1,0 +1,188 @@
+1. 安装fedora18后的初始化配置
+
+
+1.1. 防火墙
+
+如果你的电脑处于局域网内，那么防火墙是不需要的的，停止它！
+
+sudo systemctl stop firewalld.service
+sudo systemctl disable firewalld.service
+
+
+1.2. SELinux
+
+
+停止SELinux，如果你不需要它。
+
+sudo vi /etc/sysconfig/selinux
+
+# This file controls the state of SELinux on the system.
+# SELINUX= can take one of these three values:
+#
+enforcing - SELinux security policy is enforced.
+
+#
+permissive - SELinux prints warnings instead of enforcing.
+
+#
+disabled - SELinux is fully disabled.
+
+SELINUX= disabled # change
+
+# SELINUXTYPE= type of policy in use. Possible values are:
+#
+targeted - Only targeted network daemons are protected.
+
+#
+strict - Full SELinux protection.
+
+SELINUXTYPE=targeted
+
+2. 安装rpmfusion源
+
+
+
+它有非常多的免费和非免费的软件，音视频解码器。
+
+Fedora 14的源：
+
+sudo yum localinstall --nogpgcheck http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-14.noarch.rpm  http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-14.noarch.rpm
+
+Fedora 15的源：
+sudo yum localinstall --nogpgcheck http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-15.noarch.rpm  http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-15.noarch.rpm
+
+Fedora 16的源：
+sudo yum localinstall --nogpgcheck http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-16.noarch.rpm  http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-16.noarch.rpm
+
+Fedora 17的源：
+sudo yum localinstall --nogpgcheck http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-17.noarch.rpm  http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-17.noarch.rpm
+
+Fedora 18的源：
+sudo yum localinstall --nogpgcheck http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-18.noarch.rpm  http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-18.noarch.rpm
+
+
+
+3. 安装一下有用的一些软件包
+
+有些包比较大，你也可以不安装， 比如 texlive。
+
+自己选择吧。
+
+
+sudo yum -y install yum-fastestmirror unrar thunderbird emacs ibus-table \
+redhat-lsb gstreamer-plugins-bad gstreamer-plugins-ugly  gstreamer-ffmpeg \
+compat-libstdc++-33 NetworkManager-devel python-gevent tracker-ui-tools qemu \
+libpciaccess-devel xorg-x11-util-macros llvm-devel mtdev* mutt msmtp tftp \
+tftp-server policycoreutils-gui mtd-utils mtd-utils-ubi vim ibus-pinyin \
+gnome-tweak-tool ckermit stardict stardict-dic-zh_CN stardict-dic-en texlive \
+ibus-table-chinese-wubi-haifeng gnash smplayer vlc samba pidgin pidgin-sipe \
+meld expect glibc-static ncurses-static genromfs cmake ccache p7zip
+
+
+
+
+4. 升级一下系统：
+
+
+
+sudo yum -y update
+
+
+5.安装chrome
+
+
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_i386.rpm
+sudo rpm -ivh google-chrome-stable_current_i386.rpm
+
+
+6. 安装 flash plugin
+
+
+wget http://linuxdownload.adobe.com/adobe-release/adobe-release-i386-1.0-1.noarch.rpm
+sudo rpm -ivh adobe-release-i386-1.0-1.noarch.rpm
+sudo yum -y install flash-plugin
+
+
+
+
+7. 安装音视频解压器：
+
+
+wget http://www1.mplayerhq.hu/MPlayer/releases/codecs/all-20110131.tar.bz2
+tar jxf all-20110131.tar.bz
+
+sudo mkdir -p /usr/lib/codecs
+
+sudo mv all-20110131/*  /usr/lib/codecs
+
+8. 配置samba
+
+
+sudo smbpasswd -a -U your_username               #设置登陆的用户名和密码，你可以运行 whoami 查看你的用户名
+
+sudo systemctl enable smb.service                          # 开机启动samba
+
+sudo systemctl start smb.service                               #  立即启动samba
+
+sudo systemctl restart smb.service                            # 立即重启samba
+
+sudo firewall-cmd --permanent --zone=public --add-service=samba                           # 配置防火墙，让其它电脑能访问你的电脑。
+
+
+下面是一个简单配置示例：
+
+mkdir /home/public
+chmod 777 /home/public
+
+[share]
+comment = Galen's Share
+path = /home/public
+writable = yes
+valid users = your_username          # 你可以运行 whoami 查看你的用户名
+
+
+配置好后，记得重启samba （sudo systemctl restart smb.service）
+
+
+9. 配置NFS
+
+
+sudo systemctl enable nfs-server.service    # 开机启动NFS
+
+sudo systemctl start nfs-server.service        #  立即启动NFS
+
+sudo systemctl restart nfs-server.service     # 立即重启NFS
+
+＃ 关闭防火墙， 否则会出现（mount: RPC: Unable to receive; errno = No route to host）
+
+sudo systemctl status  firewalld.service
+sudo systemctl stop firewalld.service
+sudo systemctl disable firewalld.service
+
+
+下面是一个简单配置示例：
+
+vi /etc/exports
+
+/home/nfsroot *(rw,sync,no_subtree_check)
+
+
+10. 配置输入法
+
+以前的im-chooser不能正常使用了。否则会出现：“GDBus.Error:org.gtk.GDBus.UnmappedGError.Quark._imsettings_2derror_2dquark.Code5: Current desktop isn't targeted by Input Method.”
+
+1. 在屏幕右上角点击你的用户名，会出现下拉菜单，点“系统设置/System Settings", 类似windows的控制面板。
+
+2. 点“区域＆语言／Region&Language”
+
+3. 的“输入源／Input Sources“中点添加按钮，添加你想要输入法，
+
+如果没有你想要的输入法，在控制台输入下面这条指令， 以显示所有的输入法：
+
+
+gsettings set org.gnome.desktop.input-sources show-all-sources true
+
+
+4. 在”快捷键／Shortcut Setting"中，设置"Switch to next source"为 Ctrl+Space.
+
+

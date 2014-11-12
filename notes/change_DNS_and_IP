@@ -1,0 +1,113 @@
+　　一、修改IP地址
+
+　　[aeolus@db network-scripts]$ vi ifcfg-eth0
+
+　　DEVICE=eth0
+
+　　ONBOOT=yes
+
+　　BOOTPROTO=static
+
+　　IPADDR=219.136.241.211
+
+　　NETMASK=255.255.255.128
+
+　　GATEWAY=219.136.241.254
+
+　　二、修改网关
+
+　　vi /etc/sysconfig/network
+
+　　NETWORKING=yes
+
+　　HOSTNAME=Aaron
+
+　　GATEWAY=192.168.1.1
+
+　　三、修改DNS
+
+　　[aeolus@db etc]$ vi resolv.conf
+
+　　nameserver 202.96.128.68
+
+　　nameserver 219.136.241.206
+
+　　四、重新启动网络配置
+
+　　/etc/init.d/network restart五、例子
+
+　　1、修改ip地址
+
+　　即时生效:
+
+　　# ifconfig eth0 192.168.0.20 netmask 255.255.255.0
+
+　　启动生效:
+
+　　修改/etc/sysconfig/network-scripts/ifcfg-eth0
+
+　　2、修改default gateway
+
+　　即时生效:
+
+　　# route add default gw 192.168.0.254
+
+　　启动生效:
+
+　　修改/etc/sysconfig/network-scripts/ifcfg-eth0
+
+　　修改dns
+
+　　修改/etc/resolv.conf
+
+　　修改后可即时生效，启动同样有效
+
+　　3、修改host name
+
+　　即时生效:
+
+　　# hostname fc2
+
+　　启动生效:
+
+　　修改/etc/sysconfig/network
+
+　　ps:
+
+　　DEVICE=eth0
+
+　　BOOTPROTO=static
+
+　　IPADDR=192.168.8.85
+
+　　NETMASK=255.255.248.0
+
+　　GATEWAY=192.168.8.1
+
+　　HWADDR=00:0uu3:47:2C:D5:40
+
+　　ONBOOT=yes
+
+　　4：添加linux系统启动项：
+
+　　vi /etc/rc.d/rc.local
+
+　　修改Linux系统SSH的端口号
+
+　　修改Linux系统SSH的端口号操作系统linux和Unix都适用：修改配置文件 /etc/ssh/sshd_config，将里面的Port改为新端口（此端口必须是没有程序用到），比如10022，然后
+
+　　kill -HUP `cat /var/run/sshd.pid` 就行了。注：现有连接自己不会断，因为kill -HUP `
+
+　　修改Linux系统SSH的端口号
+
+　　操作系统linux和Unix都适用：
+
+　　修改配置文件 /etc/ssh/sshd_config，将里面的Port改为新端口（此端口必须是没有程序用到），比如10022，
+
+　　然后 kill -HUP `cat /var/run/sshd.pid` 就行了。
+
+　　注：现有连接自己不会断，因为kill -HUP `cat /var/run/sshd.pid` 只是HUP监听的那个，已经建立的连接（不同的 pid）不会断。
+
+要想重新启用并用新端口登陆，此时可以在本登陆帐户下用 exit 命令退出，在用新的端口登陆即可！
+ 
+posted @ 2010-03-04 09:49 fighter 阅读(8516) 评论(0) 编辑收藏

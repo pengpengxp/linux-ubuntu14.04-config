@@ -1,0 +1,8 @@
+老李原创:Virtualbox给Centos安装增强模块  
+老李的笔记本上是使用Virtualbox虚拟机，而台式机上则是VMware的虚拟机。在使用Virtualbox虚拟机给CentOS安装不上增强模块，也是鼠标不能在主宿系统之间进行自有滑动，进入虚拟机全屏但是画面不能扩展到全屏。
+解决方法：进入虚拟的centos,以root身份进入终端，依次输入如下命令：
+把divider=10加入到/etc/grub.conf配置文件
+yum update 更新系统
+yum install gcc 安装gcc库
+yum install kernel-devel 安装内核
+sh ./VBoxLinuxAdditions-x86.run 运行安装程序

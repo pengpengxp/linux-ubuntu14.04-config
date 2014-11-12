@@ -1,0 +1,115 @@
+关于源地址sources.list的书写格式以及各种dabian源
+关于源地址sources.list的书写格式以及各种dabian源
+注：使用非官方源需慎重，尤其是驱动部分的更新可能会导致登录X的问题，具体是xserver-xorg的更新可能会出现问题
+普通升级用 apt-get upgrade , 发行版升级用 apt-get dist-upgrade 
+
+1、sources.list书写的方法
+（1）地址：找到包含dists和pool这两个目录的地址，比如 
+
+http://mirrors.geekbone.org/debian/
+； 
+（2）目录名：打开dists，里面包含的目录名字，记下来。比如dists/包含sarge、etch、woody、sid。 
+（3）名字：打开以上目录，看看里面包含哪些组件名字，比如main、cont 
+rib、non-free； 
+4）书写格式：deb ，如：
+deb 
+
+sarge main contrib non-free 
+发现一个比较快的台湾地址： 
+http://ftp.isu.edu.tw/pub/Linux/Debian/debian/
+书写了一下：deb 
+http://ftp.isu.edu.tw/pub/Linux/Debian/debian/
+sarge main contrib non-free
+安装软件的信息都记载在[/etc/apt/sources.list]这个文档中
+一 sources.list 文档中设定格式
+
+deb uri distribution [component1] [componenent2] [...]
+各个选项说明：
+deb 
+两种写法，分别为 『 deb 』 和 『 deb-src 』，前者表示所指向的存放 binary 格式（编译好的执行文件套件） 的服务器位置，后者为 sources 格式（包含原始代码的软件套件）的服务器的位置。
+只想安装软件而不想再编译她就使用 『 deb 』 ， 如果想取得软件的源代码 ( sources code ) ，就使用『 deb-src 』 ， 也可以两行都写：
+deb http://http.us.debian.org/debian stable main contrib non-free
+deb-src http://http.us.debian.org/debian stable main contrib non-free
+uri ( Universal Resource Identifier ) 
+uri 指的是软件来源的位置，可以使系统内的某个位置 ( file ) 、也可以是光驱 ( cdrom ) 、可以是网络 ( http 、 ftp )……等，当用 apt-get 命令时，就会到这些位置去找软件库。一共有 file 、 cdrom 、 http 、 ftp 、copy 、rsh 、ssh 等几个参数，比较常用的参数如下：
+file 
+可以是你系统上的某个目录，如下：
+deb file:/home/moto/debian stable main contrib non-free
+也可以是 mount 到自己系统远端的 NFS Server，如下：
+deb file:/mnt/nfs-server stable main contrib non-free
+cdrom 
+光驱牒片上的位置，如下：
+deb cdrom:/dists stable main contrib non-free
+http 
+通过 http 的协议传送，如下：
+deb http://http.us.debian.org/debian stable main contrib non-free
+ftp 
+通过 ftp 的协议传送，如下： 
+deb ftp://ftp.us.debian.org/debian stable main contrib non-free
+二 优化您的安装源
+1、apt-spy 方式:
+
+`apt-spy'会根据站点回应时间和带宽自动创建`sources.list'。
+#apt-get install apt-spy
+#mv sources.list sources.list.bak //backup
+#man apt-spy //获取详细的使用方法
+#apt-spy update //更新您的镜像列表文件 /var/lib/apt-spy/mirrors.txt
+# apt-spy -d testing -a Asia
+//在亚洲区寻找速度最快的testing版镜像,并生成 sources.list文件,也可使用 -o 参数指定写入文件
+提示：这是一个漫长,确实一劳永逸的过程. 
+2、netselect-apt方式:
+`netselect-apt'会创建一个更完整的`sources.list'文件，但它使用更落后的方法来选择镜像站点
+#apt-get install netselect-apt
+#mv sources.list sources.list.bak //backup
+#man netselect-apt //获取详细的使用方法
+# netselect-apt -s testing
+//下载http: //www.debian.org/mirror/list-full文件,并根据其内容测试网络,生成sources.list
+也可将下载http://www.debian.org/mirror/list-full手动下载到本地, 并同过参数 -i 指定
+同样可以通过 -o 参数指定输出文件而不是默认的sources.list
+
+三 常用安装源
+1、官方资源:
+
+http://www.debian.org/CD
+2、国内资源:
+http://ftp.cdut.edu.cn/pub/linux/distribution/debian/
+http://mirrors.cn99.com/debian-cd/
+http://mirrors.geekbone.org/debian-cd/
+ftp://deb.ustcsz.edu.cn/debian-cd/
+http://www.cwinl.com/
+ftp://218.22.45.5/
+http://ftp.debian.org.cn/mirror/debian/
+http://mirror.dlut.edu.cn/
+
+3.非官方资源
+
+a）rarewares.org -- 提供很多音频软件
+deb http://www.rarewares.org/debian/packages/unstable ./
+
+b）blackdown Java -- 这个不用说了吧
+deb http://metalab.unc.edu/pub/linux/devel/lang/java/blackdown.org/debian unstable main non-free
+
+c）bootsplash.de -- ppracer, bootsplash stuff.
+deb http://debian.bootsplash.de unstable main
+
+d）USTC 的非官方资源
+deb ftp://debian.ustc.edu.cn/debian-uo sid marillat rareware ustc java misc jrfonseca firefly
+deb-src ftp://debian.ustc.edu.cn/debian-uo sid marillat rareware ustc java misc jrfonseca firefly
+
+e）http://debian.okey.net/上的丰富资源
+deb http://debian.okey.net/debian/ sarge main non-free contrib
+deb http://debian.okey.net/debian-uo/ unstable firefly java jrfonseca marillat misc rareware ustc
+deb http://debian.okey.net/debian-non-US/ sarge/non-US main contrib
+
+f）debian.linux.org.tw 提供 ttf-arphic-ukai ttf-arphic-uming
+deb ftp://debian.linux.org.tw/pub/apt unstable main
+
+g）提供realplayer,mplayer, acroreader, w32codecs, 等等
+deb ftp://ftp.nerim.net/debian-marillat/ unstable main
+deb-src ftp://ftp.nerim.net/debian-marillat/ unstable main
+
+更新完sources.list后，就可以用如下命令升级：
+apt-get update
+apt-get upgrade
+apt-get dist-upgrade
+然后就可以安装软件了.

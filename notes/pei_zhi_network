@@ -1,0 +1,78 @@
+ubuntu 设置IP,设置网关方法分享
+如果是在虚拟机中使用Ubuntu，那么设置之前请先参照我的上一遍文章虚拟机Net方式设置连接外网中的网络设置部分，先设置好主机的网络，然后配置虚拟机Ubuntu的IP和网关
+
+如果主机操作系统就是Ubuntu，请直接参照下文进行设置
+
+内容如下：
+
+1. 检验是否可以连通，就使用ping命令ping 网关
+开始的时候总是现实unreachable
+2. 设置IP
+sudo ifconfig eth0 133.133.133.190 netmask 255.255.255.0
+这样就算设置好了网卡eth0的IP地址和子网掩码
+3. 设置网关 sudo route add default gw 133.133.133.40
+4. ping 网关就可以ping通了
+5. 设置DNS 修改/etc/resolv.conf，在其中加入
+nameserver DNS的地址1
+nameserver DNS的地址2
+完成。
+这样设置之后，下次开机时候似乎IP又会发生变化。
+
+永久修改Ubuntu LINUX IP
+
+一、使用命令设置ubuntu的ip地址
+1. 设置IP sudo ifconfig eth0 203.171.239.155 netmask 255.255.255.224 这样就算设置好了网卡eth0的IP地址和子网掩码
+2. 设置网关 sudo route add default gw 203.171.239.129
+3. 设置DNS 修改/etc/resolv.conf，在其中加入 nameserver DNS的地址1 nameserver DNS的地址2 完成。不过，这样设置之后，下次开机时候似乎IP又不存在了。
+二、直接修改系统配置文件 ubuntu的网络配置文件是：/etc/network/interfaces 打开后里面可设置DHCP或手动设置静态ip。前面auto eth0，让网卡开机自动挂载.
+1. 以DHCP方式配置网卡编辑文件，切换到/etc/network/interfaces: 指定如下命令，sudo vi /etc/network/interfaces
+
+并用下面的行来替换有关eth0的行:
+
+# The primary network interface - use DHCP to find our address
+
+auto eth0 iface
+
+eth0 inet dhcp
+
+用下面的命令使网络设置生效: sudo /etc/init.d/networking restart
+
+也可以在命令行下直接输入下面的命令来获取地址 sudo dhclient eth0
+2. 为网卡配置静态IP地址编辑文件
+
+/etc/network/interfaces: sudo vi /etc/network/interfaces
+
+并用下面的行来替换有关eth0的行:
+
+# The primary network interface
+
+auto eth0
+
+iface eth0 inet static
+
+address 203.171.239.155
+
+gateway 203.171.239.129
+
+netmask 255.255.255.224
+
+#network 203.171.239.128 #broadcast 192.168.3.159
+
+将上面的ip地址等信息换成你自己就可以了.用下面的命令使网络设置生效: sudo /etc/init.d/networking restart
+3. 设定第二个IP地址(虚拟IP地址) 编辑文件
+
+/etc/network/interfaces: sudo vi /etc/network/interfaces
+
+在该文件中添加如下的行:
+
+auto eth0:1 iface eth0:1 inet static address 192.168.1.155 netmask 255.255.255.0 work x.x.x.x broadcast x.x.x.x gateway x.x.x.x 根据你的情况填上所有诸如
+address,netmask,network,broadcast和gateways等信息. 用下面的命令使网络设置生效: sudo /etc/init.d/networking restart
+4. 设置主机名称(hostname) 使用下面的命令来查看当前主机的主机名称: sudo /bin/hostname 使用下面的命令来设置当前主机的主机名称: sudo /bin/hostname newname 系统启动时,它会从
+/etc/hostname来读取主机的名称. 5. 配置DNS 首先,你可以在/etc/hosts中加入一些主机名称和这些主机名称对应的IP地址,这是简单使用本机的静态查询. 要访问DNS 服务器来进行查询,需要
+设置/etc/resolv.conf文件. 假设DNS服务器的IP地址是203.171.230.6 resolv.conf文件的内容应为: search test.com nameserver 203.171.230.6 重启网络:/etc/init.d/networking
+restart
+
+PS：根据上文方式，在虚拟机VMware中安装Ubuntu，虚拟机网络连接方式为Net，设置静态IP连接网络，我已经测试通过，直接修改resolv.con和interfaces的方式可以保证开机后设置的IP依然
+存在。
+
+设置后不能连接网络，欢迎留言，共同讨论，呵呵！

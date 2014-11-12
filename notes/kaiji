@@ -1,0 +1,231 @@
+ubuntu开机启动到字符界面
+发表时间:2012-02-1011:18评论:条
+
+
+
+一、要想默认不进入xWindwos/index.html'target='_blank'>windows，只需编辑文件”/etc/default/grub”，把GRUB_CMDLINE_LINUX_DEFAULT=”quietsplash”改成GRUB_CMDLINE_LINUX_DEFAULT=”quietsplashtext”（即在GRUB_CMDLINE_LINUX_DEFAULT项的后面加上”text”），然后再运行”sudoupdate-grub”即可。
+
+二、
+在ubuntu10.04版本一下的系统中：
+方法：
+sudovi/etc/default/grub
+找到这一行：GRUB_CMDLINE_LINUX_DEFAULT="quietsplash"
+改为：GRUB_CMDLINE_LINUX_DEFAULT="text"或者"quietsplashtext"
+保存后sudoupdate-grub重启即可。
+
+在ubuntu10.04以上版本中：
+方法1：
+Ubuntu安装后默认的runlevel为2
+Ubuntu之所以能直接启动到图形界面，是由于运行gdm所致。所以，只要把gdm的启动脚本禁用就可以了，方法就是把文件名的第一个字母S改成K：
+cd/etc/rc2.d
+sudomvS30gdmK30gdm
+注：此方法不适用于11.10
+方法2：
+ubuntu兼容inittab，所以新建一个/etc/inittab文件
+输入：
+id:3:initdefault:
+进入到/etc/rc3.d/中，看看gdm的启动脚本文件名：
+ls-l*gdm
+如果是以S打头的，把文件名改成以K打头
+
+
+在fedora系统中直接将/etc/inittab中的id:3:initdefault:修改为id:5:initdefault:即可
+三、注意　debian类系统的启动级别和往常的redhat等不同
+rc0表示关机rc6表示重启
+rc1表示单用户模式
+rc2-rc4表示多用户模式
+（
+0　关机
+1　单用户模式
+2　不带网络的多用户模式
+3　带网络的多用户，也就是所谓的纯字符模式
+4　保留，用户可以自给定义
+5　图形界面的多用户模式
+6　重起系统
+）
+所以如果你想要启动到终端的话
+你只需要关闭gdm的服务
+我介绍一个简单的方法
+代码:
+sudoapt-getinstallsysv-rc-conf
+sudosysv-rc-conf
+
+然后在里面找到一个叫做gdm的服务，别且在所有级别关闭它
+然后q就ok了
+
+找到的第二种方法
+用nano编辑/etc/X11/default-display-manager,把/usr/sbin/gdm注释掉,即在前面加个#号,改成#/usr/sbin/gdm,然后在加一行false这样保存既可.
+完整的是这样：
+#/usr/sbin/gdm
+false
+修改后重启，这样启动就是字符界面了。
+
+找到的第三种方法
+
+#0-halt(DoNOTsetinitdefaulttothis)关机(不要设置为默认)
+　　#1-Singleusermode单用户模式
+　　#2-Multiuser,withoutNFS(Thesameas3,ifyoudonothavenetworking)多用户模式，但不支持NFS
+　　#3-Fullmultiusermode完全的多用户模式
+　　#4-unused没用到
+　　#5-X11图形界面
+　　#6-reboot(DoNOTsetinitdefaulttothis)重启(不要设置为默认)
+
+　　RedHat中要改变启动级别，只要修改/etc/inittab。
+
+　　Ubuntu有点不一样，网上的方法也很多，试过其中一种。
+
+　　Youneedtoopenthe/etc/default/grubfile,locatethefollowingline:
+　　GRUB_CMDLINE_LINUX_DEFAULT="quietsplash"
+　　andchangeitto:
+　　GRUB_CMDLINE_LINUX_DEFAULT="quietsplashtext"
+　　update-grub
+
+　　即编辑/etc/default/grub文件，将GRUB_CMDLINE_LINUX_DEFAULT="quietsplash"改为GRUB_CMDLINE_LINUX_DEFAULT="quietsplashtext"，然后更新一下grub。
+方法三还可以
+如果想用这种方法永远启动到字符终端模式，则可以修改/boot/grub/grub.cfg，在相应的位置添加txt参照即可。但是grub.cfg是自动生成的，所有的在里面的修改都可能被其它的操作覆盖掉，比如update-grub命令，如果不想被覆盖，则修改/etc/default/grub
+把
+GRUB_CMDLINE_LINUX_DEFAULT="quietsplash"
+GRUB_CMDLINE_LINUX=""
+改成
+GRUB_CMDLINE_LINUX_DEFAULT="text"
+GRUB_CMDLINE_LINUX=""
+
+然后再运行一下update-grub命令，它会自动添加上text参数到内核参数中。
+
+说明：
+1，无论使用什么方式启动到字符终端模式，你都可以使用命令startx命令来启动Xwindow
+2，在10.04lucid下测试成功
+参数的含义（个人猜测，没有在网上找到相关内容）
+quiet阻止内核输入到命令行
+splash显示启动画面，如ubuntulogo
+text启动到字符终端模式
+我的同时写上quiet和text就起不来，停在checkingbatterystatus下面不动了，也可以我为了测试等待的时间不够长，虽然不动了，可以按CTRL+ALT+DELETE重新启动。
+文本与桌面模式切换：
+文本模式登陆后，在普通用户权限下执行startx，进入到桌面模式。
+一定要在普通用户权限下，root权限下startx，桌面模式都是默认设置，不加载个人设置！
+桌面到文本的切换：
+Ctrl+Alt+F1，切到文本界面，执行Ctrl+c，结束掉刚才启动的Xserver！
+
+
+
+
+
+
+1.在字符端输入"switchdesk GNOME",回车，再输入"startx",回车
+
+2.在控制台下登录
+
+先执行 export LANG=C
+
+再重新配置 X
+sudo dpkg-reconfigure xserver-xorg
+
+
+
+
+
+
+
+
+
+
+
+
+Ubuntu实现开机进入命令行
+分类： Linux/Other 2010-04-28 16:12 639人阅读 评论(0) 收藏 举报
+    如果使用桌面版的Ubuntu系统的话开机默认进入桌面，如果是服务器版本的话为了节省服务器资源会进入命令行。如果想让桌面版的Ubuntu系统开机也直接进入命令行的话那么需要进行一些必要的设置：
+
+
+
+直接在X环境下停掉GDM服务:
+
+
+
+sudoupdate-rc.d-fgdmremove
+
+
+
+重新启动进命令行模式：
+
+
+
+sudoreboot-n
+
+
+
+如果想在命令行模式直接进入X环境的话,则需输入:
+
+
+
+startx
+
+
+
+如果想改回开机启动回到X环境的话,则需开启GDM服务即可:
+
+
+
+sudoupdate-rc.dgdmdefaults
+
+
+
+ps:如果想直接使用命令行的话最好使用无桌面版本的Linux系统，因为这个方法有时候可能会出现一些系统错误。当然有能力的话也可以自己定制Linux，关于自己定制参见LFS手册
+
+
+
+
+
+ ubuntu开机直接进入命令行模式
+ 分类： Ubuntu 2012-06-15 18:11 1466人阅读 评论(2) 收藏 举报
+ 最近安装了ubuntu12.04来使用，每次都进入unity界面再进入命令行很不方便。
+ 不需要界面的话，可以通过设置来开机进入命令行模式。
+ 今天提供两中比较好的方法。经本人测试两中方法都可使用。
+ 【1】
+ 命令：
+ sudo gedit /etc/default/grub
+ 找到这一行
+ GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"
+
+ 改成
+ GRUB_CMDLINE_LINUX_DEFAULT="quiet splash text"
+ 在输入命令：
+ sudo update-grub
+ 开机后就自动进入tty1了。
+ （更推荐下面这个方法，因为开机时可以选择进入命令行还是界面模式）
+ 【2】
+ sudo chmod +w /boot/grub/grub.cfg  #增加可写权限
+ sudo gedit /boot/grub/grub.cfg   #编辑配置文件
+ 会找到小面这段文字：
+ menuentry 'Ubuntu，Linux 3.2.0-24-generic-pae' --class ubuntu --class gnu-linux --class gnu --class os {
+recordfail
+gfxmode$linux_gfx_mode
+insmodgzio
+insmodpart_msdos
+insmodext2
+setroot='(hd0,msdos8)'
+search--no-floppy--fs-uuid--set=root689a61a1-06fd-4ffe-95d7-8671e97bbe81
+linux/boot/vmlinuz-3.2.0-24-generic-paeroot=UUID=689a61a1-06fd-4ffe-95d7-8671e97bbe81roquietsplash$vt_handoff
+initrd/boot/initrd.img-3.2.0-24-generic-pae
+}
+复制上面的文字，并在后面粘贴下来。
+修改一些设置。修改后如下
+menuentry'Ubuntu，Linux3.2.0-24-generic-pae(commandmode)'--classubuntu--classgnu-linux--classgnu--classos{
+recordfail
+gfxmode$linux_gfx_mode
+insmodgzio
+insmodpart_msdos
+insmodext2
+setroot='(hd0,msdos8)'
+search--no-floppy--fs-uuid--set=root689a61a1-06fd-4ffe-95d7-8671e97bbe81
+linux/boot/vmlinuz-3.2.0-24-generic-paeroot=UUID=689a61a1-06fd-4ffe-95d7-8671e97bbe81rotext
+initrd/boot/initrd.img-3.2.0-24-generic-pae
+}
+这就可以了。我的是物理机直接安装的，在开机时就有菜单了，直接选择Ubuntu，Linux3.2.0-24-generic-pae(commandmode)这个选项即可
+如果虚拟机安装的话，也许开机是没有选项的（我用的VM虚拟机安装默认的就没有选择菜单）解决方法如下：
+开机启动时，grub菜单系统默认是隐藏的，去掉隐藏需要做如下操作
+你需要修改/etc/default/grub其中的某一行（自己找找，就在前面），命令：sudogedit/etc/default/grub
+GRUB_HIDDEN_TIMEOUT=0（默认是0，修要修改成大于0的值，比如10）
+保存后退出！
+再执行命令：
+sudoupdate-grub
+好了，设置完成。

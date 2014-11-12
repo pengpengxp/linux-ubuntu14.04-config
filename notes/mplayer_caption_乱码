@@ -1,0 +1,119 @@
+http://www.cnblogs.com/soli/archive/2009/11/17/1604236.html
+
+mplayer字幕乱码问题解决方法
+
+ 
+by Soli<http://soli.cnblogs.com>
+
+ 
+一、拿来主义
+
+如果你急着看电影，那就参照如下命令打开电影即可正常显示字幕：
+
+mplayer -sub name_of_movie.srt -subcp cp936 -font /usr/share/fonts/truetype/arphic/gkai00mp.ttf name_of_movie.avi
+
+注意：
+
+    -sub 后是字幕文件 -subcp 后是字幕文件的编码格式 -font 后是支持中文的字体文件
+    另外，还须保证字幕文件的编码格式必须与-subcp选项指定的编码格式一致（可以使用iconv在各编码之间转换）。
+    这四者缺一不可。
+
+二、命令行参数
+
+如果你通过上面的命令还没解决字幕乱码的问题，那请耐心地看完下面的内容，然后根据自己的具体情况做相应的调整，应该可以看到正常的字幕了。如果还是乱码，那请留言，我们一块来讨论解决。
+1.字幕文件
+
+要让mplayer显示字幕，须得有个正确的字幕文件。如果下载电影时没有字幕文件，可以去shooter.cn上去搜索下载。
+
+一般网上下载的字幕文件都是cp936的编码格式。如果不是，可以用iconv转换。比如utf8的转换成cp936的，命令如下：
+
+iconv -f utf8 -t cp936 -o name_of_movie.cp936.srt name_of_movie.utf8.srt
+
+有了字幕文件，那须告诉mplayer使用哪个字幕文件。可以用-sub选项。
+2.指定字幕文件的编码格式
+
+其实，也可不用转换字幕文件的编码格式，而用mplayer的命令选项-subcp 告诉mplayer字幕文件是什么编码格式。
+3.指定字幕使用的字体
+
+如果上面两个选项都正确地指定后，字幕还是乱码，那就应该是字体的问题了。可能mplayer默认的字体文件（~/.mplayer/subfont.ttf）不支持字幕的所使用的语言（比如中文）。那就须用-font指定一个支持中文的字体。我一般使用字体/usr/share/fonts/truetype/arphic/gkai00mp.ttf
+三、配置文件
+
+经过以上三步，在命令行下启动mplayer看电影应该可以看到正常的字幕了。
+
+但每次都输入这么长的命令确实很麻烦。下面把这些选项写入配置文件，那样就可以直接mpalyer some.avi或直接鼠标右键“用mplayer打开”啦。
+1.两个执行文件、三种启动方式和四个配置文件
+
+首先，我们需要知道的是：两个执行文件、三种启动方式和四个配置文件。两个执行文件是mplayer和gmplayer；三种启动方式是用mplayer命令、用gmplayer命令和鼠标右键；四个配置文件是/etc/mplayer/mplayer.conf、 /usr/local/etc/mplayer/mplayer.conf、 ~/.mplayer/config 和 ~/.mplayer/gui.conf。
+
+其中，鼠标右键最终调用的可能是mplayer也可能是gmplayer，我这里这两种都存在，即右键菜单里有两个名为“用mplayer打开”的项目。
+
+对于配置文件，前两个配置文件是全局的，不一定都存在。优先级最低。可以不去管它。
+
+~/.mplayer/config 可用于mplayer和gmplayer。
+
+~/.mplayer/gui.conf只用于gmplayer。所以，很多人在这个配置文件了修改了选项，而还是用mplayer启动的话，是不起作用的。
+
+它们的关系如下表：
+
+优先级	配置文件	mplayer		gmplayer
+低 	/usr/local/etc/mplayer/mplayer.conf
+	使用	使用
+低 	/etc/mplayer/mplayer.conf	使用	使用
+高 	~/.mplayer/config 		使用 	使用
+最高 	~/.mplayer/gui.conf 		  	使用
+
+所以，如果你习惯用mplayer那就修改~/.mplayer/config，如果你习惯用gmplayer那就修改~/.mplayer/gui.conf。最好是同时修改这两个配置文件，而不动那两个全局的配置文件。
+2.修改~/.mplayer/config
+
+先来修改~/.mplayer/config。加入以下两项：
+
+subcp = "cp936"
+font = "/usr/share/fonts/truetype/arphic/gkai00mp.ttf"
+
+由于不同电影的字幕文件不同，所以不能在配置文件里指定字幕文件。下面会提到如何让mplayer自动识别字幕文件并加载。这里我们指定字幕文件的编码格式为cp936，所以，你必须把下载来的字幕文件转换成该编码格式。对于字体，你可以选一个自己喜欢的中文字体即可。
+3.修改~/.mplayer/gui.conf
+
+然后修改~/.mplayer/gui.conf。如下：
+
+sub_cp = "cp936"
+font_name = "/usr/share/fonts/truetype/arphic/gkai00mp.ttf"
+
+可见，同样是配置文件，相同的配置项目的名字却是不一样的。这个要注意，别弄混了。否则mplayer会抱怨“Warning unknown option sub_cp at line 3”之类的，并且字幕依然乱码。
+
+字幕文件的编码格式、字幕的字体都准备好了，剩下的就是让mplayer找到相应的字幕文件了。
+4.让mplayer自动识别字幕文件并加载
+
+最简单的就是修改字幕文件，使其与电影同名（不包括最后的扩展名）。
+
+有时我们下载到的字幕文件是形如name_of_movie.chs.srt、name_of_movie.cht.srt文件。如果每次都要修改字幕文件的文件名，确实有点麻烦。其实我们可以用下面的方法让mplayer更智能的。
+
+在配置文件~/.mplayer/config中加入下面两行：
+
+slang = "chs,cht,eng"
+sub-fuzziness=1
+
+第二行的意思是，搜寻字幕时调整匹配模糊度:0为精确匹配（字幕文件的名字必须与电影文件名完全匹配，不含扩展名）；1为装载所有包含电影名称的字幕（含slang 所指定语言的优先级更高）；2为装载当前目录的所有字幕。
+
+第一行的意思是，字幕文件名中含有chs字样的（如name_of_movie.chs.srt）被优先选用，其次是name_of_movie.cht.srt，然后是name_of_movie.eng.srt，如果这些都没有，再找其他的文件名中含有电影文件名的字幕文件。
+5.针对gmplayer
+
+另外对于gmplayer，在配置文件~/.mplayer/gui.conf中还有如下两项需要修改或注意：
+
+sub_auto_load = "yes"
+sub_unicode = "yes"
+
+这两项可以直接修改配置文件，也可以通过图形界面来修改。方法如下：
+
+在GMPlayer上点右键，
+
+    Preferences -> Subtitle & OSD
+        Encoding处选择 Simplified Chinese charset (CP936)；
+        勾选“Unicode subtitle”；
+        取消勾选“Disable subtitle autoloading”；
+    Preferences -> Font
+        在Font 处输入字体文件的完整路径（如/usr/share/fonts/truetype/arphic/gkai00mp.ttf）；
+        在 Encoding处选择 Unicode。
+
+四、最后
+
+至此，如果你还没解决字幕乱码问题，欢迎留言一起讨论。

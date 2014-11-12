@@ -1,0 +1,162 @@
+VIM使用技巧
+vimsolarisinclude正则表达式vbgtk
+VIM
+
+1 shift+k  直接MAN关键字
+  数字+shift+k  查找指定数字章节的MAN手册
+
+2 /XX/c 搜索时忽略大小写
+
+3 [i     在Include 文件中查找单词
+ [Tab   跳转 在Include 文件中查找单词
+
+4 set paster后，在插入模式不能使用加车转Normal模式 
+
+5 gUU 大写单词
+
+6 插入模式 Ctrl-o 暂时转到命令模式，执行一个命令后马上回到插入模式。
+
+7 :ju[mps] 打出跳转表
+
+8 vim 与 gdb 配合不好！  !!!!!
+
+9 将文本的内容复制到命令行
+： Ctrl r "  
+
+10 %s//w*//u&/g
+正则表达式替换段中 /u 表示只大写首字母
+                 /U 大写整个单词
+
+11 set cursorcolum 灰色长条指示一列 
+
+12 统计字数
+g+^g
+
+13  用:make val验证时会在结束时创建一个新文件
+显示如下：
+    mcml.xml validates
+    "<create_datetime>2008" [新文件]
+WHY？
+
+14  *vt100-function-keys* *xterm-function-keys*
+
+xterm 可以用两种模式发送功能键 F1 到 F4: vt100 兼容模式或不兼容模式。因为 Vim 
+不知道 xterm 发送的哪种，两种都被识别。<Home> 和 <End> 键情况相同。
+                        普通                    vt100 
+        <F1>    t_k1    <Esc>[11~       <xF1>   <Esc>OP     *&lt;xF1&gt;-xterm*
+        <F2>    t_k2    <Esc>[12~       <xF2>   <Esc>OQ     *&lt;xF2&gt;-xterm*
+        <F3>    t_k3    <Esc>[13~       <xF3>   <Esc>OR     *&lt;xF3&gt;-xterm*
+        <F4>    t_k4    <Esc>[14~       <xF4>   <Esc>OS     *&lt;xF4&gt;-xterm*
+        <Home>  t_kh    <Esc>[7~        <xHome> <Esc>OH     *&lt;xHome&gt;-xterm*
+        <End>   t_@7    <Esc>[4~        VIM<xEnd>  <Esc>OF     *&lt;xEnd&gt;-xterm*
+
+Vim 启动时，<xF1> 被映射到 <F1>，<xF2> 到 <F2> 等等。这意味着缺省两种代码做相
+同的事情。如果你为 <xF2> 定义了映射而你的终端支持两种键，那么就覆盖了缺省的映
+射，从而可以用 <F2> 和 <xF2> 键做不同的事情。
+
+" Solaris <F1> ~ <F4> 将vt100的键映射回来
+map <Esc>OP <F1>set makeprg=cl/ %
+map <Esc>OQ <F2>
+map <Esc>OR <F3>
+map <Esc>OS <F4>
+
+完美解决方案：
+    参照happyvim@smth的 .vimrc 的做法。
+
+     " Solaris <F1> ~ <F4> 将vt100的键映射回来
+    " 这里用map不好使，只能用set ,最好在此处加个操作系统的判断
+     " 用set 设置时，不能用<ESC> 代替^[ 
+     " 以下设置必须写在set term=XX后面
+    set <F1>=^[OP
+    set <F2>=^[OQ
+    set <F3>=^[OR
+    set <F4>=^[OS
+
+15 makeprg
+set makeprg=cl/ %     
+  写为 set makeprg=cl % set makeprg=cl/ %则出错。
+
+16 自动识别文件类型
+autocmd FileType sqc :set ft=c
+au FileType DB2 SQLSTATE :set ft=sql
+不起作用
+
+正确的方法是:
+qu BufNewFile,BufRead *.DB2 SQLSTATE :set ft=sql
+qu BufNewFile,BufRead *.sqc :set ft=c
+
+17 Linux 下.vimrc缺少时也会寻找_vimrc
+
+18 台湾人的一个VIM技巧。
+ 
+由圖可見，下方的視窗是 vim 正在編輯程式，而編輯游標停留在 "webkit_web_view_new" 這個函式上，我們可按下 Esc-h，DevHelp 就會查詢這個 Gtk+/WebKit API，相當方便。只要對 vim 稍微作點設定，就可有如此的功能，方法是，修改 ~/.vimrc，加入以下巨集：
+
+" vim macro to jump to devhelp topics.
+function! DevHelpCurrentWord()
+        let word = expand("<cword>")
+        exe "!devhelp -s " . word
+endfunction
+
+" Example: bind <ESC>h to start devhelp and search for the word under the
+" cursor
+nmap <ESC>h :call DevHelpCurrentWord()<CR>
+
+再搭配前文 [在 vim 凸顯 Gtk+ 特有語法]，應該就可更舒適的撰寫程式了。
+-----------------------------------------------------------
+19  补全不容易撤消
+Ctrl+E
+
+20 :%l  显示$符号
+
+-----------------------------------------------------------
+21 搞定omnicppcomplete
+
+1> 下载omnicppcomplete
+2> 解压 cp xxx ./vim -ur
+3> 绑定 tags文件： 
+    nmap <F12> :!ctags -R --c-kinds=+p --fields=+iaS --extra=+q .<CR>
+    imap <F12> <ESC>:!ctags -R --c-kinds=+p --fields=+S<CR>
+4> 设置自动关闭预览窗口：
+ autocmd CursorMovedI  * if pumvisible() == 0|pclose|endif
+ autocmd InsertLeave    * if pumvisible() == 0|pclose|endif
+Ctrl+XO  搞定
+============================================================
+22 快速打开 copen窗口
+:cw
+
+23 比较文件 
+外部：vimdiff 1.txt 2.txt
+内部:  vert diffsplit 2.txt
+
+ 
+
+24 平时光标不闪, 而在插入模式时闪动
+
+    set guicursor+=n-v-c:blinkon0
+
+ 
+
+ 25 最 后 的 办 法
+
+如果其它的方法都行不通，你可以用 CTRL-V 来输入任何字符:
+
+        编码       键入                 范围 
+        8-bit      CTRL-V 123           十进制 0-255
+        8-bit      CTRL-V x a1 十六进制 00-ff 16-bit CTRL-V u 013b        十六进制 0000-ffff
+        31-bit     CTRL-V U 001303a4    十六进制 00000000-7fffffff
+
+ 
+
+26 用：E 打开netrw插件， 用i可以切换查看模式。
+
+ 
+
+27 关掉报警的声音
+
+在你的vimrc中，加入以下两行：
+
+set noerrorbells
+set visualbell t_vb=
+
+如果想关掉gvim中的”滴滴”提示音，则需要在gvimrc中加入set visualbell t_vb=，这是
+因为gvim在启动时，会把t_vb的值恢复为缺省值，所以要重新设置一下。

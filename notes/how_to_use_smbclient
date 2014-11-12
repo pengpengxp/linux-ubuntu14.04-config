@@ -1,0 +1,762 @@
+1      Smbclient介绍
+
+Smbclient(samba client)是基于SMB协议的,用于存取共享目标的客户端程序。
+
+SMB 协议介绍 ：
+
+服务器信息块（SMB）协议是一种 IBM 协议，用于在计算机间共享文件、打印机、串口等。SMB 协议可以用在因特网的TCP/IP协议之上，也可以用在其它网络协议如 IPX 和 NetBEUI 之上。
+
+SMB 一种客户机/服务器、请求/响应协议。通过 SMB 协议，客户端应用程序可以在各种网络环境下读、写服务器上的文件，以及对服务器程序提出服务请求。此外通过 SMB 协议，应用程序可以访问远程服务器端的文件、以及打印机、邮件槽（mailslot）、命名管道（named pipe）等资源。
+
+在 TCP/IP 环境下，客户机通过 NetBIOS over TCP/IP（或 NetBEUI/TCP 或 SPX/IPX）连接服务器。一旦连接成功，客户机可发送 SMB 命令到服务器上，从而客户机能够访问共享目录、打开文件、读写文件，以及一切在文件系统上能做的所有事情。
+
+从 Windows 95 开始，Microsoft Windows 操作系统（operating system）都包括了客户机和服务器 SMB 协议支持。Microsoft 为 Internet 提供了 SMB 的开源版本，即通用 Internet 文件系统 （CIFS）。与现有 Internet应用程序如文件传输协议（FTP）相比， CIFS 灵活性更大。对于 UNIX 系统，可使用一种称为 Samba 的共享软件。
+
+SMB 定义了两级安全保护：
+
+共享级保护（Share Level Protection）应用于服务器共享目录级。每个共享目录都需要提供一个访问口令。只有口令通过，客户机才能访问所有共享文件。
+
+用户级保护（Usr Level Protection）应用于共享目录中的单独文件，基于用户访问权限。每个用户（客户机）必须登录服务器并且获得服务器的认证许可。一旦认证通过，客户 机会获得一个 UID 。在后来客户机访问服务器的过程中都需要使用该 UID 。
+
+2      Smbclient命令使用技巧
+2.1       smbclient 功 能说明：
+
+可存取SMB/CIFS服务器的用户端程序。
+
+2.1.1         语法 ：
+
+smbclient [网络资源][密码][-EhLN][-B][-d<排错层级>][-i<范围>][-I][-l<记录文件>] [-M][-n][-O<连接槽选项>][-p][-R<名称解析顺序>][-s<目录>][-t<服务器字 码>][-T][-U<用户名称>][-W<工作群组>]补充说明：SMB与CIFS为服务器通信协议，常用于 Windows95/98/NT等系统。smbclient可让Linux系统存取Windows系统所分享的资源。
+
+2.1.2         参数：
+
+网络资源 网络资源的格式为//服务器名称/资源分享名称。
+
+密码 输入存取网络资源所需的密码。
+
+-B 传送广播数据包时所用的IP地址。
+
+-d <排错层级> 指定记录文件所记载事件的详细程度。
+
+-E 将信息送到标准错误输出设备。
+
+-h 显示帮助。
+
+-i <范围> 设置NetBIOS名称范围。
+
+-I 指定服务器的IP地址。
+
+-l <记录文件> 指定记录文件的名称。
+
+-L 显示服务器端所分享出来的所有资源。
+
+-M 可利用WinPopup协议，将信息送给选项中所指定的主机。
+
+-n 指定用户端所要使用的NetBIOS名称。
+
+-N 不用询问密码。
+
+-O <连接槽选项> 设置用户端TCP连接槽的选项。
+
+-p 指定服务器端TCP连接端口编号。
+
+-R <名称解析顺序> 设置NetBIOS名称解析的顺序。
+
+-s <目录> 指定smb.conf所在的目录。
+
+-t <服务器字码> 设置用何种字符码来解析服务器端的文件名称。
+
+-T 备份服务器端分享的全部文件，并打包成tar格式的文件。
+
+-U <用户名称> 指定用户名称。
+
+-W <工作群组> 指定工作群组名称。
+
+2.2       smbclient 使 用举例：
+
+2.2.1      列出某个 IP 地 址所提供的共享文件夹
+
+smbclient -L 198.168.0.1 -U username%password
+
+2.2.2      像 FTP 客 户端一样使用 smbclient
+
+smbclient //192.168.0.1/tmp  -U username%password
+
+执行smbclient命令成功后，进入smbclient环境，出现提示符： smb:/>
+
+这里有许多命令和ftp命令相似，如cd 、lcd、get、megt、put、mput等。通过这些命令，我们可以访问远程主机的共享资源。
+
+2.2.3      直接一次性使用 smbclient 命 令
+
+smbclient -c "ls"  //192.168.0.1/tmp  -U username%password
+
+smbclient -c "get test.txt" //192.168.0.1/tmp -U username%password
+
+3      Smbclient开发技巧
+3.1       常用函数介绍
+
+Smbclient提供了两种外部接口，一种是SMBCCTX信息结构体中的函数指针，输入及输出中含有smbclient自定义的变量；另一种是 smbc族的接口，输入及输出均为系统基本变量，其实质是通过对SMBCCTX中的函数指针的封装来实现的。
+
+3.1.1       Smbc 族 函数：
+
+int smbc_init(smbc_get_auth_data_fn fn , int debug) ；
+
+初始化samba client库，此函数必须在所有其他smbc族API被调用前使用。
+
+参数：
+
+fn *：*用于传递SMB协议所需的基本信息；
+
+提供一个简单的fn实现（其中server为samba服务器地址，share为共享目录标识，workgroup为所在域的域 名，username为用户名，password为登录密码）：
+
+static void auth_fn(const char *server, const char *share, char *workgroup, int wgmaxlen,
+char *username, int unmaxlen, char *password, int pwmaxlen)
+{
+
+strncpy(workgroup, g_workgroup, wgmaxlen - 1);
+strncpy(username, g_username, unmaxlen - 1);
+strncpy(password, g_password, pwmaxlen - 1);
+strcpy(g_server, server);
+strcpy(g_share, share);
+//    fprintf(stderr,"server[%s],share[%s]/n",server,share);
+}
+
+debug *：*调试信息等级（本人建议值0－10）；
+
+返回值：
+
+0为成功，<0为失败，错误信息可通过errno获取。
+
+int smbc_open(const char *furl, int flags, mode_t mode);
+
+打开共享服务器上的一个文件，使用方法请参考open函数。
+
+int smbc_creat(const char *furl, mode_t mode);
+
+在共享服务器上创建一个文件，使用方法请参考open函数。
+
+ssize_t smbc_read(int fd, void *buf, size_t bufsize);
+
+使用一个打开的文件句柄来读取共享服务器上的文件，使用方法请参考read函数。
+
+ssize_t smbc_write(int fd, void *buf, size_t bufsize);
+
+使用一个打开的文件句柄向共享服务器上的文件写数据，使用方法请参考write函数。
+
+off_t smbc_lseek(int fd, off_t offset, int whence);
+
+移动文件的读写位置，使用方法请参考lseek函数。
+
+int smbc_close(int fd);
+
+关闭一个打开的文件句柄，使用方法请参考close函数。
+
+int smbc_unlink(const char *furl);
+
+删除一个共享服务器上的文件或者文件夹，使用方法请参考unlink函数。
+
+int smbc_rename(const char *ourl, cones char *nurl);
+
+重命名（或移动）共享目录上的文件或者文件夹，使用方法请参考rename函数。
+
+int smbc_opendir(const char *durl);
+
+打开共享服务器上的文件夹，使用方法请参考opendir函数。
+
+int smbc_closedir(int dh);
+
+关闭一个打开的文件夹句柄，使用方法请参考closedir函数。
+
+struct smbc_dirent* smbc_readdir(unsigned int dh);
+
+读取共享服务器上的文件夹信息，使用方法请参考readdir函数。
+
+off_t smbc_telldir(int dh);
+
+获取文件夹流当前的读取位置，使用方法请参考telldir函数。
+
+int smbc_mkdir(const char *durl, mode_t mode);
+
+在共享服务器上创建一个文件夹。
+
+参数：
+
+durl *：*路径
+
+mode *：*访问权限
+
+返回值：
+
+0为成功，<0为失败，失败信息可通过errno来获取。
+
+int smbc_rmdir(const char *durl);
+
+删除共享服务器上的一个文件夹。
+
+参数：
+
+durl *：*路径
+
+返回值：
+
+0为成功，<0为失败，失败信息可通过errno来获取。
+
+int smbc_stat(const char *url, struct stat *st);
+
+获取共享服务器上一个文件或者文件夹的所有信息，使用方法请参考stat函数。
+
+int smbc_fstat(int fd, struct stat *st);
+
+通过文件句柄来获取共享服务器上一个文件的所有信息，使用方法请参考fstat函数。
+
+int smbc_chown(const char *url, uid_t owner, gid_t group);
+
+修改共享服务器上文件或者文件夹的所有者信息，使用方法请参考chown函数。
+
+int smbc_chmod(const char *url, mode_t mode);
+
+修改共享服务器上的文件的权限，使用方法请参考chmod函数。
+
+int smbc_utimes(const char *url, struct timeval *tbuf);
+
+修改共享服务器上的文件的最后修改时间，使用方法请参考utimes函数。
+
+范例：
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <dirent.h>
+#include <string.h>
+#include <unistd.h>
+#include <libsmbclient.h>
+
+#define MAX_BUFF_SIZE   255
+char g_workgroup[MAX_BUFF_SIZE];
+char g_username[MAX_BUFF_SIZE];
+char g_password[MAX_BUFF_SIZE];
+char g_server[MAX_BUFF_SIZE];
+char g_share[MAX_BUFF_SIZE];
+SMBCCTX * context;
+SMBCSRV * srv;
+
+static void auth_fn(const char *server, const char *share, char *workgroup, int wgmaxlen,
+char *username, int unmaxlen, char *password, int pwmaxlen)
+{
+
+strncpy(workgroup, g_workgroup, wgmaxlen - 1);
+strncpy(username, g_username, unmaxlen - 1);
+strncpy(password, g_password, pwmaxlen - 1);
+strcpy(g_server, server);
+strcpy(g_share, share);
+//    fprintf(stderr,"server[%s],share[%s]/n",server,share);
+}
+
+int main(int argc,char* argv[]){
+int err = -1;
+int dh = 0;
+int fd = -1;
+int buflen = 0;
+char buffer[1024] = {0};
+char url[MAX_BUFF_SIZE] = {0};
+char file[MAX_BUFF_SIZE] = {0};
+struct smbc_dirent* dirptr;
+
+bzero(g_workgroup,MAX_BUFF_SIZE);
+bzero(url,MAX_BUFF_SIZE);
+printf("%s/n",smbc_version());
+
+strncpy(g_workgroup,argv[1],strlen(argv[1]));
+strncpy(g_username,argv[2],strlen(argv[2]));
+strncpy(g_password,argv[3],strlen(argv[3]));
+strncpy(url,argv[4],strlen(argv[4]));
+if(url[strlen(url)-1] != '/'){
+strcat(url,"/");
+}
+err = smbc_init(auth_fn, 10);
+if(err < 0){
+perror("smbc_init error");
+}else{
+dh = smbc_opendir(url);
+while((dirptr = smbc_readdir(dh)) != NULL){
+bzero(file,MAX_BUFF_SIZE);
+printf("dirptr->name[%s],dirptr->smbc_type[%d]/n",dirptr->name,dirptr->smbc_type);
+if(dirptr->smbc_type == SMBC_FILE){
+bzero(buffer,1024);
+strncpy(file,url,strlen(url));
+strncat(file,dirptr->name,dirptr->namelen);
+printf("%s/n",file);
+if((fd = smbc_open(file,O_RDONLY,0666)) > 0){
+while((buflen = smbc_read(fd,buffer,1024)) > 0){
+//                        printf("buffer[%s]/n",buffer);
+}
+smbc_close(fd);
+}
+}
+}
+smbc_closedir(dh);
+//        printf("smbc_rmdir(url)[%d]/n",smbc_rmdir(url));
+}
+return err;
+}
+
+
+
+3.1.2       函数指针：
+
+SMBCCTX *smbc_new_context(void);
+
+创建一个新的SMBCCTX结构体。
+
+返回值：
+
+SMBCCTX结构体指针，返回NULL为失败。错误信息可通过errno获取。
+
+int smbc_free_context(SMBCCTX *context, int shutdown_ctx);
+
+删除一个SMBCCTX结构体。
+
+参数：
+
+context *：*已创建的SMBCCTX结构体指针。
+
+shutdown_ctx *：*强制删除标识。
+
+为1时，为强制删除；
+
+为0时，若此context与共享服务器的连接仍在使用或者有文件仍被打开，则删除context失败；
+
+返回值：
+
+0为成功，1为失败。错误信息可通过errno获取。
+
+SMBCCTX *smbc_init_context(SMBCCTX * context);
+
+初始化SMBCCTX结构体。
+
+参数：
+
+context *：*已创建的SMBCCTX结构体执政。
+
+返回值：
+
+成功初始化的SMBCCTX结构体指针，若返回值NULL则为初始化失败。错误信息可通过errno获取。
+
+SMBCCTX * smbc_set_context(SMBCCTX * new_context);
+
+设置（或重置）SMBCCTX结构体数据。
+
+参数：
+
+new_context *：*已创建的SMBCCTX结构体指针。
+
+返回值：
+
+被设置前的原始SMBCCTX结构体指针。
+
+SMBCFILE *(*open) (SMBCCTX *c, const char *fname, int flags, mode_t mode);
+
+打开共享服务器上的一个文件。
+
+参数：
+
+c *：*已初始化（或设置）的SMBCCTX结构体指针；
+
+fname *：*文件路径；
+
+flags *：*打开方式；
+
+mode *：*文件权限
+
+返回值 :
+
+成功打开的文件句柄，若<=0为失败，错误信息可通过errno获取。
+
+SMBCFILE *(*creat)(SMBCCTX *c, const char *path, mode_t mode);
+
+在共享服务器上的创建一个文件。
+
+参数：
+
+c *：*已初始化（或设置）的SMBCCTX结构体指针；
+
+path *：*文件路径；
+
+mode *：*文件权限
+
+返回值 :
+
+成功创建的文件句柄，若<=0为失败，错误信息可通过errno获取。
+
+ssize_t (*read)(SMBCCTX *c, SMBCFILE *file, void *buf, size_t count);
+
+使用一个打开的文件句柄来读取共享服务器上的文件。
+
+参数：
+
+c *：*已初始化（或设置）的SMBCCTX结构体指针；
+
+file *：*文件句柄；
+
+buf *：*存放读取到的数据的内存指针；
+
+count *：*读取长度
+
+返回值 :
+
+实际读取到的字节数，如果返回0，表示已到达文件尾或者无可读取的数据，此外文件读写位置会随读取到的字节移动，若返回-1表示有错误发生，错误信 息可通过errno获取。 
+
+ssize_t (*write)(SMBCCTX *c, SMBCFILE *file, void *buf, size_t count);
+
+使用一个打开的文件句柄向共享服务器上的文件写数据。
+
+参数：
+
+c *：*已初始化（或设置）的SMBCCTX结构体指针；
+
+file *：*文件句柄；
+
+buf *：*需要写入的数据的指针；
+
+count *：*写入数据的长度
+
+返回值 :
+
+实际写入的字节数，若返回-1表示有错误发生，错误信息可通过errno获取。
+
+int (*unlink)(SMBCCTX *c, const char *fname);
+
+删除一个共享服务器上的文件或者文件夹。
+
+参数：
+
+c *：*已初始化（或设置）的SMBCCTX结构体指针；
+
+fname *：*指定路径
+
+返回值 :
+
+0为成功，-1为失败，错误信息可通过errno获取。
+
+int (*rename)(SMBCCTX *ocontext, const char *oname, SMBCCTX *ncontext, const char *nname);
+
+重命名（或移动）共享目录上的文件或者文件夹。
+
+参数：
+
+ocontext *：*已初始化（或设置）的SMBCCTX结构体指针；
+
+oname *：*源路径；
+
+ncontext *：*已初始化（或设置）的SMBCCTX结构体指针；
+
+nname *：*目标路径
+
+返回值 :
+
+0为成功，-1为失败，错误信息可通过errno获取。
+
+off_t (*lseek)(SMBCCTX *c, SMBCFILE * file, off_t offset, int whence);
+
+移动文件的读写位置。
+
+参数：
+
+c *：*已初始化（或设置）的SMBCCTX结构体指针；
+
+file *：*文件句柄；
+
+offset *：*位移量；
+
+whence *：*位移起始位置（SEEK_SET,SEEK_CUR,SEEK_END）
+
+返回值 :
+
+当前文件的读写位置，若返回-1表示有错误发生，错误信息可通过errno获取。
+
+int (*stat)(SMBCCTX *c, const char *fname, struct stat *st);
+
+获取共享服务器上一个文件或者文件夹的所有信息。
+
+参数：
+
+c *：*已初始化（或设置）的SMBCCTX结构体指针；
+
+fname *：*路径；
+
+st *：*文件属性结构体
+
+返回值 :
+
+0为成功，-1为失败，错误信息可通过errno获取。
+
+int (*fstat)(SMBCCTX *c, SMBCFILE *file, struct stat *st);
+
+通过文件句柄来获取共享服务器上一个文件的所有信息。
+
+参数：
+
+c *：*已初始化（或设置）的SMBCCTX结构体指针；
+
+file *：*文件句柄；
+
+st *：*文件属性结构体
+
+返回值 :
+
+0为成功，-1为失败，错误信息可通过errno获取。
+
+int (*close_fn)(SMBCCTX *c, SMBCFILE *file);
+
+关闭一个打开的文件句柄。
+
+参数：
+
+c *：*已初始化（或设置）的SMBCCTX结构体指针；
+
+file *：*文件句柄；
+
+返回值 :
+
+0为成功，-1为失败，错误信息可通过errno获取。
+
+SMBCFILE *(*opendir)(SMBCCTX *c, const char *fname);
+
+打开共享服务器上的文件夹。
+
+参数：
+
+c *：*已初始化（或设置）的SMBCCTX结构体指针；
+
+fname *：*文件夹路径；
+
+返回值 :
+
+成功打开的文件夹句柄，若NULL为失败，错误信息可通过errno获取。
+
+int (*closedir)(SMBCCTX *c, SMBCFILE *dir);
+
+关闭一个打开的文件夹句柄。
+
+参数：
+
+c *：*已初始化（或设置）的SMBCCTX结构体指针；
+
+fname *：*文件夹句柄；
+
+返回值 :
+
+0为成功，-1为失败，错误信息可通过errno获取。
+
+struct smbc_dirent *(*readdir)(SMBCCTX *c, SMBCFILE *dir);
+
+读取共享服务器上的文件夹信息。
+
+参数：
+
+c *：*已初始化（或设置）的SMBCCTX结构体指针；
+
+dir *：*文件夹句柄；
+
+返回值 :
+
+下个文件夹进入点，若NULL为失败或读取到目录文件尾，错误信息可通过errno获取。
+
+int (*mkdir)(SMBCCTX *c, const char *fname, mode_t mode);
+
+在共享服务器上创建一个文件夹。
+
+参数：
+
+c *：*已初始化（或设置）的SMBCCTX结构体指针；
+
+fname *：*文件夹路径；
+
+mode *：*权限；
+
+返回值 :
+
+0为成功，-1为失败，错误信息可通过errno获取。
+
+int (*rmdir)(SMBCCTX *c, const char *fname);
+
+删除共享服务器上的一个文件夹。
+
+参数：
+
+c *：*已初始化（或设置）的SMBCCTX结构体指针；
+
+fname *：*文件夹路径；
+
+返回值 :
+
+0为成功，-1为失败，错误信息可通过errno获取。
+
+off_t (*telldir) (SMBCCTX *c, SMBCFILE *dir);
+
+获取文件夹流当前的读取位置。
+
+参数：
+
+c *：*已初始化（或设置）的SMBCCTX结构体指针；
+
+dir *：*文件夹句柄；
+
+返回值：
+
+下一个读取位置，-1表示有错误发生，错误信息可通过errno获取。
+
+int (*chmod)(SMBCCTX *c, const char *fname, mode_t mode);
+
+修改共享服务器上的文件的权限。
+
+参数：
+
+c *：*已初始化（或设置）的SMBCCTX结构体指针；
+
+fname *：*文件夹路径；
+
+mode *：*权限；
+
+返回值 :
+
+0为成功，-1为失败，错误信息可通过errno获取。
+
+int (*utimes)(SMBCCTX *c, const char *fname, struct timeval *tbuf);
+
+修改共享服务器上的文件的最后修改时间。
+
+参数：
+
+c *：*已初始化（或设置）的SMBCCTX结构体指针；
+
+fname *：*文件夹路径；
+
+tbuf *：*时间结构体；
+
+返回值 :
+
+0为成功，-1为失败，错误信息可通过errno获取。 
+
+范例：
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <dirent.h>
+#include <string.h>
+#include <unistd.h>
+#include <libsmbclient.h>
+
+#define MAX_BUFF_SIZE   255
+char g_workgroup[MAX_BUFF_SIZE];
+char g_username[MAX_BUFF_SIZE];
+char g_password[MAX_BUFF_SIZE];
+char g_server[MAX_BUFF_SIZE];
+char g_share[MAX_BUFF_SIZE];
+SMBCCTX * context;
+SMBCSRV * srv;
+//smbc_get_cached_srv_fn get_srv;
+
+static void auth_fn(const char *server, const char *share, char *workgroup, int wgmaxlen,
+char *username, int unmaxlen, char *password, int pwmaxlen)
+{
+
+strncpy(workgroup, g_workgroup, wgmaxlen - 1);
+strncpy(username, g_username, unmaxlen - 1);
+strncpy(password, g_password, pwmaxlen - 1);
+strcpy(g_server, server);
+strcpy(g_share, share);
+//    fprintf(stderr,"server[%s],share[%s]/n",server,share);
+}
+
+int main(int argc, char* argv[]){
+SMBCFILE* sfd;
+SMBCFILE* fd;
+int localfd = -1,readlen = -1;
+
+struct smbc_server_cache * getServerCacheData;
+char buff[1024*1024*4] = {0};
+char url[MAX_BUFF_SIZE] = {0};
+char file[MAX_BUFF_SIZE] = {0};
+struct smbc_dirent* dirptr;
+bzero(g_workgroup,MAX_BUFF_SIZE);
+bzero(url,MAX_BUFF_SIZE);
+printf("%s/n",smbc_version());
+
+strncpy(g_workgroup,argv[1],strlen(argv[1]));
+strncpy(g_username,argv[2],strlen(argv[2]));
+strncpy(g_password,argv[3],strlen(argv[3]));
+strncpy(url,argv[4],strlen(argv[4]));
+if(url[strlen(url)-1] != '/'){
+strcat(url,"/");
+}
+context = smbc_new_context();
+if(context != NULL){
+context->debug = 10;
+context->callbacks.auth_fn = auth_fn;
+context->options.one_share_per_server = 1;
+
+if(!smbc_init_context(context)){
+perror("smbc_init_context failed");
+smbc_free_context(context,1);
+return -1;
+}
+
+sfd = context->opendir(context,url);
+struct smbc_dirent dirptr1;
+while((dirptr = context->readdir(context,sfd)) != NULL){
+if(dirptr->smbc_type == SMBC_FILE){
+printf("name[%s]/n",dirptr->name);
+strncpy(file,url,strlen(url));
+strncat(file,dirptr->name,dirptr->namelen);
+if((fd = context->open(context,file,O_RDONLY,0666)) > 0){
+context->close_fn(context,fd);
+}
+}
+}
+context->closedir(context,sfd);
+}
+return 0;
+}
+
+
+
+4          Smbclient 使 用的个人小结
+
+4.1       Smbclient 编 程需要注意的地方：
+
+4.1.1     使用smbclient编程需要用到的库，/usr/lib/libsmbclient.so 或者/usr/lib/libsmbclient.a。
+
+4.1.2     smbclient中，同一个共享目录下的所有数据交互，控制消息使用的有且只有一个connection连接（通过设置 one_share_per_server属性，可将同一个共享服务器下所有操作及数据交互都使用同一个connection连接）。
+
+4.1.3     smbclient向samba服务器的连接方式：smbclient的连接请求是在调用除初始化设置外的所有API接口时才发起的。这些API中，首先 会查询当前srv下是否有可用的连接，若有则使用当前可用连接，若没有可用连接则建立新的连接。
+
+4.1.4     smbclient的句柄是一个包含与服务器连接fd，请求文件名，共享服务器句柄等连接信息的集合。
+
+4.1.5     smbclient的重连机制：smbclient的内部是不提供重连机制的，也就是说，若一个请求超时后，API将直接返回错误信息。由本节点第二点可 知，在应用层下一次调用API时，smbclient层会向samba服务器再次发出连接请求。
+
+4.1.6     smbclient的smbc族函数使用时需要注意的的地方：
+i.             由A可知，smbc_init函数实质 上是对smbc_new_context()和smbc_init_context(SMBCCTX *context)进行了封装，而smbc_init函数并没有提供参数来指定smbc_new_context和smbc_init_context使 用的context指针。因此，smbc_init函数初始化的是smbclient库中的一个全局变量SMBCCTX *statcont。我们知道当一个进程中多次调用同一个库文件时，库文件的全局变量的地址是唯一的，也就是说，若我们使用smbc族API来对 smbclient进行多线程编程是不可行的。
+ii.             由libsmbclient.h中的声明 可知，smbc族的API没用提供对SMBCCTX结构体的参数设置接口。也就是说这种API不适合有特殊需求的程序（例如需要获取的数据为 urlcontext类型，或者需要指定同一个共享服务器下的所有共享文件夹都只使用一个连接等）
+
+4.1.7     由SMB协议可知，基于SMB协议的数据交互必须遵循 连接->发送命令->接收数据 ->发送命令->......->断开连接 的阻塞通信模式，又因为当smbclient是以一个连接至少对应一个共享文件的方式来进行通信的，所以若简单的对smbclient使用多线程操作，会 出现数据混乱的情况，导致不可预期的错误。
+
+4.1.8     管理SMBCCTX的一些小技巧：
+
+i.             首先，我们需要使用SMBCCTX结构 体函数指针API。
+
+ii.             SMBCCTX结构体中提供了一个 callbacks结构体，我们可以通过使用其中的部分函数来获取SMBCCTX的一些状态，并进行管理。
+
+iii.             get_cached_srv_fn：通 过服务器地址、共享目录名、用户名、所在域名来获取SMBCCTX中符合条件的srv，返回值将用于下面的这些函数调用。
+
+iv.             check_server_fn：使用这个函 数可以查看指定的server的健康状态（这里特别提一下，在samba3.0.X的版本中，此函数是通过向服务器端发送自定义PING包来确定当前 server的连接是否正常，以此来判断server的健康状态的；而samba3.2.4中，则是通过当前连接所用的fd所对应的 socket_addr结构体是否存在来判断server的健康状态的。或许设计者的出发点不同，但samba3.0.X更加适合我们现在的项目）。
+
+v.             remove_unsed_server_fn： 删除当前没有使用的srv
+
+vi.             remove_cached_srv_fn： 删除缓存池指定的srv。
+
+vii.             purge_cached_fn：删除缓存池 所有的srv
+
+4.2       多线程编程的解决方案：
+
+根 据samba官方消息，3.0.X版本的libsmbclient设计并未考虑成线程安全，因此最佳的多线程调用方式应该为加锁方式，至于新版本中是否为 线程安全，以及其使用方式，持续关注中。。。

@@ -1,6 +1,8 @@
-*
+/*
 
-!.config/*
+#####################################################
+## only backup these files
+#####################################################
 !.gitignore
 !.bash_history
 !.bashrc
@@ -17,3 +19,10 @@
 !.vimperatorrc
 !.vimrc
 !.Xmodmap
+
+#####################################################
+## after use some time, don't back these file
+#####################################################
+/.bash_history
+/.fluxbox/fbrun_history
+/.sdcv_history

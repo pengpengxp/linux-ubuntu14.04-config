@@ -1,0 +1,111 @@
+陈斌的博客
+Linux,Programming
+Menu
+Skip to content
+
+    Home
+    关于(About)
+
+Tag Archives: window	
+Posted on February 3, 2013	
+Moving focus and buffer between Emacs window
+
+For the basics, check the excellent article Moving between Emacs windows.
+
+If you are impatient to read the above article, here is my summary:
+
+    you can use windmove.el (embedded in Emacs). Its hotkey are Shift+Arrow.
+    switch-window.el is great. The default hot key is “C-x o”.
+
+I love switch-windows.el. It’s only three key strikes to select a window.
+
+I also use other packages which requrie less key strikes than switch-windows.el.
+1 window-numbering.el
+
+window-numbering.el is the my most favourite package. It uses hot key “M-NUM” to switch window (for example, “M-3″ to select window with number 3). By using this package I can press only one key to switch window. Besides, it has some extra features like hotkey “M-0″ to jump to the minbuffer.
+
+Here is my configuration of window-numbering.el:
+(require 'window-numbering)
+;; highlight the window number in pink color
+(custom-set-faces '(window-numbering-face ((t (:foreground "DeepPink" :underline "DeepPink" :weight bold)))))
+(window-numbering-mode 1)
+
+2 evil-mode
+
+evil-mode is a vim-emulation. It use vim’s hot keys (C-w h/j/k/l) to move. If you set the CAPSLOCK key to ctrl key, you will notice “C-w h” is more efficient than “C-x o”. It’s because “w” key is more close than “x” key and you don’t need move finger when pressing “h/j/k/l”.
+
+3 buffer-move.el
+
+buffer-move.el moves the buffer instead of focus between windows. It can be installed through MELPA.
+
+Here is my configuration:
+(global-set-key (kbd "C-c C-b C-k")     'buf-move-up)
+(global-set-key (kbd "C-c C-b C-j")   'buf-move-down)
+(global-set-key (kbd "C-c C-b C-h")   'buf-move-left)
+(global-set-key (kbd "C-c C-b C-l")  'buf-move-right)
+
+4 updated
+
+I use keyfreq to record all my key pressing for more than six months.
+
+According to the data collected by keyfreq, more than 99 percent of my moving focus between windows is done through window-numbering.el.
+
+So it’s necessary to optimize window-numbering.el further. By default, window-numbering.el uses “M-num” key to select window which is already efficient. But as a geek, I have a tendency to push the efficiency to the extreme end.
+
+Finally I use hotkey “,1″, “,2″, and “,3″ to switch to the window numbering “1″, “2″, and “3″ in evil-mode?
+
+Here is the code:
+(define-key evil-normal-state-map ",1" 'select-window-1)
+(define-key evil-normal-state-map ",2" 'select-window-2)
+(define-key evil-normal-state-map ",3" 'select-window-3)
+
+This could be regarded as an example how I take advantage of evil and evil-leader.
+
+Check my code at github to see complete configuration.
+
+Posted in Linux	| Tagged buffer, emacs, en, move, window	| Leave a comment
+Posted on July 20, 2012	
+Emacs中的完美多窗口操作
+典型的工作流
+
+    在两个子窗口中对比文件内容
+    打开更多的窗口以参考其他信息.
+    对某个窗口内容比较有兴趣,跳转到该窗口,将该窗口最大化
+    看完最大化的窗口内容后,undo最大化操作,重新回到早先的多个小窗口模式以便继续纵览全局
+
+将子窗口自动编号,然后按M-0…9跳转(最爱)
+
+安装window-numbering.el,然后在.emacs中添加以下代码,
+
+(require 'window-numbering)
+(window-numbering-mode 1)
+
+undo/redo之前的窗口操作(最爱)
+
+安装Winner Mode,然后在.emacs中添加以下代码,
+
+(winner-mode 1)
+;; copied from http://puntoblogspot.blogspot.com/2011/05/undo-layouts-in-emacs.html
+(global-set-key (kbd "C-x 4 u") 'winner-undo)
+(global-set-key (kbd "C-x 4 r") 'winner-redo)
+
+焦点移动到下一窗口(常用)
+
+M-x other-window,快捷键是`C-x o`.
+水平/垂直切分当前窗口(常用)
+
+快捷键C-x 2/3
+将当前子窗口最大化(常用)
+
+M-x delete-other-windows,快捷键`C-x 1`.
+删除当前子窗口(偶尔用)
+
+M-x delete-window (快捷键`C-x 0`)
+
+顺便说一下,M-x kill-buffer-and-window (快捷键`C-x 4 0`),我现在用得更多 些.
+移动焦点到上下左右的窗口(基本不用)
+
+因我较喜欢vi快捷键,所以我安装了Evil Mode.快捷键和Vi一样. C-w h/j/k/l移动至各方向的子窗口.
+存储/载入窗口布局到register(基本不用)
+
+`C-x r w <register>`存储,`C-x r j <register>`载入.

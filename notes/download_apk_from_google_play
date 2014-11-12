@@ -1,0 +1,42 @@
+http://forums.crackberry.com/bb10-android-app-sideloading-f279/tutorial-how-download-apk-file-google-play-store-820107/
+
+Tutorial: How to download an APK file from Google Play Store
+Page 1 of 3123NextLastLast Results 1 to 25 of 60 Like Tree18Likes
+Thread Tools
+Search Thread
+Display
+maneck35  maneck35 is offline
+maneck35's Avatar
+CrackBerry Abuser
+Posts297 PostsGlobal Posts305 Global Posts
+06-19-2013, 03:25 PM
+Thread AuthorThread Author   #1  
+I've seen many people asking the same question over and over again, so I thought I'd write up a small tutorial for this.
+
+Note: This method will NOT allow you to download APK files of paid apps.
+
+Things Needed:
+1. Google Chrome Browser: Download Link
+
+2. APK Downloader Extension (A file named '1.4.3.crx' will be downloaded to a destination of your choice): Download Link
+
+3. An Android Device OR if you don't have one, get the BlueStacks App Player for Windows or Mac: Download Link
+
+Instructions:
+Step 1: Install Google Chrome if you don't already have it.
+
+Step 2: Type "chrome://extensions" in the address bar without the quotes.
+
+Step 3: Drag the 1.4.3.crx file that you downloaded into the Extensions page that's opened up in Chrome. Press Add in the popup box that comes up.
+
+Step 4: Click the Options link beneath the APK Downloader entry on the Extensions page and you will be asked to provide your email, password and device ID. Enter the email address and password associated with your Google Play account. Keep this page open.
+
+Step 5 (optional - skip this step if you have an Android phone): Install BlueStacks App Player and run it.
+
+Step 6: In BlueStacks (or your Android phone) open the Play Store and search for, and download the DeviceID app.
+
+Step 7: Once installed, open the DeviceID app and note the Device ID and email address shown. Type these into the APK Downloader Settings page that you kept open in Chrome in Step 4.
+
+Step 8: Save the settings and now, whenever you browse the Play Store from Chrome, you can click on the APK Downloader icon that comes up in the address bar to download the APK file. See Screenshot
+
+Hope this helps.

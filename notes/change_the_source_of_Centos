@@ -1,0 +1,207 @@
+  
+  根据需要选择设置源：
+  一、如何设置CentOS 5的yum源为上海交通大学网站
+  二、设置yum源为国内的服务器
+  三、CentOS 下使用本地镜像源
+
+  一。如何设置CentOS 5的yum源为上海交通大学网站
+
+  1．修改/etc/yum.repos.d/CentOS-Base.repo为:
+  CentOS-Base.repo
+  [base] 
+  name=CentOS-5 - Base 
+  #mirrorlist=http://mirrorlist.centos.org/?release=$releasever5&arch=$basearch& 
+  repo=os 
+  #baseurl=http://mirror.centos.org/centos/$releasever/os/$basearch/ 
+  baseurl=http://ftp.sjtu.edu.cn/centos/5.0/os/$basearch/ 
+  gpgcheck=1 
+  gpgkey=http://mirror.centos.org/centos/RPM-GPG-KEY-centos5
+
+  #released updates 
+  [update] 
+  name=CentOS-5 - Updates 
+  #mirrorlist=http://mirrorlist.centos.org/?release=4&arch=$basearch&repo=updates 
+  baseurl=http://ftp.sjtu.edu.cn/centos/5.0/updates/$basearch/ 
+  gpgcheck=1 
+  gpgkey=http://mirror.centos.org/centos/RPM-GPG-KEY-centos5
+
+  #packages used/produced in the build but not released 
+  [addons] 
+  name=CentOS-5 - Addons 
+  #mirrorlist=http://mirrorlist.centos.org/?release=4&arch=$basearch&repo=addons
+
+  baseurl=http://ftp.sjtu.edu.cn/centos/5.0/addons/$basearch/ 
+  gpgcheck=1 
+  gpgkey=http://mirror.centos.org/centos/RPM-GPG-KEY-centos5
+
+  #additional packages that may be useful 
+  [extras] 
+  name=CentOS-5 - Extras 
+  #mirrorlist=http://mirrorlist.centos.org/?release=4&arch=$basearch&repo=extras
+
+  baseurl=http://ftp.sjtu.edu.cn/centos/5.0/extras/$basearch/ 
+  gpgcheck=1 
+  gpgkey=http://mirror.centos.org/centos/RPM-GPG-KEY-centos5
+
+  #additional packages that extend functionality of existing packages 
+  [centosplus] 
+  name=CentOS-5 - Plus 
+  #mirrorlist=http://mirrorlist.centos.org/?release=4&arch=$basearch&repo=centosplus 
+  baseurl=http://ftp.sjtu.edu.cn/centos/5.0/centosplus/$basearch/ 
+  gpgcheck=1 
+  enabled=0 
+  gpgkey=http://mirror.centos.org/centos/RPM-GPG-KEY-centos5
+
+  #contrib - packages by Centos Users 
+  [contrib] 
+  name=CentOS-5 - Contrib 
+  #mirrorlist=http://mirrorlist.centos.org/?release=4&arch=$basearch&repo=contrib 
+  baseurl=http://ftp.sjtu.edu.cn/centos/5.0/contrib/$basearch/ 
+  gpgcheck=1 
+  enabled=0 
+  gpgkey=http://mirror.centos.org/centos/RPM-GPG-KEY-centos5
+
+  2．执行
+  64位：
+  rpm --import http://ftp.sjtu.edu.cn/centos/5.0/os/x86_64/RPM-GPG-KEY-CentOS-5
+
+  32位：
+  rpm --import http://ftp.sjtu.edu.cn/centos/5.0/os/i386/RPM-GPG-KEY-CentOS-5
+
+  3．执行
+  yum update
+  Ok了，搞定。
+
+  二、设置yum源为国内的服务器：
+
+  1.相关需更改配置文件位置同上。
+
+  # CentOS-Base.repo
+  #
+  # This file uses a new mirrorlist system developed by Lance Davis for CentOS.
+  # The mirror system uses the connecting IP address of the client and the
+  # update status of each mirror to pick mirrors that are updated to and
+  # geographically close to the client. You should use this for CentOS updates
+  # unless you are manually picking other mirrors.
+  #
+  # If the mirrorlist= does not work for you, as a fall back you can try the 
+  # remarked out baseurl= line instead.
+  #
+  [base]
+  name=CentOS-5 - Base
+  baseurl=http://mirror.be10.com/centos/5/os/i386/
+  gpgcheck=1
+  #released updates
+  [update]
+  name=CentOS-5 - Updates
+  baseurl=http://mirror.be10.com/centos/5/updates/i386/
+  gpgcheck=1
+  #packages used/produced in the build but not released
+  [addons]
+  name=CentOS-5 - Addons
+  baseurl=http://mirror.be10.com/centos/5/addons/i386/
+  gpgcheck=1
+  #additional packages that may be useful
+  [extras]
+  name=CentOS-5 - Extras
+  baseurl=http://mirror.be10.com/centos/5/extras/i386/
+  gpgcheck=1
+  #additional packages that extend functionality of existing packages
+  [centosplus]
+  name=CentOS-5 - Plus
+  baseurl=http://mirror.be10.com/centos/5/centosplus/i386/
+  gpgcheck=1
+  enabled=0
+  #contrib - packages by Centos Users
+  [contrib]
+  name=CentOS-5 - Contrib
+  baseurl=http://mirror.be10.com/centos/5/contrib/i386/
+  gpgcheck=1
+  enabled=0
+  #packages in testing
+  [testing]
+  name=CentOS-5 - Testing
+  baseurl=http://mirror.be10.com/centos/5/testing/i386/
+  gpgcheck=1
+  enabled=0
+
+  2.rpm --import http://mirror.be10.com/centos/RPM-GPG-KEY-CentOS-5
+
+  三、CentOS 下使用本地镜像源
+
+  不知道大家有没有和我一样尝试使用rsync 同步mirrors.kernel.org/CentOS，总计超过6G的数据在只有30-50KB/s的速度下传输，也许需要3-5天才可以完成。怎么办？使用国内的服务器吧，但是他们只提供yum源更新，也就是只能使用http访问，而不提供rsync server。
+
+  这是我找到的一个速度不错的CentOS 4/5 yum源:218.201.144.68
+
+  使用wget将centos 5镜像到本地磁盘上
+
+  mkdir -pv /opt/CentOS
+  cd /opt/CentOS
+  wget -m -c http://218.201.144.68/centos/5/os/i386/
+
+  以上命令会从网络上抓取2.6G左右的数据，会运行很长时间，你完全可以去做其它的工作。完成后，使用ls命令看看我们获取到的数据，我们只需要保留i386目录下面的数据，将其移动到opt，并将下载时产生的index.html?之类文件一并删除
+
+  cd /opt/CentOS/218.201.144.68/centos/5/os/
+  mv i386 /opt/CentOS5
+  cd /opt
+  rm -rf CentOS
+  find CentOS5 -name index.htm?\* -exec rm -f{}\;
+
+  下一步配置yum更新源。CentOS已经在/etc/yum.repos.d下面创建了CentOS-Media.repo，对该文件做适应修改就可以使用。以下是修改结果
+
+  [root@localhost etc]# cat yum.repos.d/CentOS-Media.repo
+  # CentOS-Media.repo
+  #
+  # This repo is used to mount the default locations for a CDROM / DVD on
+  # CentOS-5. You can use this repo and yum to install items directly off the
+  # DVD ISO that we release.
+  #
+  # To use this repo, put in your DVD and use it with the other repos too:
+  # yum --enablerepo=c4-media [command]
+  #
+  # or for ONLY the media repo, do this:
+  #
+  # yum --disablerepo=\* --enablerepo=c4-media [command]
+
+  [c5-media]
+  name=CentOS-$releasever - Media
+  baseurl=file:///opt/CentOS
+  # file:///media/cdrom/
+  # file:///media/cdrecorder/
+  gpgcheck=1
+  enabled=1
+  gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-beta
+
+  现在就可以使用yum check-update来测验一下本地源了。如果在没有连接网络情况，最好把yum.repos.d目录下面的其它repo文件适当更名，这样yum就只使用本地源，速度得以提升。
+
+  备注：本人只将网络上此方面的相关资料收集，关于配置文件中源版本、源连接速度、源可用性未作测试。
+
+  希望对此问题有疑问的朋友可以参考这些方法。
+
+   
+   【已有2位网友发表了看法】 【打印】 【关闭】
+
+    相关评论
+    作者: dexin 发布日期: 2008-1-13
+    当进行一些yum操作时，比如说yum install xxx，会出现类似的错误：
+    http://centos.ustc.edu.cn/centos/5.0/updates/i386/repodata/repomd.xml: [Errno 14] HTTP Error 404: Not Found
+
+    原因：在http://centos.ustc.edu.cn/centos/5.0/readme中这么说：
+    ......
+    you should use /5/ and not /5.0/ in your path....
+    ......
+    解决方法：
+    在所有后缀名为repo的文件中，比如CentOS-Base.repo，或者edu.repo（也可能没有这个文件）
+    所有出现5.0的地方都改为5，比如将
+    http://centos.ustc.edu.cn/centos/5.0/contrib/$basearch/
+    改为：
+
+    http://centos.ustc.edu.cn/centos/5/contrib/$basearch/
+
+    修改环境：CentOS 5
+    修改时间：2008－01－13
+    作者: cikee 发布日期: 2010-4-07
+    我恨上海交通大学啊。。我辛辛苦苦的一个个字更改完了。运行rpm，结果提示：
+    error：http://ftp.sjtu.edu.cn/centos/5.0/os/i386/RPM-GPG-KEY-Centos-5: import read failed （-1）
+    waring：u 0x9ff08c8 nrefs ！=0 （ftp.sjtu.edu.cn http）
+

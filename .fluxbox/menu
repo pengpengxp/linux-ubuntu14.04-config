@@ -1,0 +1,5 @@
+[begin] (fluxbox)
+[exec] (gnome-terminal) (/usr/bin/gnome-terminal)
+[exec] (chrome) (/usr/bin/google-chrome)
+[include] (/etc/X11/fluxbox/fluxbox-menu)
+[end]
