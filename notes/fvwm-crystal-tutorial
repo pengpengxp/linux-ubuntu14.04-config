@@ -1,0 +1,187 @@
+ [转帖] FVWM-Crystal介绍 2009-12-21 10:47:04
+分类： LINUX
+FVWM-Crystal介绍
+Wikipedia，自由的百科全书
+是不是也曾试过使用FVWM而被它的配置文件所吓倒？试试看FVWM-Crystal[1]这个theme吧，无须自己动手就可以得到一个漂亮而实用的桌面了:-) 
+ 特点 
+大量的透明效果，漂亮的桌面 
+多种可选窗口装饰、桌面布局，方便的壁纸选择 
+由一个 python 脚本搜索${PATH}后自动生成可使用的程序菜单，可识别许多程序 
+通知区域。如scim，stardict等运行时的托盘小图标 
+QuakeConsole---即按 alt + ` 时会出现的一个临时的终端，很方便使用的一个小功能 
+控制某些音乐播放器。现在支持xmms，mpd[2]（需要安装mpc为前端） 
+许多实用的键绑定。包括控制系统音量(需要aumix或alsamixer支持)，切换虚拟桌面，控制窗口大小等 
+可以通过修改系统配置文件(/usr/share/fvwm-crystal/下)和用户配置文件来定制。用户配置文件放在${HOME}/.fvwm下，并以比较合理的结构组织。 
+安装 
+在Gentoo里只需 emerge，FVWM-Crystal依赖于FVWM，所以可以先安装一个。FVWM可以加上libstroke的支持，以后就可以自己定义鼠标动作了。 
+USE="stroke" emerge -avt fvwm
+emerge -avt fvwm-crystal
+如何使用 
+根据你使用的登录管理器使用不同的方法来在登录时使用FVWM-Crystal。 
+xdm 
+修改/etc/rc.conf，最后一行改为: 
+XSESSION="fvwm-crystal"
+gdm/kdm 
+直接在菜单里面选择即可。 
+不使用登录管理器，使用startx 
+在$HOME下创建或编辑文件.xinitrc，内容如下： 
+#!/bin/bash
+exec fvwm-crystal
+FVWM-Crystal的菜单操作很简单也很直观，自己enjoy吧！可以通过菜单设置默认的terminal，墙纸，窗口装饰的样式、颜色，窗口焦点的切换方式，关机，重启等（需要配置好sudoers）。 
+快捷键 
+在/usr/share/doc/fvwm-crystal-version中
+有关于键绑定和其他如使用Rox-Filer来管理桌面的文档。先介绍一些对我常使用的键绑定的介绍，以后有机会再补全，心急的话自己先看吧。如果你不满
+意默认的键绑定可以在/usr/share/fvwm-crystal/fvwm/components/bindings目录下搞到对应的文件来修改。
+约定：M ＝ alt，C = ctrl，S = shift 
+M + `: 开/关 QuakeConsole 
+MS + `: 开启一个新的终端 
+M + Fn: 切换到第n个桌面 
+MS + Fn: 移动当前活动窗口到第n个桌面 
+M + ,: 系统音量减小10% 
+M + .: 系统音量增加10% 
+MS + ,: 系统音量减小5% 
+MS + .: 系统音量增加5% 
+MS + [0-9]: 改变窗口大小、卷起或者水平平铺、竖直平铺等，自己试试看吧，很有趣的方式 
+M + tab: 列出窗口列表，不包含最小化的窗口 
+MS + tab: 列出最小化的窗口 
+M + menu: 激活主菜单（menu就是键盘上有菜单图标的那个键） 
+M + Win_R: 激活程序菜单 
+添加未识别的程序 
+在$ {HOME}/.fvwm下建立Applications目录，注意要保持和/usr/share/fvwm-
+crystal/fvwm/Applications下面保持相同的目录结构。然后建立一个特别命名的脚本。如为添加LumaQQ可以在${HOME}
+/.fvwm/Internet/IM下建立如下名字的脚本： 
+10~lumaqq~LumaQQ
+第一个数字是可选的，用来指定在程序面板中出现的优先级。第二个lumaqq是程序的名字，FVWM-Crystal用它来检查命令是
+否存在，但是它还用来选择出现在菜单中的图片，默认为22x22的png图标，具体见下面一节，所以此项也是必须的。第三个LumaQQ是在程序面板中出
+现时显示的名字，这个是必须的。然后编辑脚本如下： 
+#!/bin/bash
+exec lumaqq $@
+不要忘了chmod为可执行的！这样在重启FVWM-Crystal以后LumaQQ就会出现在程序面板Internet目录下面了。
+这里特别指出的是，也许有的人会存在无法启动lumaqq的问题，提示找不到jar包，这样你需要检查你的lumaqq可执行命令在lumaqq的目录进
+行执行的，那么你在/usr/bin等等默认搜索目录中要写的执行lumaqq的脚本，应该是lumaqq在系统中的绝对路径，而不是一个符号链接。 
+另
+外由于用xdm登录时用户的路径如${HOME}/bin没有包含进来，所以在用户目录下的可执行程序不会被检测到，也就不会在面板里面创建一项，可以把
+脚本名中的第二个用来检查程序是否存在的部分去掉，如改成：10~LumaQQ，这样就可以了，但是这样图片就只有默认的了。 
+或者也可以不用xdm登录，在${HOME}/.bash_profile最后添加一行startx，这样在文本界面登录以后就会自动运行X Window了。 
+添加未识别程序的图片 
+同
+样在.fvwm下保持和/usr/share/fvwm-crystal/fvwm下相同的结构建立icons/Default目录，然后把你要指定的图
+片放在这里就可以了，关键的应该是22x22分辨率的图片。可以用ImageMagic里提供的convert程序改变图片大小，如： 
+convert -resize QQ.png lumaqq.png
+这里图片的名字应该和你的可执行程序名字相同。 
+如何显示中文 
+在alva的blog[3]有
+很多关于FVWM和FVWM-Crystal本地化的文章，具体请看他的blog吧。不过要注意的是FVWM-Crystal里面有函数把${HOME}
+/.fvwm/.fvwm2rc里面的设置全部去掉了，所以在.fvwm2rc里面设置中文是没有效果的。应该在/usr/share/fvwm-
+crystal/fvwm/components/style/Menu里面修改。如： 
+MenuStyle * Font "xft:Vera Sans YuanTi:pixelsize=12"
+Style * Font "xft:Vera Sans YuanTi:pixelsize=12"
+ 其他 
+使修改只作用于当前用户 
+如
+果要对FVWM-Crystal作什么修改最好是在用户主目录下进行修改，这样以来可以使系统不受影响，而来以后更新就不用重新配置了。具体方法：如果要
+修改/usr/share/fvwm-crystal/fvwm下的哪个文件，进入到${HOME}/.fvwm，保持与系统目录里相同的目录结构，然后
+将要修改的文件复制过来再进行修改。 
+键绑定的与 Emacs 或其他程序的冲突 
+Fvwm-Crystal 默认的键绑定与Emacs冲突，主要在于emacs中的 M + x
+在fvwm-crystal中用来控制播放器。而且默认的fvwm-crystal没有使用 win
+键，因此可以修改/usr/share/fvwm-crystal/fvwm/components/functions/Keyboard-
+Modifiers。只需替换了几个注释就可以利用左边的win键来代替alt键，也避免了与Emacs冲突，注释中有说明。 
+登录时即启动 scim 
+根据你使用登录管理器与否修改${HOME}/.xinitrc或/etc/X11/Session/fvwm-crystal，在exec fvwm-crystal之前加上： 
+LANG=zh_CN.UTF-8 scim -d (这里改成你所使用的local)
+GTK_IM_MODULES=scim
+some eye-candy :-) 
+这些应该可以通过修改/usr/share/fvwm-crystal/fvwm/preferences/Startup来自动启动的。（不知道为什么，我没有成功） 
+gdeskcal[4]: 在桌面上显示日历。 
+conky[5]: 在桌面上显示系统信息，比torsmo(已经没有人维护了)功能更强一些吧。另外还有gkrellm[6]。 
+[编辑]
+相关链接 
+一些关于 FVWM 配置的网页： 
+王垠的FVMW介绍[7]   
+LinuxSir上关于FVWM配置的介绍[8]   
+Gentoo Wik上关于torsmo的配置[9]   
+alva的Blog,有许多关于FVWM和FVWM-Crystal中文化的文章[10]   
+--mother's son 20:13:56 2006年3月3日 (CET) 
+取自"http://www.tecehux.com/wiki/index.php?title=FVWM-Crystal%E4%BB%8B%E7%BB%8D"
+
+
+安装及设置过程
+apt-get install fvwm-crystal
+fvwm-crystal是fvwm的一个配置好了的前端，需要fvwm支持，建议用aptitude安装。之后在用户目录下，编辑.xsession或.xinitrc文件皆可，写入如下行：
+$ exec fvwm-crystal
+在命令行启动X：
+$ startx
+这样就进入crystal界面了。
+[$]crystal的好处是会在启动时自动 寻找相关的应用程序，比如eclips，xmms，iceweasal(firefox)，stardict，等等，凡是你装了的，路径里能找到的，它都 会给你找到，并放在分类工具栏里。这样应用程序的菜单就不用自己写了，很方便。当然还是会有一些用户自己的特殊情况，比起fvwm来麻烦要少很多了。
+[$]菜单默认是透明色系，自己可以改。用户自己的设置在~/.fvwm/下，自己建立想改的相应目录和文件。注意，这个目录下的目录系必须和/usr/share/fvwm-crystal/fvwm/目录下的目录系相同。系统菜单很清晰，很容易用，可以改背景，主题等等。
+[$]默认绑定了了许多键盘和鼠标组合，比较好用的是：
+Alt+"`"：在屏幕上方出现一个控制台，在所有窗口的上面，就像FPS游戏里面的控制台一样。
+Alt+Shift+"`"：开启一个默认终端 。
+Alt+Shift+1,2,3...9：改变所有桌面上窗口的排列方式，1 是上下排列，2是在屏幕上均有分布，3是层叠，...自己试试就知道了，很花哨。
+Alt+","和"."：系统音量+或-。其实Alt+键盘最下一排字母，从z到"/"，都是控制audio播放器的。
+所有的绑定在/usr/share/doc/fvwm-crystal/Keyboard bindings.txt.gz和Mouse bindings.txt.gz文件中有详细说明。
+[$]多数主题的系统默认右键弹出默认终端，你可以自己改成弹出系统菜单(具体怎么改下面再说)。这个有点麻烦，折腾了我一晚上才搞清楚的。现说明一下菜单和键盘绑定的具体情况：
+系统菜单的定义文件是/usr/share/doc/fvwm-crystal/recipes/(以下简写为：/*~*/recipes)中的相应主题定义文件，比如Default主题中的菜单，就是这个目录下Default文件中以如下行开头的句块：
+Main "diamond" menu {{{2
+DestroyMenu /FVWM-Crystal
+AddToMenu /FVWM-Crystal
+......
+句块中有这么一句：
+Include components/bindings/Desktop-RMB-OpenTerminal
+这句调用了右键弹出终端的定义文件，位置是：/*~*/components/bindings/Desktop-RMB-OpenTerminal，内容如下：
+# Default desktop bindings
+# Open new terminal on RMB
+Mouse 3 RI $[Mod] AA
+# vim:ft=fvwm
+其中，Mouse 3-鼠标右键，R-根窗口，就是桌面；I-Iconfied 窗口；$[Mod]控制键，可用xmodmap -pm命令查看，$[Mod1]是左右ALT键；“AA”是系统定义的一个动作：弹出默认终端，具体的定义在这里：/*~*/components/functions/Exec-Accelerator文件中(就这个AA和它的定义文件找的我头晕，估计耗了了上千脑细胞)。具体的定义如下：
+DestroyFunc AA
+AddToFunc AA
++ I Window-SetPlacementPolicy
++ I Exec exec $[DefaultTerminal]
+我用的是crxvt，所以改为如下：
+DestroyFunc AA
+AddToFunc AA
++ I Window-SetPlacementPolicy
++ I Exec exec $[DefaultTerminal]-gb -fg white -bg black -tr +sb
+其中$[DefaultTerminal]是crystal-fvwm自己定义的变量，即默认终端，可以自行更改。其定义文件在这里：
+/*~*/preferences/DefaultTerminal
+内容如下：
+FindCommand DefaultTerminal crxvt urxvt Eterm aterm crxvt mrxvt xterm gnome-terminal konsole xfce4-terminal x-terminal-emulator
+其中的FindCommand ，以及下面提到的SavePreferences等是系统定义的函数，其定义分别在这两个文件中：
+/*~*/components/functions/FindFunctions
+/*~*/components/functions/Preferences
+其作用是按照顺序测试后面的命令，看有哪些是存在的，并返回第一个测试存在的命令(我用crxvt，文件中没有，于是手动加入)。再由SavePreferences 命令 将上面的返回值记录在Preferences文件中，作为默认终端：
+SavePreferences DefaultTerminal "FindCommand DefaultTerminal $0 crxvt urxvt Eterm aterm mrxvt xterm gnome-terminal konsole xfce4-terminal x-terminal-emulator"
+默认控制台终端DefaulConsoleTerminal也是这样处理的，上面这段源码来自这个文件：
+/*~*/components/functions/Preferences-Menu
+这是系统菜单的定义文件，在起中可以选择默认终端和默认控制台终端。
+如果想把右键弹出终端改为右键弹出系统菜单，就在
+/*~*/components/bindings/Desktop-RMB-OpenTerminal
+这个文件中，将下面这句话注释掉：
+Mouse 3 RI $[Mod] AA
+并改为弹出菜单语句：
+Mouse 3 RI $[Mod] Menu /FVWM-Crystal $[MenuPosition-SE]
+$[MenuPosition-SE]是弹出菜单的摆放位置，具体定义文件在这里：
+/*~*/components/functions/Menu-Position
+如果想改变alt+~ 弹出Console的样式，引用文件在这里：
+/*~*/components/apps/QuakeConsole
+[$]TopDown主题的弹出菜单比较全，可以照搬，不过注意要把菜单定义文件前的PipeRead那一行内容也一起拷过去。
+[$]如果只想改动用户个人的配置，将上面的/*~*/目录改为用户配置目录：~/.fvwm/ ，其下的目录系要和/*~*/目录下的目录系保持一致。系统启动会优先读入用户的个人配置。
+[$]其他个人偏好的配置，依然按照fvwm的语法写入主文件(比如/*~*/recipes/Default)就行了。
+[$] 菜单和下方状态栏的中文调整: 
+修 改/usr/local/share/fvwm-crystal/fvwm/recipes／下主题文件，其中关于字体的设置全部改为 "-adobe-courier-bold-r-*-*-12-*" 。一种简单的方法是，看哪行有 Font 和 xft这两个关键字，而且有其他字体的名字，基本上就可以把 “ ” 中的内容换成以上内容。
+/*~*/component/styles/Menu 中以Font开头的行定义系统菜单的字体.
+      关于标题栏的中文： 
+修改 /usr/local/share/fvwm-crystal/fvwm/decorations/ 目录下各个主题中的 Theme.* 文件，修改的内容和方法同上。
+[$]关于fvwm系统函数
+crystal中定义了一些fvwm系统函数，比如AA,A和S等，,其意义分别如下
+A      : 以-e为参数，启动一个终端，如urxvt
+AA    : 启动一个不能以e为参数的终端，比如xterm，crxvt
+S       : 用sudo命令执行程序
+[$]如果想让fvwm打开一个终端并在终端中执行一个shell应用程序，比如aptitude等，不能用exec命令引入，因为这些应用程序没有图形界面，不能离开shell单独执行。这种情况，可以定义一个系统函数，比如上面提到的S，然后用"FvwmCommand"命令来调用这个系统函数，这样fvwm就自动给这个函数打开一个终端来执行应用程序。
+[$] Application 文件夹中分为多个文件夹，其中的文件命名形式都是用'~'隔开的两段字符，例如:
+Aapplication/System/Configuration/~aptitude~Aptitude
+第一个“~”后面的字符串是fvwm启动时要检查的命令，如果命令存在，就读入此文件的内容，并在任务栏中开启一个启动按钮。在桌面上点击此启动按钮就能调用此文件中定义的命令。如果命令不存在，就不开启启动按钮。
+第二个“~”后面的字符串是要在任务栏中快捷方式上显示出来的项目名称。
+所以，如果你不想让crystal在启动时检查快捷方式对应的命令是否存在，就将这个文件的第一个字符串改为系统任意一个已存在的命令，比如“ls”，这样fvwm在启动时就总会为此文件开启一个启动按钮。

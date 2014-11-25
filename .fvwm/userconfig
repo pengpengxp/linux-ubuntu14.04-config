@@ -1,0 +1,52 @@
+# 显式中文
+MenuStyle * Font "xft:Vera Sans YuanTi:pixelsize=14:Bold"
+Style * Font "xft:Vera Sans YuanTi:pixelsize=14:Bold"
+# Style * Font  -*-simsun-medium-r-*-*-14-*-*-*-*-*-*-*
+
+AddToFunc InitFunction
++ I Exec fcitx
++ I Exec sogou-qimpanel
++ I Exec gnome-sound-applet
++ I Exec /home/pengpengxp/peng_bin/p_set_resolution.sh #change the resolution
++ I Exec xset r rate 200 30 #the keyborad speed
++ I Exec xmodmap "/home/pengpengxp/.Xmodmap"
+#+ I Exec tomboy
+#+ I Exec ubuntuone-launch
+#+ I Exec gnome-volume-control-applet
+#+ I Exec /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1
+##其它... /etc/xdg/autostart/...
+
+key F1 A A Exec gnome-terminal 
+key F2 A A Exec fbrun
+key M A MC Exec emacs24-x
+key F4 A M Close # alt+F4 关闭窗口
+Key r A CM Restart # alt+r 重启fvwm
+
+DeskTopSize 4x1
+Key F1 A C GotoPage 0 0
+Key F2 A C GotoPage 1 0
+Key F3 A C GotoPage 2 0
+Key F4 A C GotoPage 3 0
+Key F1  A $[Mod1]	MoveToPage-Focus 0 0
+Key F2  A $[Mod1]	MoveToPage-Focus 1 0
+Key F3  A $[Mod1]	MoveToPage-Focus 2 0
+Key F4  A $[Mod1]	MoveToPage-Focus 3 0
+
+Key Pause A N Exec xfce4-terminal -x sdcv
+Key Scroll_Lock A A Exec killall xfce4-terminal
+
+Key E A $[Mod1] Exec exec thunar
+Key L A $[Mod1] Exec exec xflock4
+Key G A $[Mod1] Exec exec google-chrome
+Key F A $[Mod1] Exec exec firefox
+
+# maxinize the windows size
+Key space A M Window-Resize Maximize
+
+# 鼠标点击才聚焦
+Style * ClicktoFocus
+
+# alt+tab not perfect
+Key Tab A M Window-list-page "Root c c" NoDeskSort, NoGeometry, CurrentAtEnd, IconifiedAtEnd, SelectOnRelease Meta_R
+
+Key Escape A M GotoPage prev
