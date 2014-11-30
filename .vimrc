@@ -1,7 +1,8 @@
 set autoindent
+set ic
+set nohlsearch
 set nu
 set incsearch
-set hlsearch
 set tabstop=2
 set keywordprg=sdcv
 syntax on

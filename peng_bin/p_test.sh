@@ -25,3 +25,6 @@ do
 done
 echo `expr $count / 1024 / 1024` MB;
 exit 0
+
+
+exit 0

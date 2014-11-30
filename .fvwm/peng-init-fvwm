@@ -4,6 +4,8 @@
 
 ################ copy from the fvwm-crystal settings ####
 Read $[HOME]/.fvwm/from-crystal
+Read $[HOME]/.fvwm/peng-menu
+Read $[HOME]/.fvwm/peng-style
 
 ################ switch alt(meta) and win keyboard ################
 # Mod - any modifier
@@ -22,26 +24,38 @@ SetEnv Mod2 4S
 SetEnv SelectOnReleaseKey Super_L
 
 ################ 显式中文 ################
-MenuStyle * Font "xft:Vera Sans YuanTi:pixelsize=14:Bold"
-Style * Font "xft:Vera Sans YuanTi:pixelsize=14:Bold"
+# MenuStyle * Font "xft:Vera Sans YuanTi:pixelsize=14:Bold"
+MenuStyle * Font "xft:Hiragino Sans GB W3:pixelsize=14:Italic"
+# Style * Font "xft:Vera Sans YuanTi:pixelsize=55:Italic"
+Style * Font "xft:Hiragino Sans GB W3:pixelsize=14:Italic"
+
+AddToFunc ExitFunction
++ I test (Quit) Echo Bye-bye
 
 DestroyFunc StartFunction
 AddToFunc StartFunction   	
-+ I Module FvwmTaskBar
 + I Module FvwmButtons MainPanel
 + I Module FvwmAuto 500 Raise Nop
 + I Module FvwmAnimate
-+ I Exec exec xdaliclock 
+# + I Module FvwmPager * *
++ I Exec /home/pengpengxp/peng_bin/p_set_resolution.sh #change the resolution
 + I Exec exec xloadimage -onroot -fullscreen ~/.fvwm/img/desktop.jpeg
-+ I Exec exec xsim
++ I Module FvwmTaskBar
+# + I Exec exec xdaliclock 
+# + I Exec exec xloadimage -onroot -fullscreen ~/.fvwm/img/desktop.jpeg
+# + I Exec exec xsim
+
+Style *FvwmPager* Sticky
 
 AddToFunc InitFunction
+# + I Exec exec tint2
 + I Exec fcitx
++ I Exec fcitx-qimpanel
 + I Exec sogou-qimpanel
-+ I Exec gnome-sound-applet
-+ I Exec /home/pengpengxp/peng_bin/p_set_resolution.sh #change the resolution
+##+ I Exec gnome-sound-applet
 + I Exec xset r rate 200 30 #the keyborad speed
 + I Exec xmodmap "/home/pengpengxp/.Xmodmap"
++ I Exec exec gnome-terminal
 #+ I Exec tomboy
 #+ I Exec ubuntuone-launch
 #+ I Exec gnome-volume-control-applet
@@ -56,6 +70,7 @@ key Q A MC Exec exec emacs24-x -Q
 key E A MC peng-emacs-w3m
 key F4 A M Close # alt+F4 关闭窗口
 Key R A CM Restart # alt+r 重启fvwm
+Key BackSpace A MC Quit
 
 ## for stardict
 Key Pause A N Exec xfce4-terminal -x sdcv
@@ -64,10 +79,15 @@ Key Scroll_Lock A A Exec killall xfce4-terminal
 Key E A $[Mod1] Exec exec thunar
 Key L A $[Mod1] Exec exec xflock4
 Key G A $[Mod1] Exec exec google-chrome
-Key F A $[Mod1] Exec exec firefox
+Key C A $[Mod1] Exec exec chromium-browser
+Key Q A $[Mod1] Exec exec wine-qqintl
+
+Key Super_R A M	Menu RootMenu Nop
+Key Super_L A M	Menu RootMenu Nop
+
 
 ## maxinize the windows size
-Key space A M Maximize-Func
+# Key space A M Maximize-Func
 
 ################ my desktop settings ################
 DeskTopSize 4x1
@@ -75,10 +95,10 @@ DeskTopSize 4x1
 # Key F2 A C GotoPage 1 0
 # Key F3 A C GotoPage 2 0
 # Key F4 A C GotoPage 3 0
-Key F1 A C peng-goto-page-focus 0 0
-Key F2 A C peng-goto-page-focus 1 0
-Key F3 A C peng-goto-page-focus 2 0
-Key F4 A C peng-goto-page-focus 3 0
+Key F1 A C peng-goto-page-focus1 0 0
+Key F2 A C peng-goto-page-focus2 1 0
+Key F3 A C peng-goto-page-focus3 2 0
+Key F4 A C peng-goto-page-focus4 3 0
 Key F1  A $[Mod1]	MoveToPage-Focus 0 0
 Key F2  A $[Mod1]	MoveToPage-Focus 1 0
 Key F3  A $[Mod1]	MoveToPage-Focus 2 0
@@ -93,12 +113,47 @@ MoveThreshold 3
 ## 鼠标点击才聚焦
 Style * ClicktoFocus
 
+# Style *wps* BorderWidth 5, HandleWidth 5, DepressableBorder
+# Style *wps* Icon kcmkwm.png
+# Style *wps* MWMFunctions, MWMDecor, MWMButtons, HintOverride
+# Style *wps* DecorateTransient, NoPPosition
+# Style *wps* SloppyFocus, MouseFocusClickRaises
+# Style *wps* SmartPlacement
+# Style *wps* HilightFore black, HilightBack gainsboro
+# Style *wps* IconBox 360x200+1-1, IconFill left bottom
+Style *wps* Font  -*-simsun-medium-r-*-*-14-*-*-*-*-*-*-*
+Style *wps* IconFont  -*-simsun-medium-r-*-*-12-*-*-*-*-*-*-*
+
+################################################################
+## I copy from others.
+## start some applications maximized
+################################################################
+DestroyModuleConfig FE-StartMaximized: *
+*FE-StartMaximized: Cmd Function
+*FE-StartMaximized: add_window FuncStartMaximized
+
+AddToFunc StartFunction
++ I Module FvwmEvent FE-StartMaximized
+
+DestroyFunc FuncStartMaximized
+AddToFunc   FuncStartMaximized
+# + I ThisWindow ("gnome-terminal") Maximize-Func
++ I ThisWindow ("*emacs*") Maximize-Func
++ I ThisWindow ("*chrome*") Maximize-Func
++ I ThisWindow ("*evince*") Maximize-Func
++ I ThisWindow ("*wps*") Maximize 100 -20p
+################################################################
+
+
 ## ignore the Num Lock key, from the tutorial,not test??
 IgnoreModifiers L25
 
 ################ pengpengxp's fvwm-task-bar ################
 Addtofunc peng-emacs-w3m
 + I Exec exec emacs24-x -Q -l $[HOME]/.emacs.d/init-simple.el -e 'w3m'
+
+Addtofunc peng-google-chrome
++ I Exec exec google-chrome
 
 Style "FvwmTaskBar" NoTitle, !Handles, !Borders, Sticky, WindowListSkip, \
       CirculateSkip, StaysOnBottom, FixedPosition, FixedSize, !Iconifiable
@@ -116,8 +171,9 @@ DestroyModuleConfig FvwmTaskBar: *
 *FvwmTaskBar: UseIconNames                                                         
 *FvwmTaskBar: ShowTips                                                             
 *FvwmTaskBar: StartName FVWM                                                       
-*FvwmTaskBar: StartMenu FvwmRootMenu                                               
-*FvwmTaskBar: Button Title Emacs-w3m, Icon mini/xterm.png, Action (Mouse 1) peng-emacs-w3m
+*FvwmTaskBar: StartMenu RootMenu
+# *FvwmTaskBar: Button Title Emacs-w3m, Icon mini/xterm.png, Action (Mouse 1) peng-emacs-w3m
+# *FvwmTaskBar: Button Title Chrome, Icon mini/xterm.png, Action (Mouse 1) peng-google-chrome
 *FvwmTaskBar: Action Click3 Menu FvwmWindowOpsMenu                                 
 *FvwmTaskBar: StartIcon mini/fvwm.png                                              
 *FvwmTaskBar: PageOnly              # only list the app in the current page
@@ -136,7 +192,13 @@ Mouse 1 2  A       Close
 Mouse 1 4  A       Maximize-Func
 Mouse 1 6  A       Iconify
 
-Key F3 A M Module FvwmConsole -terminal rxvt -geometry 45x5-0+0 -bg gold -fg midnightblue -fn "-adobe-courier-medium-r-*-*-14-*-*-*-*-*-*-*"
+Key BackSpace A $[Mod1] ALL ("*",CurrentPage,"!*chrome*","!*emacs*") Iconify
+
+Key Space A $[Mod1] Maximize-Func
+Key space A M Maximize-Func
+
+# Key F3 A M Module FvwmConsole -terminal rxvt -geometry 45x5-0+0 -bg gold -fg midnightblue -fn "-adobe-courier-medium-r-*-*-14-*-*-*-*-*-*-*"
+Key F3 A M Module FvwmConsole -terminal rxvt -geometry 45x5-0+0 -bg white -fg midnightblue -fn "-adobe-courier-medium-r-*-*-14-*-*-*-*-*-*-*"
 
 # # alt+tab not perfect
 MenuStyle WindowList SelectOnRelease Meta_R
@@ -153,9 +215,33 @@ Key Tab A $[Mod1]2	Window-List-Page "root c c"
 *FvwmAnimate: Effect Random
 *FvwmAnimate: Width 3
 
+################ my sound control ################
+Key comma	A $[Mod1]	Exec exec amixer set Master 5%-
+Key period	A $[Mod1]	Exec exec amixer set Master 5%+
+
 ################ my fullscreen ################
 ## ???????todo
+
+################ my image capture ################
+SetEnv fvwm_screenshot /tmp/fvwm_screenshot
+DestroyFunc Screenshot
+AddToFunc Screenshot
++ I Exec exec mkdir -p $[fvwm_screenshot]
++ I Exec exec import -window root -quality 100 $[fvwm_screenshot]/screenshot-`date +%Y%m%d_%H%M%S`.png
+
+DestroyFunc Screenshot-Delay
+AddToFunc Screenshot-Delay
++ I Exec exec mkdir -p $[fvwm_screenshot]
++ I Exec exec import -pause 10 -window root -quality 100 $[fvwm_screenshot]/screenshot-`date +%Y%m%d_%H%M%S`.png
+
+DestroyFunc Screenshot-Frame
+AddToFunc Screenshot-Frame
++ I Exec exec mkdir -p $[fvwm_screenshot]
++ I All (CurrentPage) Exec exec import -frame -quality 100 $[fvwm_screenshot]/screenshot-`date +%Y%m%d_%H%M%S`.png 2>/dev/null
+
+Key Print A C Screenshot
+Key Print A A Screenshot-Frame
+
 ################################################################
 ################ pengpengxp's personal settings
 ################################################################
-

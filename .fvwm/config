@@ -1,0 +1,4 @@
+################ copy from the fvwm-crystal settings ####
+Read $[HOME]/.fvwm/peng-init-fvwm
+Read $[HOME]/.fvwm/peng-test-fvwm
+# Read $[HOME]/.fvwm/win95

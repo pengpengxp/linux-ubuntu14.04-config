@@ -4,18 +4,19 @@ DIR=`pwd`
 
 cat >${DIR}/main.tex <<EOF
 \documentclass[UTF8,onecolumn]{ctexart}
-\title{}
-\date{}
+\title{这个是测试文件}
+\date{2014年 12月 02日 星期二 19:54:29 CST}
 \begin{document}
+\maketitle{}
+\section{这是测试}
+这是测试文件。
 \end{document}
+
 EOF
 
 cat >${DIR}/makefile <<EOF
 .PHONY:all
 all:
-	xelatex main.tex
-	bibtex main.aux
-	xelatex main.tex
 	xelatex main.tex
 	evince main.pdf
 clean:

@@ -1,0 +1,31 @@
+################################################################
+## This is copy from wang yin
+################################################################
+DestroyMenu Quit-Verify 	
+AddToMenu Quit-Verify 	"Really Quit Fvwm?" Title	
++		      	"Yes, Really Quit"  Quit	
++                       "Restart Fvwm2"     Restart fvwm2
++		      	"No, Don't Quit"    Nop	
+
+DestroyMenu RootMenu
+AddToMenu RootMenu      "Root Menu"     Title
++                       "&gnome-terminal%mini.display.xpm%"      Exec exec gnome-terminal
++                       "&Chromium%.monitor.xpm%"       Exec exec chromium-browser
++                       "&Chrome%mini.monitor.xpm%"       Exec exec google-chrome
++                       "&Chrome-incognito%mini.monitor.xpm%"       Exec exec google-chrome --incognito
++                       "&Emacs%mini.monitor.xpm%"       Exec exec emacs24-x
++                       "&Emacs-w3m%mini.monitor.xpm%"       Exec exec emacs24-x -Q -l $[HOME]/.emacs.d/init-simple.el
++                       "&Wine-qqintl%mini.monitor.xpm%"       Exec exec wine-qqintl
++                       "&Wps%mini.monitor.xpm%"       Exec exec wps
++                       "&Vmplayer%mini.monitor.xpm%"       Exec exec vmplayer
++                       ""              Nop
++                       ""              Nop
++                       "Re&fresh Screen"   Refresh
++                       "Re&capture Screen" Recapture
++                       ""              Nop
++                       "&Lock"         Exec exec xflock4
++                       "&Exit Fvwm%mini.exit.xpm%"     Popup Quit-Verify
+# +                       "&Programs"      Popup ProgramsMenu
+# +                       "&Utilities"     Popup Utilities
+################################################################
+Mouse 1 R       A       Menu RootMenu Nop

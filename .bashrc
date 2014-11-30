@@ -87,6 +87,9 @@ alias la='ls -A'
 alias l='ls -CF'
 alias lm='ls -al |more'
 
+################################################################
+## pengpengxp's alias
+################################################################
 alias bohao="sudo /home/netp/open_keeper/peng"
 alias bohao_wireless="sudo /home/netp/open_keeper/peng_wireless"
 alias duankai="sudo poff -a"
@@ -108,6 +111,10 @@ alias emacsrestart="emacsstop ; emacsstart"
 alias p_date='date +%y-%m-%d\ %H:%M:%S'
 alias p_cc='xclip -selection clipboard'
 alias p_pp='xclip -selection clipboard -o'
+
+alias 41='ssh root@172.23.26.41'
+
+
 
 
 alias rm='rm -i'

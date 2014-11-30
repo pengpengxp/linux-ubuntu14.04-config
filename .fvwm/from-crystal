@@ -1,0 +1,44 @@
+DestroyFunc Window-Focus-DefaultDesk-Raised
+AddToFunc Window-Focus-DefaultDesk-Raised
++ I Iconify False
++ I FlipFocus
+#+ I Focus
++ I Layer Default
++ I Raise
+#+ I WarpToWindow 50 50
+
+# Shows windows only from current desktop page
+DestroyFunc Window-List-Page
+AddToFunc Window-List-Page
++ I WindowList (CurrentPage) "$*" Function Window-Focus-DefaultDesk-Raised CurrentAtEnd CurrentDesk NoGeometry MaxLabelWidth 40 NoIcons NoCurrentDeskTitle NoHotkeys SelectOnRelease $[SelectOnReleaseKey]
+
+# Usage: MoveToPage-Focus [x[p] y[p]] | [prev]
+# man FVWM, "MoveToPage"
+DestroyFunc MoveToPage-Focus
+AddToFunc MoveToPage-Focus
++ I MoveToPage $*
++ I Next (CurrentPage, AcceptsFocus, Visible) Focus
+
+# DestroyFunc PengTest
+# AddToFunc PengTest
+# + I WindowList (CurrentPage) "$*" Function Window-Focus-DefaultDesk-Raised CurrentAtEnd CurrentDesk NoGeometry MaxLabelWidth 40 NoIcons NoCurrentDeskTitle NoHotkeys SelectOnRelease F1
+
+DestroyFunc peng-goto-page-focus1
+AddToFunc peng-goto-page-focus1
++ I GotoPage $*
++ I WindowList (CurrentPage) "$*" Function Window-Focus-DefaultDesk-Raised CurrentAtEnd CurrentDesk NoGeometry MaxLabelWidth 40 NoIcons NoCurrentDeskTitle NoHotkeys SelectOnRelease F1
+
+DestroyFunc peng-goto-page-focus2
+AddToFunc peng-goto-page-focus2
++ I GotoPage $*
++ I WindowList (CurrentPage) "$*" Function Window-Focus-DefaultDesk-Raised CurrentAtEnd CurrentDesk NoGeometry MaxLabelWidth 40 NoIcons NoCurrentDeskTitle NoHotkeys SelectOnRelease F2
+
+DestroyFunc peng-goto-page-focus3
+AddToFunc peng-goto-page-focus3
++ I GotoPage $*
++ I WindowList (CurrentPage) "$*" Function Window-Focus-DefaultDesk-Raised CurrentAtEnd CurrentDesk NoGeometry MaxLabelWidth 40 NoIcons NoCurrentDeskTitle NoHotkeys SelectOnRelease F3
+
+DestroyFunc peng-goto-page-focus4
+AddToFunc peng-goto-page-focus4
++ I GotoPage $*
++ I WindowList (CurrentPage) "$*" Function Window-Focus-DefaultDesk-Raised CurrentAtEnd CurrentDesk NoGeometry MaxLabelWidth 40 NoIcons NoCurrentDeskTitle NoHotkeys SelectOnRelease F4

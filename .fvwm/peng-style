@@ -1,0 +1,14 @@
+################################################################
+## This is my personal style
+################################################################
+
+## the specific application's style
+Style *emacs* !Borders,!Title
+Style *wps* !Borders,!Title
+Style *chrome* !Borders,!Title
+Style *firefox* !Borders,!Title
+Style *thunar* !Borders,Title
+Style *gnome-terminal* Borders,Title
+Style *tint2* !Borders,!Title
+
+################################################################

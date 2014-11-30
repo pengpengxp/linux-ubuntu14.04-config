@@ -1,0 +1,29 @@
+DestroyModuleConfig FvwmIconMan
+
+*FvwmIconMan: NumManagers 1
+*FvwmIconMan: Colorset 40
+*FvwmIconMan: DrawIcons false
+*FvwmIconMan: FocusAndSelectButton flat
+*FvwmIconMan: FocusAndSelectColorset 40
+*FvwmIconMan: FocusButton flat
+*FvwmIconMan: FocusColorset 40
+*FvwmIconMan: Font "Shadow=0 1 SE:xft:Swiss911 XCm BT:pixelsize=16"
+*FvwmIconMan: Format %t
+*FvwmIconMan: IconButton flat
+*FvwmIconMan: IconColorset 40
+*FvwmIconMan: ManagerGeometry 1x20
+*FvwmIconMan: PlainButton flat
+*FvwmIconMan: PlainColorset 40
+*FvwmIconMan: Resolution page 
+*FvwmIconMan: SelectButton flat
+*FvwmIconMan: SelectColorset 40
+*FvwmIconMan: Sort id
+*FvwmIconMan: UseWinList true
+*FvwmIconMan: Tips false
+*FvwmIconMan: ReliefThickness 0
+*FvwmIconMan: Title ""    
+*FvwmIconMan: Action    Mouse   1  N sendcommand Raise
+*FvwmIconMan: Action    Mouse   2  N sendcommand 'WindowShade toggle'
+*FvwmIconMan: Action    Mouse   3  N sendcommand Iconify
+*FvwmIconMan: ButtonGeometry 150x20
+*FvwmIconMan: MaxButtonWidth 300
