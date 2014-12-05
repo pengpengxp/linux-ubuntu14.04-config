@@ -1,0 +1,42 @@
+#!/bin/bash
+
+#this is just for test
+
+lan_name="本地连接"
+IP="172.23.20.88"
+SUB="255.255.255.0"
+GATEWAY="172.23.20.1"
+DNS="202.202.32.33"
+
+echo "set your IP and gateway..."
+netsh interface ip set address name=$lan_name source=static addr=$IP mask=$SUB gateway=$GATEWAY
+echo "set you DNS..."
+netsh interface ip set dnsserver name=$lan_name source=static addr=$DNS register=primary
+
+
+
+echo "delete the default gateway..."
+route delete 0.0.0.0 $GATEWAY
+
+echo "add the shangjiao to the route path"
+##add ftp://ftp.sjtu.edu.cn to the route path
+
+##shangjiao
+route add 202.38.97.0 mask 255.255.255.0 172.23.20.1
+echo "add the beijiao to the route path"
+##beijiaotong
+route add 202.112.154.0 mask 255.255.255.0 172.23.20.1
+echo "add the qinghua to the route path"
+##qinghua
+route add 166.111.8.0 mask 255.255.255.0 172.23.20.1
+echo "add the cqupt to the route path"
+##cqupt
+route add 202.202.43.0 mask 255.255.255.0 172.23.20.1
+route add 202.202.32.0 mask 255.255.255.0 172.23.20.1
+route add 172.16.0.0 mask 255.240.0.0 172.23.20.1
+
+echo "start the netkeeper..."
+/cygdrive/c/ChinaNetSn/bin/Netkeeper.exe &
+
+echo "finish,enjoy yourself..."
+exit 0

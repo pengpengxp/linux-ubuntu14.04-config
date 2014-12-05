@@ -1,0 +1,49 @@
+
+#网易的源
+deb http://123.58.173.106/ubuntu/ maverick main multiverse restricted universe
+deb http://123.58.173.106/ubuntu/ maverick-backports main multiverse restricted universe
+deb http://123.58.173.106/ubuntu/ maverick-proposed main multiverse restricted universe
+deb http://123.58.173.106/ubuntu/ maverick-security main multiverse restricted universe
+deb http://123.58.173.106/ubuntu/ maverick-updates main multiverse restricted universe
+deb-src http://123.58.173.106/ubuntu/ maverick main multiverse restricted universe
+deb-src http://123.58.173.106/ubuntu/ maverick-backports main multiverse restricted universe
+deb-src http://123.58.173.106/ubuntu/ maverick-proposed main multiverse restricted universe
+deb-src http://123.58.173.106/ubuntu/ maverick-security main multiverse restricted universe
+deb-src http://123.58.173.106/ubuntu/ maverick-updates main multiverse restricted universe
+
+
+#北京理工大学的校内源，速度可达1.5M/s http://mirror.njtu.edu.cn，
+#
+#deb http://202.112.154.58/ubuntu/ maverick main multiverse restricted universe
+#deb http://202.112.154.58/ubuntu/ maverick-backports main multiverse restricted universe
+#deb http://202.112.154.58/ubuntu/ maverick-proposed main multiverse restricted universe
+#deb http://202.112.154.58/ubuntu/ maverick-security main multiverse restricted universe
+#deb http://202.112.154.58/ubuntu/ maverick-updates main multiverse restricted universe
+#deb-src http://202.112.154.58/ubuntu/ maverick main multiverse restricted universe
+#deb-src http://202.112.154.58/ubuntu/ maverick-backports main multiverse restricted universe
+#deb-src http://202.112.154.58/ubuntu/ maverick-proposed main multiverse restricted universe
+#deb-src http://202.112.154.58/ubuntu/ maverick-security main multiverse restricted universe
+#deb-src http://202.112.154.58/ubuntu/ maverick-updates main multiverse restricted universe
+
+
+#骨头兄亲自搭建并维护这个Ubuntu源（该源位于浙江杭州百兆共享宽带的电信机房)：
+#deb http://ubuntu.srt.cn/ubuntu/ maverick main restricted universe multiverse
+#deb http://ubuntu.srt.cn/ubuntu/ maverick-security main restricted universe multiverse
+#deb http://ubuntu.srt.cn/ubuntu/ maverick-updates main restricted universe multiverse
+#deb http://ubuntu.srt.cn/ubuntu/ maverick-proposed main restricted universe multiverse
+#deb http://ubuntu.srt.cn/ubuntu/ maverick-backports main restricted universe multiverse
+#deb-src http://ubuntu.srt.cn/ubuntu/ maverick main restricted universe multiverse
+#deb-src http://ubuntu.srt.cn/ubuntu/ maverick-security main restricted universe multiverse
+#deb-src http://ubuntu.srt.cn/ubuntu/ maverick-updates main restricted universe multiverse
+#deb-src http://ubuntu.srt.cn/ubuntu/ maverick-proposed main restricted universe multiverse
+#deb-src http://ubuntu.srt.cn/ubuntu/ maverick-backports main restricted universe multiverse
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,26 @@
+#!/bin/bash
+
+/home/pengpengxp/netp/open_keeper/xkin
+
+while [ -z "`ifconfig |grep ppp`" ]
+do
+    poff -a > /dev/null 2>&1
+    rm -f /etc/ppp/peers/dsl-provider
+    sleep 3
+    echo first inside...
+    /home/pengpengxp/netp/open_keeper/xkin /dev/null 2>&1
+done
+
+while [ 1 > 0 ]
+do
+	while [ -z "`ifconfig |grep ppp`" ]
+	do
+	    poff -a > /dev/null 2>&1
+	    poff -a > /dev/null 2>&1
+	    rm -f /etc/ppp/peers/dsl-provider
+	    sleep 3
+	    echo inside...
+	    /home/pengpengxp/netp/open_keeper/xkin 
+	done
+done
+exit 0

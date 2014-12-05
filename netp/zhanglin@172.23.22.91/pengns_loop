@@ -1,0 +1,40 @@
+#!/bin/bash
+# 不主动断
+
+./xkin
+
+while [ -z "`ifconfig |grep ppp`" ]
+do
+    poff -a > /dev/null 2>&1
+    rm -f /etc/ppp/peers/dsl-provider
+    sleep 3
+    echo first inside...
+    ./xkin > /dev/null 2>&1
+done
+
+if [ -n "`ifconfig |grep ppp`" ]
+then
+    TIME=`date +%H:%M:%S`
+    echo "first dial time = $TIME"
+fi
+
+while [ 1 > 0 ]
+do
+    while [ -z "`ifconfig |grep ppp`" ]
+    do
+	poff -a > /dev/null 2>&1
+	poff -a > /dev/null 2>&1
+	rm -f /etc/ppp/peers/dsl-provider
+	sleep 3
+	echo inside...
+	./xkin 
+	
+	if [ -n "`ifconfig |grep ppp`" ]
+	then
+	    TIME=`date +%H:%M:%S`
+	    echo "redail,I hate this"
+	    echo "time = $TIME"
+	fi
+    done
+done
+exit 0

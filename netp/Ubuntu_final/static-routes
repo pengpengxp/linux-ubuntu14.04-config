@@ -1,0 +1,33 @@
+#!/bin/sh
+#usage :
+#copy this file to /etc/network/if-up.d/static-routes
+#修改这里的IP地址,把这里的 456.456.456.456  换成你的IP地址
+ifconfig eth0:0 456.456.456.456  netmask 255.255.255.0 up
+#/sbin/route del -net  0.0.0.0
+#/sbin/route add -net 0.0.0.0 netmask 0.0.0.0  gw 192.168.1.1 metric 1  
+/sbin/route add -net 172.16.0.0 netmask 255.255.0.0 gw 789.789.789.789 metric 20    
+/sbin/route add -net 172.17.0.0 netmask 255.255.0.0 gw 789.789.789.789  metric 20    
+/sbin/route add -net 172.18.0.0 netmask 255.255.0.0 gw 789.789.789.789  metric 20    
+/sbin/route add -net 172.19.0.0 netmask 255.255.0.0 gw 789.789.789.789  metric 20    
+/sbin/route add -net 172.20.0.0 netmask 255.255.0.0 gw 789.789.789.789  metric 20    
+/sbin/route add -net 172.22.0.0 netmask 255.255.0.0 gw 789.789.789.789  metric 20    
+/sbin/route add -net 202.202.0.0 netmask 255.255.0.0 gw 789.789.789.789  metric 20    
+/sbin/route add -net 211.83.0.0 netmask 255.255.0.0 gw 789.789.789.789  metric 20    
+/sbin/route add -net 172.16.255.255 netmask 255.255.255.255 gw 789.789.789.789  metric 20    
+/sbin/route add -net 172.17.255.255 netmask 255.255.255.255 gw 789.789.789.789  metric 20    
+/sbin/route add -net 172.18.255.255 netmask 255.255.255.255 gw 789.789.789.789  metric 20    
+/sbin/route add -net 172.19.255.255 netmask 255.255.255.255 gw 789.789.789.789  metric 20    
+/sbin/route add -net 172.20.255.255 netmask 255.255.255.255 gw 789.789.789.789  metric 20    
+/sbin/route add -net 172.22.255.255 netmask 255.255.255.255 gw 789.789.789.789  metric 20    
+/sbin/route add -net 202.202.255.255 netmask 255.255.255.255 gw 789.789.789.789  metric 20    
+/sbin/route add -net 211.83.255.255 netmask 255.255.255.255 gw 789.789.789.789  metric 20 
+#增加对电子科技大学的源的访问
+/sbin/route add -host 202.115.22.208  gw 789.789.789.789 metric 20
+#增加对上海交通的源的访问 http://ftp.sjtu.edu.cn/
+/sbin/route add -host 202.38.97.230  gw 789.789.789.789 metric 20
+#增加对北京理工的校内支持的访问，可以访问多个资源
+/sbin/route add -host 202.112.154.58  gw 789.789.789.789 metric 20
+#中国科技大学
+/sbin/route add -host 202.38.95.110  gw 789.789.789.789 metric 20
+#网易的源：http://mirrors.163.com/
+/sbin/route add -host 123.58.173.106  gw 789.789.789.789 metric 20

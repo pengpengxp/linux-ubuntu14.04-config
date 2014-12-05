@@ -1,0 +1,45 @@
+#!/bin/sh
+#脚本作者zsl1005,这个只实现了登录的基本功能，欢迎引用修改。
+
+cd $(dirname $0)
+#请在下面填上自己的账号和密码
+user="15310614657@cqupt"
+password=211219
+if test -z $user || test -z $password
+	then echo 用户名和密码信息缺失，请修改xkin文件，添加用户名和和密码
+	exit 0
+fi
+count=0
+maxcount=10
+# realusername=`js -f username.js -e "xkv18('$user')"`
+realusername=`./ex_C++`
+echo $realusername
+poff -a > /dev/null
+until test -n "`ifconfig | grep ppp`" || [ "$count" -eq "$maxcount" ]
+do
+	if [ "$count" != 0 ]
+		then echo "第$count次登录失败"
+	fi
+	cp HFDial.pppoe temp
+	echo "plugin rp-pppoe.so eth0" >> temp
+	echo "user \"$realusername\"" >> temp
+	echo "password \"$password\"" >> temp
+	mv temp /etc/ppp/peers/dsl-provider
+	pon dsl-provider
+	# > /dev/null
+	count=`expr $count + 1`
+	if [ "$count" -eq "$maxcount" ]
+	then echo "达到最大失败次数，请检查账户密码信息，或者稍后再试"
+	exit 0
+	fi
+	sleep 1
+done
+#echo `plog | grep local`
+echo "login ok"
+echo "now set default routes"
+pp=`ifconfig |grep "ppp" | sed -e 's/ .*$//'`
+dr=`route -n | grep -e "^0.0.0.0" | sed -e 's/0.0.0.0 *//' | sed -e 's/ .*$//'`
+./ip_route $dr $1 $pp
+echo "route set ok"
+exit 0
+

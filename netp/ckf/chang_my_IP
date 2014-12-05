@@ -1,0 +1,28 @@
+#!/bin/bash
+#to change my IP
+PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
+export PATH
+
+ifconfig p5p1 172.23.22.45 netmask 255.255.255.0
+
+gateway=172.23.22.1
+#route add -net 172.0.0.0 netmask 255.0.0.0 gw $gateway 
+#route add -net 202.202.0.0 netmask 255.255.0.0 gw $gateway 
+#route add -net 211.83.0.0 netmask 255.255.0.0 gw $gateway 
+#route add -net 211.86.156.210 netmask 255.255.255.255 gw $gateway 
+#route add -net 202.32.0.0 netmask 255.255.0.0 gw $gateway 
+
+route add -net 172.16.0.0 netmask 255.240.0.0 gw $gateway 
+#route add -net 192.168.255.0 netmask 255.255.255.0 gw 192.168.255.1
+route add -net 202.202.0.0 netmask 255.255.0.0 gw $gateway 
+#ip range for sjtu.edu.cn
+route add -net 202.120.0.0 netmask 255.255.0.0 gw $gateway 
+#ip range for tsinghua.edu.cn
+route add -net 166.111.0.0 netmask 255.255.0.0 gw $gateway 
+route add -net 202.202.0.0 netmask 255.255.0.0 gw $gateway 
+route add -net 211.83.0.0 netmask 255.255.0.0 gw $gateway 
+route add -net 211.86.156.210 netmask 255.255.255.255 gw $gateway 
+route add -net 202.32.0.0 netmask 255.255.0.0 gw $gateway 
+route add -net 202.38.0.0 netmask 255.255.0.0 gw $gateway 
+route add default gw 172.23.22.1
+exit 0

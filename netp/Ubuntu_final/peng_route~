@@ -1,0 +1,22 @@
+#/bin/bash
+
+gateway=172.23.22.1
+IP=172.23.22.107
+NETMASK=255.255.255.0
+
+ifconfig eth0:0 $IP netmask $NETMASK up
+
+route add -net 172.16.0.0 netmask 255.240.0.0 gw $gateway 
+#route add -net 192.168.255.0 netmask 255.255.255.0 gw 192.168.255.1
+route add -net 202.202.0.0 netmask 255.255.0.0 gw $gateway 
+#ip range for sjtu.edu.cn
+route add -net 202.120.0.0 netmask 255.255.0.0 gw $gateway 
+#ip range for tsinghua.edu.cn
+route add -net 166.111.0.0 netmask 255.255.0.0 gw $gateway 
+route add -net 202.202.0.0 netmask 255.255.0.0 gw $gateway 
+route add -net 211.83.0.0 netmask 255.255.0.0 gw $gateway 
+route add -net 211.86.156.210 netmask 255.255.255.255 gw $gateway 
+route add -net 202.32.0.0 netmask 255.255.0.0 gw $gateway 
+route add -net 202.38.0.0 netmask 255.255.0.0 gw $gateway 
+
+exit 0
