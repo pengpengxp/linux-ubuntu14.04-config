@@ -27,3 +27,15 @@ DestroyModuleConfig FvwmIconMan
 *FvwmIconMan: Action    Mouse   3  N sendcommand Iconify
 *FvwmIconMan: ButtonGeometry 150x20
 *FvwmIconMan: MaxButtonWidth 300
+
+
+
+DestroyFunc testfunction
+AddToFunc testfunction   	
++ I SetEnv xiepeng "xiepeng"
++ I Exec exec xmessage $[xiepeng]
+
+DestroyMenu someMenu
+AddToMenu someMenu
++ "root" Popup /
+Key f12 A A Menu someMenu nop

@@ -52,10 +52,10 @@ AddToFunc InitFunction
 + I Exec fcitx
 + I Exec fcitx-qimpanel
 + I Exec sogou-qimpanel
-##+ I Exec gnome-sound-applet
-+ I Exec xset r rate 200 30 #the keyborad speed
-+ I Exec xmodmap "/home/pengpengxp/.Xmodmap"
++ I Exec exec xset r rate 200 30 #the keyborad speed
++ I Exec exec xmodmap "/home/pengpengxp/.Xmodmap"
 + I Exec exec gnome-terminal
+#+ I Exec gnome-sound-applet
 #+ I Exec tomboy
 #+ I Exec ubuntuone-launch
 #+ I Exec gnome-volume-control-applet
@@ -64,7 +64,7 @@ AddToFunc InitFunction
 ################ my key bindings ################
 ## global settings
 key F1 A A Exec exec gnome-terminal 
-key F2 A A Exec exec fbrun
+key F2 A A Exec exec gmrun
 key M A MC Exec exec emacs24-x
 key Q A MC Exec exec emacs24-x -Q
 key E A MC peng-emacs-w3m
@@ -141,7 +141,8 @@ AddToFunc   FuncStartMaximized
 + I ThisWindow ("*emacs*") Maximize-Func
 + I ThisWindow ("*chrome*") Maximize-Func
 + I ThisWindow ("*evince*") Maximize-Func
-+ I ThisWindow ("*wps*") Maximize 100 -20p
++ I ThisWindow ("*pcmanfm*") Maximize 100 -20p
++ I ThisWindow ("*thunar*") Maximize 100 -20p
 ################################################################
 
 
@@ -198,7 +199,8 @@ Key Space A $[Mod1] Maximize-Func
 Key space A M Maximize-Func
 
 # Key F3 A M Module FvwmConsole -terminal rxvt -geometry 45x5-0+0 -bg gold -fg midnightblue -fn "-adobe-courier-medium-r-*-*-14-*-*-*-*-*-*-*"
-Key F3 A M Module FvwmConsole -terminal rxvt -geometry 45x5-0+0 -bg white -fg midnightblue -fn "-adobe-courier-medium-r-*-*-14-*-*-*-*-*-*-*"
+# Key F3 A M Module FvwmConsole -terminal rxvt -geometry 45x5-0+0 -bg white -fg midnightblue -fn "-adobe-courier-medium-r-*-*-28-*-*-*-*-*-*-*"
+Key F3 A M Module FvwmConsole gnome-terminal
 
 # # alt+tab not perfect
 MenuStyle WindowList SelectOnRelease Meta_R

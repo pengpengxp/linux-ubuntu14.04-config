@@ -17,7 +17,9 @@ AddToMenu RootMenu      "Root Menu"     Title
 +                       "&Emacs-w3m%mini.monitor.xpm%"       Exec exec emacs24-x -Q -l $[HOME]/.emacs.d/init-simple.el
 +                       "&Wine-qqintl%mini.monitor.xpm%"       Exec exec wine-qqintl
 +                       "&Wps%mini.monitor.xpm%"       Exec exec wps
-+                       "&Vmplayer%mini.monitor.xpm%"       Exec exec vmplayer
++                       "&virtualbox%mini.monitor.xpm%"       Exec exec virtualbox
++                       "win&7%mini.monitor.xpm%"       Exec exec virtualbox --startvm win7
++                       "&xp%mini.monitor.xpm%"       Exec exec virtualbox --startvm xp
 +                       ""              Nop
 +                       ""              Nop
 +                       "Re&fresh Screen"   Refresh
@@ -25,7 +27,10 @@ AddToMenu RootMenu      "Root Menu"     Title
 +                       ""              Nop
 +                       "&Lock"         Exec exec xflock4
 +                       "&Exit Fvwm%mini.exit.xpm%"     Popup Quit-Verify
++                       "TEST"     popup Quit-Verify
+# +                       "&Vmplayer%mini.monitor.xpm%"       Exec exec vmplayer
 # +                       "&Programs"      Popup ProgramsMenu
 # +                       "&Utilities"     Popup Utilities
 ################################################################
+
 Mouse 1 R       A       Menu RootMenu Nop

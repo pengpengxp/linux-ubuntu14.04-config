@@ -158,7 +158,6 @@ export INFOPATH
 
 ###I don't want garbage
 alias em="emacs24-x"
-alias virtualbox="virtualbox > /dev/null 2>&1 &"
 alias thunderbird="/usr/local/pengpengxp_sw/thunderbird/thunderbird-bin > /dev/null 2>&1 &"
 alias vmplayer="vmplayer > /dev/null 2>&1 &"
 alias firefox="firefox > /dev/null 2>&1 &"
@@ -166,6 +165,7 @@ alias chrome="google-chrome > /dev/null 2>&1 &"
 alias stardict="stardict > /dev/null 2>&1 &"
 alias protect_eye="protect_eye.sh > /dev/null 2>&1 &"
 alias clean='rm -rvf *~'
+# alias virtualbox="virtualbox > /dev/null 2>&1 &"
 
 ###for the emacs in terminal
 export TERM=xterm-256color

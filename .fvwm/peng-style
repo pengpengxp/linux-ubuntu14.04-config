@@ -10,5 +10,4 @@ Style *firefox* !Borders,!Title
 Style *thunar* !Borders,Title
 Style *gnome-terminal* Borders,Title
 Style *tint2* !Borders,!Title
-
 ################################################################

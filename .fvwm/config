@@ -1,4 +1,5 @@
 ################ copy from the fvwm-crystal settings ####
+ImagePath +:/usr/share/icons:/usr/share/pixmaps:/usr/share/icons/hicolor/48x48/apps:/usr/local/share/fvwm/icons:$HOME/.fvwm/img
 Read $[HOME]/.fvwm/peng-init-fvwm
 Read $[HOME]/.fvwm/peng-test-fvwm
 # Read $[HOME]/.fvwm/win95
