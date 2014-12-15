@@ -22,7 +22,23 @@
 !.vimperatorrc
 !.vimrc
 !.Xmodmap
+
+#####################################################
+## something special in .config directory
+#####################################################
+!.config/
+.config/*
 !.config/eyerest.conf
+!.config/xfce4
+!.config/fcitx
+!.config/fcitx-qimpanel
+!.config/git
+!.config/gnome-session
+!.config/Thunar
+!.config/tint2
+
+
+
 
 #####################################################
 ## after use some time, don't back these file
