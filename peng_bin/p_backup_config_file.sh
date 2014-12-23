@@ -17,11 +17,13 @@ if [ $# != 1 ];then
     echo "usage ./backup_emacs.sh where-you-want-to-backup"
     exit 1
 fi 
+
 DATE=`date +%y_%m_%d`
 NAME=$1config_${DATE}.tar.bz2
 echo "I will backup configure file to $NAME"
 echo "Is that right?"
 echo "yes or no"
+
 read TMP
 CONDITION="no"
 

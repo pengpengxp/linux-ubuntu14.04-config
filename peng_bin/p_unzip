@@ -1,0 +1,27 @@
+#!/bin/bash
+
+################################################################
+# 我自己的zip解压脚本，解决解压windows打包的乱码问题，也解决有时候解压
+# 所有文件全部出现在当前目录的问题（也就是压缩文件本身没有一个目录的情
+# 况）。
+
+# 注意：这个脚本一次只能解压缩一个文件。
+
+# 2014年 12月 17日 星期三 17:27:20 CST
+################################################################
+
+
+
+if [ $# -ne 1 ]
+then
+    echo "usage: p_unzip file.zip"
+    echo "\tyou can only depress one file a time"
+else
+    # echo "I'll begin to depress file"
+    TEMPDIR=`basename -s .zip $1`
+    # echo $TEMPDIR
+    mkdir $TEMPDIR
+    unzip -O cp936 $1 -d $TEMPDIR
+fi
+
+exit 0

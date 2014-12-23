@@ -1,54 +1,6 @@
 [xfdesktop-version-4.10.3+-rcfile_format]
 4.10.3+=true
 
-[/home/pengpengxp/桌面/as-trigger-key [tab.txt]
-row=0
-col=1
-
-[/home/pengpengxp/桌面/金山打字通.lnk]
-row=3
-col=1
-
-[/home/pengpengxp/桌面/Sublime Text 2.desktop]
-row=1
-col=1
-
-[/home/pengpengxp/桌面/yozo-impress.desktop]
-row=5
-col=1
-
-[/home/pengpengxp/桌面/yozo-writer.desktop]
-row=0
-col=2
-
-[/home/pengpengxp/桌面/
-Usage:
-        wbfc [option] [chinese or wubi-code] [wb_db path]
-Option:
-1.txt]
-row=2
-col=2
-
-[/home/pengpengxp/桌面/yozo-pdf.desktop]
-row=4
-col=1
-
-[/home/pengpengxp/桌面/金山打字通.desktop]
-row=2
-col=1
-
-[/home/pengpengxp/桌面/新执行编辑命令，此时匹配-^$-.txt]
-row=4
-col=0
-
-[/home/pengpengxp/桌面/yozo-calc.desktop]
-row=1
-col=2
-
-[/home/pengpengxp/桌面/Internet Explorer 8.desktop]
-row=5
-col=0
-
 [E2DAF827DAF7F61F]
 row=0
 col=0

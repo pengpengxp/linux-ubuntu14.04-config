@@ -22,6 +22,7 @@
 !.vimperatorrc
 !.vimrc
 !.Xmodmap
+!.i3/
 
 #####################################################
 ## something special in .config directory
@@ -30,8 +31,6 @@
 .config/*
 !.config/eyerest.conf
 !.config/xfce4
-!.config/fcitx
-!.config/fcitx-qimpanel
 !.config/git
 !.config/gnome-session
 !.config/Thunar

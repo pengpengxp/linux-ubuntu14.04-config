@@ -1,11 +1,15 @@
 [xfdesktop-version-4.10.3+-rcfile_format]
 4.10.3+=true
 
+[XIAOMI]
+row=5
+col=0
+
 [E2DAF827DAF7F61F]
 row=0
 col=0
 
-[BC09-0C49]
+[MI 3C]
 row=4
 col=0
 

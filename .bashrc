@@ -208,6 +208,8 @@ fi
 
 # use kindlegen and texi2mobi
 export PATH=$PATH:/usr/local/kindlegen_linux_2.6_i386_v2_9/:/usr/local/texi2mobi/
+# use dropboxd
+export PATH=$PATH:/home/pengpengxp/.dropbox-dist
 
 ################################################################
 # 使用percol配置成文件管理器。可以剪切复制这些。网上找的。
@@ -252,3 +254,5 @@ alias gl='git log'
 alias ga='git add'
 alias gc='git commit'
 ################################################################
+
+export UNZIP="-O CP936"
