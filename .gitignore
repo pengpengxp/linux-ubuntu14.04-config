@@ -36,9 +36,6 @@
 !.config/Thunar
 !.config/tint2
 
-
-
-
 #####################################################
 ## after use some time, don't back these file
 #####################################################
@@ -46,3 +43,4 @@
 /.fluxbox/fbrun_history
 /.sdcv_history
 /.fvwm/.FvwmConsole-History
+/.config/fcitx/*

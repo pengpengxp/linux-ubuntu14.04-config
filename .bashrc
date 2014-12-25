@@ -140,11 +140,12 @@ fi
 
 
 ##to change my key binding
-key_result=`xmodmap | grep lock |awk '{x = $3;print x}'`
-if [ $key_result != "(0x76)" ]
-then
-   xmodmap /home/pengpengxp/change_key_binding/Xpeng.kmap
-fi
+# key_result=`xmodmap | grep lock |awk '{x = $3;print x}'`
+# if [ $key_result != "(0x76)" ]
+# then
+#    xmodmap /home/pengpengxp/change_key_binding/Xpeng.kmap
+# fi
+
 ###ifconfig
 export PATH="$PATH":/sbin/;
 
@@ -201,10 +202,10 @@ export ANDROID_SDK_HOME=/usr/local/android-sdk-linux
 
 
 #start after login in
-if [ "`xrandr|grep "1440 x 900"`" == "" ]
-then
-    /home/pengpengxp/peng_bin/p_set_resolution.sh
-fi
+# if [ "`xrandr|grep "1440 x 900"`" == "" ]
+# then
+#     /home/pengpengxp/peng_bin/p_set_resolution.sh
+# fi
 
 # use kindlegen and texi2mobi
 export PATH=$PATH:/usr/local/kindlegen_linux_2.6_i386_v2_9/:/usr/local/texi2mobi/

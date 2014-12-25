@@ -55,6 +55,7 @@
 ; (gtk_accel_path "<Actions>/ThunarLocationButtons/location-buttons-paste-into-folder" "")
 ; (gtk_accel_path "<Actions>/ThunarBookmarks/2249e57bdbfcf09f86f5203d4509b195" "")
 ; (gtk_accel_path "<Actions>/ThunarBookmarks/333e590543f4281733bcfe08c17c61c9" "")
+; (gtk_accel_path "<Actions>/ThunarBookmarks/f792890f6ee8f3c98398b1c2a904b5a9" "")
 ; (gtk_accel_path "<Actions>/ThunarWindow/about" "")
 ; (gtk_accel_path "<Actions>/ThunarBookmarks/81063c290c30a80bb2bd7c16c814fece" "")
 ; (gtk_accel_path "<Actions>/ThunarWindow/contents" "F1")

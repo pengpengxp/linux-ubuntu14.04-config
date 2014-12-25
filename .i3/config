@@ -167,9 +167,9 @@ bar {
         # i3bar_command /bin/date
 
 	#### hide the bar
-	# mode hide
-	# hidden_state hide
-	# modifier $mod
+	mode hide
+	hidden_state hide
+	modifier $mod
 
 	tray_output primary
 }
@@ -184,7 +184,8 @@ hide_edge_borders both
 #### key bindings
 bindcode 67 exec --no-startup-id gnome-terminal
 bindcode 68 exec --no-startup-id dmenu_run
-bindcode 127 exec --no-startup-id xfce4-terminal -x sdcv
+bindcode Control+127 exec --no-startup-id xfce4-terminal -x sdcv #按住Control再按Pause才触发
+bindcode Mod1+127 exec --no-startup-id xfce4-terminal -x sdcv #按住Alt再按Pause才触发
 bindcode 78 exec --no-startup-id xfce4-terminal -x killall xfce4-terminal
 bindcode 107 exec xflock4
 
@@ -217,6 +218,8 @@ bindsym $mod+F7 move container to workspace 7WorkSpace
 bindsym $mod+F8 move container to workspace 8WorkSpace
 bindsym $mod+F9 move container to workspace 9WorkSpace
 
+bindsym $mod+comma exec amixer set Master 5%-
+bindsym $mod+period exec amixer set Master 5%+
 # use ALT to do some window moving
 bindsym Mod1+h focus left
 bindsym Mod1+j focus down
@@ -232,3 +235,10 @@ bindsym Mod1+Shift+h move left
 bindsym Mod1+Shift+j move down
 bindsym Mod1+Shift+k move up
 bindsym Mod1+Shift+l move right
+
+#### exec automatically when login in
+exec /home/pengpengxp/peng_bin/p_set_keyboard_rate.sh
+exec /home/pengpengxp/peng_bin/p_set_resolution.sh
+exec /home/pengpengxp/.dropbox-dist/dropboxd
+
+exec emacs
